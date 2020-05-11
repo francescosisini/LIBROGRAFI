@@ -1,0 +1,10 @@
+#include "tuki5_modello.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+ */
+direzione gioca_tuki(posizioni posi, oggetto **labx){
+
+
+}

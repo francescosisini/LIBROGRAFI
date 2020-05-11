@@ -1,0 +1,16 @@
+#include "tuki5_modello.h"
+#include <stdio.h>
+#include <unistd.h>
+
+
+
+direzione gioca_tuki(posizioni p, oggetto **labx){
+  static int turno = 0;
+  static direzione ld=SINISTRA;
+  
+  int r = p.tuki_y;
+  int c = p.tuki_x;
+  if(labx[r][c-1] !=J && labx[r][c-1] !=U)
+    ld = SU;
+    return ld;
+}

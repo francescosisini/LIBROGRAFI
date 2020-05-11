@@ -1,0 +1,367 @@
+/*___________________________________________________________
+ * 
+ * FILE: gioca_tuki_generagrafo.c
+ */
+
+#include "tuki5_modello.h"
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <unistd.h>
+
+#define NNODI 34
+#define SCONOSCIUTO -2
+
+/********* SEZIONE GRAFO ***************/
+
+/*
+ * Data Model: il grafo è implementato come
+ * una lista di archi tra vertici
+ */
+
+/* Verice del grafo */
+typedef struct {
+  int indice;
+  /* attributi */
+  int riga, colonna;
+} grafo_Vertice;
+
+/* Arco orientato e pesato */
+typedef struct arco {
+  /* vertici collegati */
+  grafo_Vertice da, a;
+  /* attributi */
+  direzione partenza, arrivo;
+  int lunghezza;
+} grafo_Arco;
+
+/* Elemento della lista di archi */
+typedef struc elemento {
+  grafo_Arco arco;
+  /* Navigazione lista*/
+  struct  elemento *  next;
+} grafo_Elemento;
+
+/* Puntatore alla lista di archi */
+typedef grafo_Elemento * grafo_Grafo;
+
+/* Inserisce l'arco in testa alla lista */
+void grafo_inserisci(grafo_Grafo * pg, grafo_Arco arco)
+{
+  grafo_Elemento * aux = malloc(sizeof(grafo_Elemento));
+  if(aux == 0) exit(1);
+  aux -> arco = arco;
+  aux -> next = *pg;
+  *pg = aux;
+}
+
+/* Cerca tra gli elementi del grafo se uno degli archi è connesso
+   ad un vertice in riga e colonna. Se lo trova torna l'indice del
+   vertice 
+*/
+int grafo_Vertice_cerca(int riga, int colonna)
+{
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/*___________________________________________________________
+ *
+ * Controlla se l'oggetto nella cella non è un muro
+ *
+ */
+bool oggetto_accessibile(oggetto s)
+{
+  if(s == 'J' || s == 'U' || s == 'V')
+    return true;
+  else
+    return false;
+}
+
+void stampa(nodo * pac_grafo)
+{
+  FILE * f = fopen("grafi.txt","w+t");
+  for(int i=0;i<NNODI;i++)
+    fprintf(f,"Nodo %d, (%d,%d) sx %d, dx %d, su %d, giu %d\n", pac_grafo[i].indice,
+	    pac_grafo[i].riga,
+	    pac_grafo[i].colonna,
+	    pac_grafo[i].n_sx,
+	    pac_grafo[i].n_dx,
+	    pac_grafo[i].n_su,
+	    pac_grafo[i].n_giu);
+  fclose(f);
+}
+
+/*_____________________________________________________
+ *
+ * Inizializza tutti i campi di ogni nodo del pac_grafo
+ */
+
+void inizializza_pac_grafo(nodo * pac_grafo)
+{
+  for(int i=0; i<NNODI; i++)
+    {
+      pac_grafo[i].riga =  SCONOSCIUTO;;
+      pac_grafo[i].colonna =  SCONOSCIUTO;
+      pac_grafo[i].indice = SCONOSCIUTO;
+      pac_grafo[i].n_sx =  SCONOSCIUTO;
+      pac_grafo[i].n_dx =  SCONOSCIUTO;;
+      pac_grafo[i].n_su =  SCONOSCIUTO;
+      pac_grafo[i].n_giu =  SCONOSCIUTO;
+    }
+}
+
+/*_______________________________________________________
+ *
+ * Se il nodo è già stato rilevato la funzione
+ * restutuisce true altrimenti restituisce false
+ *
+ */
+bool nodo_presente(nodo * pac_grafo,int riga, int colonna)
+{
+  
+  for(int i=0; i<NNODI; i++)
+    {
+      if(pac_grafo[i].riga == riga && pac_grafo[i].colonna == colonna)
+	return true;
+    }
+  return false;
+}
+
+
+direzione gioca_tuki(posizioni posi, oggetto **labx)
+
+{
+
+  /*___________________________________________________________
+   *|
+   *| I nodi del grafo del labirinto
+   */
+  static nodo pac_grafo[NNODI];
+  
+  
+  /* Numero dei nodi rilevati nel labirinto */
+  static int numero_nodi = 0;
+  /* Indice dell'ultimo nodo rilevato */
+  static int nodo_precedente = SCONOSCIUTO;
+
+
+  /*_______________________________________________
+   *
+   * I nodi possono essere collegati 
+   * da sinistra a destra o dall'alto in basso, 
+   * quando l'arco non fa curve, ma non tutti 
+   * gli archi sono linee rette. Anche archi che collegano 
+   * i nodi da sinistra verso l'alto, verso destra 
+   * e così via, sono presenti nel labirinto Pac-Man.
+   *
+   * ENG:
+   * Nodes can be connected as left to right or up to down,
+   * when the edge makes no curves, but not all the edges are 
+   * straight lines. Edges  connecting nodes left to up, up to right 
+   * and so on, are also  present in the Pac-Man maze.
+   */
+  
+  /* Direzione presa nel turno di gioco precedente */
+  static int direzione_arrivo = FERMO;
+  /* Direzione presa nel turno di gioco precedente */
+  static int direzione_partenza = FERMO;
+
+  /* Direzione presa in questo turno di gioco */
+  static direzione ld = SINISTRA;
+  
+  static bool init = false;
+  if(!init)
+    {
+      inizializza_pac_grafo(pac_grafo);
+      srand(time(0));
+      init = true;
+    }
+  
+  /* Posizione di Tuki o Pac-Man nel labirinto*/
+  int i = posi.tuki_y;
+  int j = posi.tuki_x;
+  
+  /* Celle confinanti (neighbors) */
+  oggetto vicino[4];
+  vicino[0] = labx[i][j-1]; //sinistra
+  vicino[1] = labx[i][j+1]; //destra
+  vicino[2] = labx[i-1][j]; //su
+  vicino[3] = labx[i+1][j]; //giu
+
+  /* Verifica se la cella corrente è un nodo */
+  int nd = 0;
+  for(int k=0; k<4; k++)
+    nd += (1*oggetto_accessibile(vicino[k]));
+  printf("\x1b[30;30HND:%d - p: %d",nd,nodo_presente(pac_grafo,i,j));
+  fflush(stdout);
+
+  /* IT: È vero se nel ciclo di gioco corrente viene rilevato un nodo */
+  /* EN: Is true if in the current game cycle a node is detetcted  */
+  bool nodo_rilevato = false;
+  if(nd>2 && !nodo_presente(pac_grafo,i,j))
+    {
+      nodo_rilevato = true;
+      /* La cella corrente è un nodo non ancora rilevato */
+      numero_nodi++;
+
+      /* Indice del nodo corrente */
+      int nc = numero_nodi - 1;
+
+      //Coordinate del nodo
+      pac_grafo[nc].riga = i;
+      pac_grafo[nc].colonna = j;
+      pac_grafo[nc].indice = nc;
+
+      /* Collegamnti del nodo */
+      if( direzione_arrivo == SINISTRA)
+	pac_grafo[nc].n_dx = nodo_precedente;
+
+      if( direzione_arrivo == DESTRA)
+	pac_grafo[nc].n_sx = nodo_precedente;
+
+      if( direzione_arrivo == SU)
+	pac_grafo[nc].n_giu = nodo_precedente;
+
+      if( direzione_arrivo == GIU)
+	pac_grafo[nc].n_su = nodo_precedente;
+
+      if(nodo_precedente != SCONOSCIUTO)
+	{
+	  if(direzione_partenza == SINISTRA)
+	    pac_grafo[nodo_precedente].n_sx = nc;
+	  
+	  if(direzione_partenza == DESTRA)
+	    pac_grafo[nodo_precedente].n_dx = nc;
+	  
+	  if(direzione_partenza == SU)
+	    pac_grafo[nodo_precedente].n_su = nc;
+	  
+	  if(direzione_partenza == GIU)
+	    pac_grafo[nodo_precedente].n_giu = nc;
+	}
+
+      
+      
+      // Aggiornamento ultimo nodo
+      nodo_precedente = nc;
+      stampa(pac_grafo);
+    }
+
+  /* Variabile ausiliarie con nomi più comodi */
+  oggetto s = vicino[0];
+  oggetto d = vicino[1];
+  oggetto a = vicino[2];
+  oggetto b = vicino[3];
+
+   /* Gestione ostacoli */
+  bool disponibile = false;
+  
+  /* Questo bool garantisce che per ogni 
+     ciclo di gioco la scelta della direzione abbia 
+     una componente casuale. 
+     Questo al fine di evitare loop che sarebbero causati 
+     dall'assenza della squadra fantasma */
+  bool aleatorio = false;
+  
+  /* 
+     se la cella successiva nella direzione corrente non è disponibile,
+     ne viene scelta un'altra e viene eseguita una nuova iterazione
+  */
+  while(!disponibile)
+    {
+      if(!oggetto_accessibile(s) && ld == SINISTRA)
+        {
+          ld = rand()%2;
+          if(ld==0)
+            ld = SU;
+          else
+            ld = GIU;
+          aleatorio = true;
+        }
+      else
+        
+        if(!oggetto_accessibile(d) && ld == DESTRA)
+          {
+	    
+            ld = rand()%2;
+            if(ld==0) ld = SU;
+            else
+              ld = GIU;
+            aleatorio = true;
+          }
+        else
+	  if(!oggetto_accessibile(a) && ld == SU)
+            {
+              ld = rand()%2;
+              if(ld==0) ld = SINISTRA;
+              else
+                ld = DESTRA;
+              aleatorio = true;
+            }
+          else
+            if(!oggetto_accessibile(b) && ld == GIU)
+	      {
+                ld = rand()%2;
+                if(ld==0) ld = SINISTRA;
+                else
+                  ld = DESTRA;
+                aleatorio = true;
+	      }
+            else
+              disponibile = true;
+    }
+    
+    // Memorizzazione per il pac_grafo
+    direzione_arrivo = ld;
+    if(nodo_rilevato)
+      direzione_partenza = ld;
+    
+    if(aleatorio) return ld;
+    
+        
+    /* Se la direzione non è aleatoria la cambiamo qui */
+    if(oggetto_accessibile(a) && ld !=SU && ld!=GIU)
+      {
+	int sv = rand()%10;
+	if(sv>=5)
+	  ld = SU;
+      }
+    if(oggetto_accessibile(b) && ld !=GIU && ld!=SU)
+      {
+	int sv = rand()%10;
+	if(sv>=5)
+	  ld = GIU;
+      }
+    if(oggetto_accessibile(s) && ld !=SINISTRA && ld!=DESTRA)
+      {
+	int sv = rand()%10;
+	if(sv>=5)
+	  ld = SINISTRA;
+      }
+    if(oggetto_accessibile(d) && ld !=DESTRA && ld!=SINISTRA)
+      {
+	int sv = rand()%10;
+	if(sv>=5)
+	  ld = DESTRA;
+      }
+
+    // Memorizzazione per il pac_grafo
+    direzione_arrivo = ld;
+    if(nodo_rilevato)
+      direzione_partenza = ld;
+    return ld;
+  
+}
