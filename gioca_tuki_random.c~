@@ -15,65 +15,45 @@
 /********* SEZIONE GRAFO ***************/
 
 /*
-  ITA:  I grafi sono implementati come
-  liste di archi tra vertici
-  ENG: Graphs are edges lists 
+ * Data Model: il grafo è implementato come
+ * una lista di archi tra vertici
  */
 
-/* 
-   ITA: Verice del grafo 
-   ENG: Graph vertex
-*/
+/* Verice del grafo */
 typedef struct {
-  /* 
-     ITA: Indice univoco nel grafo 
-     ENG: Unique index into the graph
-  */
+  /* Chiave unica */
   int indice;
-  /* 
-    ITA: attributi
-    ENG: attributes
-  */
-  int riga, colonna;//row and column
-} agra_Vertice;
+  /* attributi */
+  int riga, colonna;
+} grafo_Vertice;
 
-/* 
-   ITA: Arco orientato e pesato
-   ENG: diricted and weighted edge ("arco" means edge) 
-*/
+/* Arco orientato e pesato */
 typedef struct arco {
-  /* 
-     ITA: vertici collegati dall'arco
-     ENG: vertices connected by the edge
-  */
-  agra_Vertice da, a;
-   /* 
-    ITA: attributi
-    ENG: attributes
-   */
+  /* vertici collegati - chiave unica composta */
+  grafo_Vertice da, a;
+  /* attributi */
   direzione partenza, arrivo;
   int lunghezza;
-} agra_Arco;
+} grafo_Arco;
 
-/* 
-   ITA: Elemento della lista di archi
-   ENG: Edges list element
-*/
+/* Elemento della lista di archi */
 typedef struct elemento {
-  agra_Arco arco;
+  grafo_Arco arco;
+  /* Navigazione lista*/
   struct  elemento *  next;
-} agra_Elemento;
+} grafo_Elemento;
 
-typedef agra_Elemento * agra_Grafo;
+/* Puntatore alla lista di archi */
+typedef grafo_Elemento * grafo_Grafo;
 
-/*
-  ITA: Inserisce l'arco in testa alla lista
-  ENG: inserts an edge on top of the list
-*/
-void agra_Arco_inserisci(agra_Grafo * pg, agra_Arco arco)
+/* Inserisce l'arco in testa alla lista */
+void grafo_inserisci(grafo_Grafo * pg, grafo_Arco arco)
 {
 
-  agra_Grafo cg = *pg;
+  grafo_Grafo cg = *pg;
+  
+  /* Non sono ammessi   */
+
   
   if(arco.da.indice == arco.a.indice)
     return;
@@ -89,20 +69,18 @@ void agra_Arco_inserisci(agra_Grafo * pg, agra_Arco arco)
         cg = cg->next;
     }
   
-  agra_Elemento * aux = malloc(sizeof(agra_Elemento));
+  grafo_Elemento * aux = malloc(sizeof(grafo_Elemento));
   if(aux == 0) exit(1);
   aux -> arco = arco;
   aux -> next = *pg;
   *pg = aux;
 }
 
-/* ITA: Cerca tra gli elementi del grafo se uno degli archi è connesso
+/* Cerca tra gli elementi del grafo se uno degli archi è connesso
    ad un vertice in riga e colonna. Se lo trova torna l'indice del
    vertice, altrimenti -1
-   ENG: Looks into the graph for a vertex whose row and column attributes
-   are equal to riga and colonna
 */
-int agra_Vertice_cerca(agra_Grafo g, int riga, int colonna)
+int grafo_Vertice_cerca(grafo_Grafo g, int riga, int colonna)
 {
   while(g)
     {
@@ -115,12 +93,12 @@ int agra_Vertice_cerca(agra_Grafo g, int riga, int colonna)
   return -1;
 }
 
-void agra_stampa(agra_Grafo g)
+void grafo_stampa(grafo_Grafo g)
 {
-  FILE * f = fopen("grafi.csv","w+t");
+  FILE * f = fopen("grafi.txt","w+t");
   while(g)
     {
-      fprintf(f," %d,%d,\n",
+      fprintf(f," Arco (%d,%d)\n",
 	      g->arco.da.indice,
 	      g->arco.a.indice);
 	      
@@ -131,10 +109,7 @@ void agra_stampa(agra_Grafo g)
 
 
 
-/* 
-   ITA: Controlla se l'oggetto nella cella non è un muro
-   ENG: chcks if the object into the cell is or not a wall
-*/
+/* Controlla se l'oggetto nella cella non è un muro */
 bool oggetto_accessibile(oggetto s)
 {
   if(s == 'J' || s == 'U' || s == 'V')
@@ -142,7 +117,7 @@ bool oggetto_accessibile(oggetto s)
   else
     return false;
 }
-/*
+
 direzione direzione_opposta(direzione d)
 {
   if(d == SINISTRA) return DESTRA;
@@ -152,24 +127,14 @@ direzione direzione_opposta(direzione d)
   return FERMO;
 
 }
-*/
+
 
 direzione gioca_tuki(posizioni posi, oggetto **labx)
 
 {
 
-  /*
-    ITA: per generare il grafo impediamo a PAC-MAN di entrare nella
-    casa dei fantasmi
-    ENG: to generte maze graph we prevent PAC-MAN to get into 
-    ghosts' house
-   */
-  labx[14][12]='A';
-  labx[14][13]='A';
-  labx[14][11]='A';
-  labx[14][14]='A';
-  
-  static agra_Grafo g = 0;
+  /* Grafo del labirinto */
+  static grafo_Grafo g = 0;
 
   /* 
      ITA: Se Tuki è su un vertice, deve aggiungere l'arco
@@ -198,20 +163,14 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
     and so on, are also  present in the Pac-Man maze.
    */
   
-  /* 
-     ITA: Direzione presa nel turno di gioco precedente 
-     ENG: Direction taken into the previous game cycle
-  */
+  /* Direzione presa nel turno di gioco precedente */
   static int direzione_arrivo = FERMO;
+  /* Direzione presa nel turno di gioco precedente */
   static int direzione_partenza = FERMO;
-  
   static int lunghezza_arco = 0;
   static int i_da, j_da;
 
-   /* 
-     ITA: Direzione presa nel turno di gioco corrente 
-     ENG: Direction taken into the current game cycle
-  */
+  /* Direzione presa in questo turno di gioco */
   static direzione ld = SINISTRA;
   
   static bool init = false;
@@ -221,10 +180,7 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
       init = true;
     }
   
-  /* 
-     ITA: Posizione di Pac-Man nel labirinto
-     ENG: PAC-MAN's row and column
-   */
+  /* Posizione di Tuki o Pac-Man nel labirinto*/
   int i = posi.tuki_y;
   int j = posi.tuki_x;
 
@@ -232,10 +188,10 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
   
   /* Celle confinanti (neighbors) */
   oggetto vicino[4];
-  vicino[0] = labx[i][j-1]; //sinistra - left
-  vicino[1] = labx[i][j+1]; //destra - right
-  vicino[2] = labx[i-1][j]; //su - up
-  vicino[3] = labx[i+1][j]; //giu - down
+  vicino[0] = labx[i][j-1]; //sinistra
+  vicino[1] = labx[i][j+1]; //destra
+  vicino[2] = labx[i-1][j]; //su
+  vicino[3] = labx[i+1][j]; //giu
 
   /*  
       ITA: Conta il numero di vicini accessibili
@@ -247,12 +203,13 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
   
   fflush(stdout);
 
-  /* ITA: È vero se nel ciclo di gioco corrente viene rilevato un nodo */
-  /* ENG: Is true if in the current game cycle a node is detetcted  */
+  /* IT: È vero se nel ciclo di gioco corrente viene rilevato un nodo */
+  /* EN: Is true if in the current game cycle a node is detetcted  */
   bool nodo_rilevato = false;
 
   if(vertice_da == SCONOSCIUTO && nd>2)
     {
+      printf("caz");
       fflush(stdout);
       vertice_da = 0;
       i_da = i;
@@ -262,18 +219,19 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
     }
   else if(nd>2)
     {
+      
       /* 
 	 ITA: Se siamo qui, Tuki è su un vertice
 	 ENG: If we are here Tuki position is a vertex 
       */
-      int vertice_a = agra_Vertice_cerca(g,i,j);
+      int vertice_a = grafo_Vertice_cerca(g,i,j);
       if(vertice_a<0)
 	{
 	  vertice_a = vertici_contati;
 	  vertici_contati++;
 	}
-      agra_Arco arco;
-      agra_Vertice v_a, v_da;
+      grafo_Arco arco;
+      grafo_Vertice v_a, v_da;
       v_a.indice = vertice_a;
       v_a.riga = i;
       v_a.colonna = j;
@@ -287,7 +245,7 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
       arco.lunghezza = lunghezza_arco;
       arco.arrivo = direzione_arrivo;
       arco.partenza = direzione_partenza;
-      agra_Arco_inserisci(&g, arco);
+      grafo_inserisci(&g, arco);
       nodo_rilevato = true;
 
       lunghezza_arco = 0;
@@ -295,7 +253,7 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
       i_da = i;
       j_da = j;
       
-      agra_stampa(g);
+      grafo_stampa(g);
       
     }
 
@@ -305,20 +263,14 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
   oggetto a = vicino[2];
   oggetto b = vicino[3];
 
-   /* ITA: Gestione ostacoli
-      ENG: dealing with obstacles
-    */
+   /* Gestione ostacoli */
   bool disponibile = false;
   
-  /* ITA: Questo bool garantisce che per ogni 
-     turno di gioco la scelta della direzione abbia 
+  /* Questo bool garantisce che per ogni 
+     ciclo di gioco la scelta della direzione abbia 
      una componente casuale. 
      Questo al fine di evitare loop che sarebbero causati 
-     dall'assenza della squadra fantasma 
-     ENG: this bool is set to true if during the direction
-     decision a random step has been taken. This in order to
-     avoid loops that would be caused by runs without ghosts
-  */
+     dall'assenza della squadra fantasma */
   bool aleatorio = false;
   
   /* 

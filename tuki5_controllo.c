@@ -124,7 +124,7 @@ int main(int argc, char **argv)
     p=mdl_posizioni();//aggiorna le posizioni prima di mostrarle a video
     view_punteggio(pnt);
     view_giocatori(p,lab,inblu);
-    //delay(30);
+    delay(10);
     // delay(250);
 
 

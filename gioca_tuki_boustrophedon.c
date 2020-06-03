@@ -3,54 +3,84 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+enum tipo {MURO,ALTRO};
+typedef enum tipo tipo_oggetto;
 
-
-
-enum chartype {MURO,ALTRO};
-typedef enum chartype char_type;
-
-/**
- *Battlefield cells graph representation
+/*
+  ITA: Attributi della cella
+  ENG: Cell attributes
  */
-typedef struct data
+typedef struct dato
 {
-  int readed;
   int visitata;
-  char_type cell_type;
-  int cont;
-} Data;
+  tipo_oggetto t_o;
+} Attributi;
 
-typedef struct cell {
-  Data d;
-  struct cell* destra;
-  struct cell* basso;
-  struct cell* sinistra;
-  struct cell* alto;
-} Cell;
-typedef Cell* graph;
-
-/**
- *Cell path list
+/*
+  ITA: vicini di ogni cella
+  ENG: cell's neighbords
  */
-typedef struct node{
-  graph pcell;
-  struct node * next;
-  struct node * prev;
-}Node;
-typedef Node* path;  
+typedef struct cella {
+  Attributi d;
+  struct cella* destra;
+  struct cella* basso;
+  struct cella* sinistra;
+  struct cella* alto;
+} Cella;
 
+/*
+  ITA: Grafo composto da celle
+  ENG: Graph composed by cells
+ */
+typedef Cella* Grafo;
 
+/*
+  ITA: elementi della lista dei passi
+  ENG: elements of the step list
+ */
+typedef struct nodo{
+  Grafo pcell;
+  struct nodo * next;
+  struct nodo * prev;
+}Nodo;
 
-/*Functions*/
+/*
+  ITA: lista dei passi
+  ENG: step list
+ */
+typedef Nodo* Cammino;  
 
-char_type get_cell_type(oggetto code);
-direzione symmetry(direzione d);
-void new_graph(graph* g);
-graph add_to_graph(graph pcell,Data d,direzione dir);
-void new_path(path* p);
-void add_head(path* l, graph g);
-Cell* get_neighbor(path ap,direzione inquired_dir);
-oggetto controller_leggi_oggetto(direzione dir);
+/*
+  ITA: classifica il contenuto in MURO o ALTRO
+  ENG: classify the argument into MURO (i.e. wall) or ALTRO (i.e. non wall)
+*/
+tipo_oggetto rivela_tipo_oggetto(oggetto contenuto);
+/*
+  ITA: inizializza un grafo vuoto
+  ENG: initialize an empty graph
+ */
+void crea_Grafo(Grafo* g);
+/*
+  ITA: Aggiunge al grafo una nuova cella con attributi d, collegandola alla direzione
+  dir cella corrente
+  ENG: Adds a new cell, with the attributes d, to the graph, linking it to the
+  direction dir of the current cell
+ */
+Grafo aggiungi_al_Grafo(Cella * p_corrente,Attributi d,direzione dir);
+/*
+  ITA: inizializza una lista di passo puntata da p_camm cammimo vuoto
+  ENG: initialize an empty list of steps
+ */
+void crea_Cammino(Cammino* p_camm);
+/*
+  ITA: aggiunge una Cella nella lista puntata da p_camm dei passi compiuti
+  ENG: adds a cell in the list pointed to by p_camm of the steps performed
+ */
+void aggiungi_in_testa(Cammino * p_camm, Cella * p_cella);
+/*
+  ITA:
+ */
+Cella* rivela_vicini(Cammino ap,direzione inquired_dir);
 
 int nn=0;
 int moves=0;
@@ -69,9 +99,9 @@ direzione gioca_tuki(posizioni posi, oggetto **labx){
   labx[14][14]='A';
   
   static int init=0;
-  static graph g=NULL;
-  static path p=NULL;
-  static path l=NULL;
+  static Grafo g=NULL;
+  static Cammino p=NULL;
+  static Cammino l=NULL;
 
   int i = posi.tuki_y;
   int j = posi.tuki_x;
@@ -85,22 +115,18 @@ direzione gioca_tuki(posizioni posi, oggetto **labx){
     {
       init=1;
       /* 1)Start with any cell in the decomposition. 
-       * Insert it into the path list. Mark it as visitata*/
+       * Insert it into the Cammino list. Mark it as visitata*/
       /* The list of visitata cells*/
 
       /*the battlefield*/
-      new_graph(&g);      
-      graph fn=(graph)malloc(sizeof(Cell));
+      crea_Grafo(&g);      
+      Grafo fn=(Grafo)malloc(sizeof(Cella));
       g=fn;
       g->d.visitata=1;
-      g->d.cell_type=ALTRO;
-      g->d.cont=-1;
-      /*The cell list (path in the battlefield)*/
-      new_path(&p);
-      add_head(&p,g);
-    }else
-    {
-      
+      g->d.t_o=ALTRO;
+      /*The cell list (Cammino in the battlefield)*/
+      crea_Cammino(&p);
+      aggiungi_in_testa(&p,g);
     }
   
   /*Assigns the neighbors cells */
@@ -113,31 +139,31 @@ direzione gioca_tuki(posizioni posi, oggetto **labx){
 
   //Alto
   cx = a_;
-  //fprintf(f,"dir SU readed %d ",cx);
+  
   if(g->alto==NULL)
     {
-      graph gc=get_neighbor(p,SU);
-      if(gc){
-	g->alto=gc;
-	gc->basso=g;
-      }else
+      Grafo gc=rivela_vicini(p,SU);
+      if(gc)
 	{
-          
-	  Data d={1,0,get_cell_type(cx)};
-	  graph tg=add_to_graph(g,d,SU);
+	  g->alto=gc;
+	  gc->basso=g;
 	}
-    }else
+      else
+	{
+	  Attributi d={0,rivela_tipo_oggetto(cx)};
+	  Grafo tg=aggiungi_al_Grafo(g,d,SU);
+	}
+    }
+  else
     {
-      g->alto->d.readed=1;
-      g->alto->d.cell_type=get_cell_type(cx);
+      g->alto->d.t_o=rivela_tipo_oggetto(cx);
     }
   
   //Basso
   cx = b_;
-  //fprintf(f,"dir GIU readed %d ",cx);
   if(g->basso==NULL)
     {
-      graph gc=get_neighbor(p,GIU);
+      Grafo gc=rivela_vicini(p,GIU);
       if(gc)
 	{
 	  g->basso=gc;
@@ -145,84 +171,79 @@ direzione gioca_tuki(posizioni posi, oggetto **labx){
 	}
       else
 	{
-	  Data d={1,0,get_cell_type(cx)};
-	  graph tg=add_to_graph(g,d,GIU);
+	  Attributi d={0,rivela_tipo_oggetto(cx)};
+	  Grafo tg=aggiungi_al_Grafo(g,d,GIU);
 	}
     }else
     {
-      g->basso->d.readed=1;
-      g->basso->d.cell_type=get_cell_type(cx);
+      g->basso->d.t_o=rivela_tipo_oggetto(cx);
     }
 
   //Destra
   cx = d_;
-  //fprintf(f,"dir DESTRA readed %d ",cx);
   if(g->destra==NULL)
     {
       /*check if the cell already exists*/
-      graph gc=get_neighbor(p,DESTRA);
+      Grafo gc=rivela_vicini(p,DESTRA);
       if(gc){
 	g->destra=gc;
 	gc->sinistra=g;
 
       }else
 	{
-	  Data d={1,0,get_cell_type(cx)};
-	  graph tg=add_to_graph(g,d,DESTRA);
+	  Attributi d={0,rivela_tipo_oggetto(cx)};
+	  Grafo tg=aggiungi_al_Grafo(g,d,DESTRA);
 
 	}
     }else
     {
-      g->destra->d.readed=1;
-      g->destra->d.cell_type=get_cell_type(cx);
+      g->destra->d.t_o=rivela_tipo_oggetto(cx);
     }
   
   //Sinistra
   cx = s_;
-  //fprintf(f,"dir SINISTRA readed %d ",cx);
   if(g->sinistra==NULL)
     {
-      graph gc=get_neighbor(p,SINISTRA);
+      Grafo gc=rivela_vicini(p,SINISTRA);
       if(gc)
 	{
 	  g->sinistra=gc;
 	  gc->destra=g;
 	}else
 	{
-	  Data d={1,0,get_cell_type(cx)};
-	  graph tg=add_to_graph(g,d,SINISTRA);
+	  Attributi d={0,rivela_tipo_oggetto(cx)};
+	  Grafo tg=aggiungi_al_Grafo(g,d,SINISTRA);
 	}
     }else
     {
-      g->sinistra->d.readed=1;
-      g->sinistra->d.cell_type=get_cell_type(cx);
+      g->sinistra->d.t_o=rivela_tipo_oggetto(cx);
     }
     
   /*
     2)Go to the rst unvisitata cell in the neighbor list of
     the current cell (i.e., go to the rst clockwise
     unvisitata cell). Insert this cell into the beginniing of
-    the path list and mark it as visitata.
+    the Cammino list and mark it as visitata.
    */
  
  //chekcs L
-  //if(g->sinistra->d.cell_type==MURO)g->sinistra->d.visitata=1;
-  if(g->sinistra->d.visitata==0&&g->sinistra->d.cell_type!=MURO)
+  //if(g->sinistra->d.t_o==MURO)g->sinistra->d.visitata=1;
+  if(g->sinistra->d.visitata==0&&g->sinistra->d.t_o!=MURO)
     {
       g=g->sinistra;
       g->d.visitata=1;
-      add_head(&p,g);
+      aggiungi_in_testa(&p,g);
       l=p;
       return SINISTRA;
     }
 
   //chekcs U
-  //if(g->alto->d.cell_type==MURO)g->alto->d.visitata=1;
-  if(g->alto->d.visitata==0&&g->alto->d.cell_type!=MURO)
+  //if(g->alto->d.t_o==MURO)g->alto->d.visitata=1;
+  if(g->alto->d.visitata==0&&g->alto->d.t_o!=MURO)
     {
       g=g->alto;
       g->d.visitata=1;
-      add_head(&p,g);
+      aggiungi_in_testa(&p,g);
       l=p;
       return SU;
     }
@@ -230,22 +251,22 @@ direzione gioca_tuki(posizioni posi, oggetto **labx){
 
 
  //chekcs R
-  //if(g->destra->d.cell_type==MURO)g->destra->d.visitata=1;
-  if(g->destra->d.visitata==0&&g->destra->d.cell_type!=MURO)
+  //if(g->destra->d.t_o==MURO)g->destra->d.visitata=1;
+  if(g->destra->d.visitata==0&&g->destra->d.t_o!=MURO)
     {
       g=g->destra;
       g->d.visitata=1;
-      add_head(&p,g);
+      aggiungi_in_testa(&p,g);
       l=p;
       return DESTRA;
     }
   //chekcs D
-  //if(g->basso->d.cell_type==MURO)g->basso->d.visitata=1;
-  if(g->basso->d.visitata==0&&g->basso->d.cell_type!=MURO)
+  //if(g->basso->d.t_o==MURO)g->basso->d.visitata=1;
+  if(g->basso->d.visitata==0&&g->basso->d.t_o!=MURO)
     {
       g=g->basso;
       g->d.visitata=1;
-      add_head(&p,g);
+      aggiungi_in_testa(&p,g);
       l=p;
       return GIU;
     }
@@ -255,19 +276,19 @@ direzione gioca_tuki(posizioni posi, oggetto **labx){
   /*
     3) At this point, back track until a cell with unvis-
     ited neighbors is encountered. This back tracking is
-    achieved by walking forward through the path list,
+    achieved by walking forward through the Cammino list,
     inserting each element that is visitata to the front
-    of the path list, until an element with an unvisied
+    of the Cammino list, until an element with an unvisied
     neighbor is encountered. Insert this element to the
-    front of the path list and repeat the above procedure
+    front of the Cammino list and repeat the above procedure
     (i.e., goto step 2).
    */
  
   /*back to previous cell*/
   l=l->prev;
   if(l==NULL) exit(-1);
-  /*Add it to the path list*/
-  add_head(&p,l->pcell);
+  /*Add it to the Cammino list*/
+  aggiungi_in_testa(&p,l->pcell);
   
   /*get the diretion*/
   direzione nd;//next step direzione
@@ -288,7 +309,7 @@ direzione gioca_tuki(posizioni posi, oggetto **labx){
   
 }
 
-Cell* get_neighbor(path ap,direzione dir){
+Cella* rivela_vicini(Cammino ap,direzione dir){
   int R=0,U=0;
   int found=0;
   
@@ -393,54 +414,34 @@ Cell* get_neighbor(path ap,direzione dir){
 
 
 
-char_type get_cell_type(oggetto code){
+tipo_oggetto rivela_tipo_oggetto(oggetto code){
   if(code != 'J' && code != 'U' && code != 'V'){
     return MURO;
   }
   
   return ALTRO;
 }
-direzione symmetry(direzione d){
-  direzione sd=FERMO;
-  switch(d){
-  case SINISTRA:
-    sd=DESTRA;
-    break;
-  case DESTRA:
-    sd=SINISTRA;
-    break;
-  case SU:
-    sd=GIU;
-    break;
-   case GIU:
-    sd=SU;
-    break;
-  }
-  return sd;
-  
-}
 
-void new_graph(graph* g)
+void crea_Grafo(Grafo* g)
 {
   *g = NULL;
 }
 
 
 /**
- *Add a cell to the graph after checking that a cell
+ *Add a cell to the Grafo after checking that a cell
  *was already present at the same poistion.
- *For each cell of the actual Tuki path is saltoposed
+ *For each cell of the actual Tuki Cammino is saltoposed
  *to exist another 4 cells at the ajacent direzione
  *This functions.
  *The existence of a possible unlinked cell in the 'd' 
- *direzione is tested scann2ing the path_list untill a
+ *direzione is tested scann2ing the Cammino_list untill a
  *cell 
  */
-graph add_to_graph(graph pcell,Data d,direzione dir){
+Grafo aggiungi_al_Grafo(Grafo pcell,Attributi d,direzione dir){
   nn++;
-  Cell* n=(Cell*)malloc(sizeof(Cell));
+  Cella* n=(Cella*)malloc(sizeof(Cella));
   n->d=d;
-  n->d.cont=nn;
  
   switch(dir)
     {
@@ -464,11 +465,11 @@ graph add_to_graph(graph pcell,Data d,direzione dir){
   return n;
 }
 
-void new_path(path* p){
+void crea_Cammino(Cammino* p){
   *p=0;
 }
-void add_head(path* l, graph g) {
-  Node* aux = (Node*)malloc(sizeof(Node));
+void aggiungi_in_testa(Cammino* l, Grafo g) {
+  Nodo* aux = (Nodo*)malloc(sizeof(Nodo));
   
   aux->prev = *l;
   aux->next = NULL;  
