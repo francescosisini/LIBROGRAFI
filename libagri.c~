@@ -1,0 +1,91 @@
+
+
+rei_genus rivela_rei_genus(oggetto code){
+  if(code != 'J' && code != 'U' && code != 'V'){
+    return MURO;
+  }
+  
+  return ALTRO;
+}
+
+void agri_creo_Tabellam(agri_Tabella* g)
+{
+  *g = NULL;
+}
+
+
+/**
+ *Add a cell to the agri_Tabella after checking that a cell
+ *was already present at the same poistion.
+ *For each cell of the actual Tuki agri_Iter is ssursumposed
+ *to exist another 4 cells at the ajacent direzione
+ *This functions.
+ *The existence of a possible unlinked cell in the 'd' 
+ *direzione is tested scann2ing the agri_Iter_list untill a
+ *cell 
+ */
+agri_Tabella agri_addo_Tabellam(agri_Tabella tabella,Attributi d,direzione dir)
+{
+  agri_Cella* n=(agri_Cella*)malloc(sizeof(agri_Cella));
+  n->d=d;
+ 
+  switch(dir)
+    {
+    case SU:
+      tabella->sursum=n;
+      n->deorsum=tabella;
+      break;
+    case GIU:
+      tabella->deorsum=n;
+      n->sursum=tabella;
+      break;
+    case DESTRA:
+      tabella->dextra=n;
+      n->sinistra=tabella;
+      break;
+    case SINISTRA:
+      tabella->sinistra=n;
+      n->dextra=tabella;
+      break;
+    }
+  return n;
+}
+
+void agri_colligo_Cellas
+(agri_Cella * da, agri_Cella * a, direzione da_a)
+{
+  switch(da_a)
+    {
+    case SU:
+      da->sursum=a;
+      a->deorsum=da;
+      break;
+    case GIU:
+      da->deorsum=a;
+      a->sursum=da;
+      break;
+    case DESTRA:
+      da->dextra=a;
+      a->sinistra=da;
+      break;
+    case SINISTRA:
+      da->sinistra=a;
+      a->dextra=da;
+      break;
+    }
+
+}
+
+void agri_creo_Iter(agri_Iter* p){
+  *p=0;
+}
+void agri_addo_Iter(agri_Iter* l, agri_Tabella g)
+{
+  agri_Passo* aux = (agri_Passo*)malloc(sizeof(agri_Passo));  
+  aux->prev = *l;
+  aux->next = NULL;  
+  aux->locus = g;
+  if(*l)
+    (*l)->next=aux;
+  *l = aux;
+}

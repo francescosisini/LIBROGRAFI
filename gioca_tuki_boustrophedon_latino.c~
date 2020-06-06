@@ -1,0 +1,589 @@
+#include "tuki5_modello.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+enum tipo {MURO,ALTRO};
+typedef enum tipo tipo_oggetto;
+
+/*
+  ITA: Attributi della cella
+  ENG: Cell attributes
+ */
+typedef struct dato
+{
+  int visitata;
+  tipo_oggetto t_o;
+} Attributi;
+
+/*
+  ITA: vicini di ogni cella
+  ENG: cell's neighbords
+ */
+typedef struct cella {
+  Attributi d;
+  struct cella* destra;
+  struct cella* basso;
+  struct cella* sinistra;
+  struct cella* alto;
+} agri_Cella;
+
+/*
+  ITA: Tabellam composto da celle
+  ENG: Graph composed by cells
+ */
+typedef agri_Cella* agri_Tabella;
+
+/*
+  ITA: elementi della lista dei passi
+  ENG: elements of the step list
+ */
+typedef struct nodo
+{
+  agri_Cella * posizione;
+  struct nodo * next;
+  struct nodo * prev;
+}agri_Passo;
+
+/*
+  ITA: lista dei passi
+  ENG: step list
+ */
+typedef agri_Passo* agri_Iter;  
+
+/*
+  ITA: classifica il contenuto in MURO o ALTRO
+  ENG: classify the argument into MURO (i.e. wall) or ALTRO (i.e. non wall)
+*/
+tipo_oggetto rivela_tipo_oggetto(oggetto contenuto);
+/*
+  ITA: inizializza un grafo vuoto
+  ENG: initialize an empty graph
+ */
+void agri_creo_Tabellam(agri_Tabella* g);
+/*
+  ITA: Aggiunge al grafo una nuova cella con attributi d, collegandola alla direzione
+  dir cella corrente
+  ENG: Adds a new cell, with the attributes d, to the graph, linking it to the
+  direction dir of the current cell
+ */
+agri_Tabella agri_addo_Tabellam(agri_Tabella tabella,Attributi d,direzione dir);
+
+/*
+  ITA: collega le cella da e a lungo la direzione da ---> a
+ */
+void agri_colligo_Cellas(agri_Cella * da, agri_Cella * a, direzione da_a);
+
+
+
+/*
+  ITA: inizializza una lista di passo puntata da p_camm cammimo vuoto
+  ENG: initialize an empty list of steps
+ */
+void agri_creo_Iter(agri_Iter* p_camm);
+/*
+  ITA: aggiunge una Cella nella lista puntata da p_camm dei passi compiuti
+  ENG: adds a cell in the list pointed to by p_camm of the steps performed
+ */
+void agri_addo_Iter(agri_Iter * p_camm, agri_Cella * p_cella);
+/*
+  ITA:
+ */
+agri_Cella* agri_rivela_Cella(agri_Iter ap,direzione ricerca);
+
+
+/**
+ * Tuki algorithm based on The Boustrophedon Cellular Decomposition
+ * Choset e Pignon
+ */
+direzione gioca_tuki(posizioni posi, oggetto **labx){
+
+
+  //Modifica il labirinto per non imboccare il tunnel 
+  labx[16][2]='A';
+  labx[16][23]='A';
+   labx[14][13]='A';
+  labx[14][14]='A';
+  
+  static int init=0;
+  static agri_Tabella g=NULL;
+  static agri_Iter p=NULL;
+  static agri_Iter l=NULL;
+
+  int i = posi.tuki_y;
+  int j = posi.tuki_x;
+  oggetto s_ = labx[i][j-1];
+  oggetto d_ = labx[i][j+1];
+  oggetto a_ = labx[i-1][j];
+  oggetto b_ = labx[i+1][j];
+  
+  
+  if(!init)
+    {
+      init=1;
+      /* 1)Start with any cell in the decomposition. 
+       * Insert it into the agri_Iter list. Mark it as visitata*/
+      /* The list of visitata cells*/
+
+      /*the battlefield*/
+      agri_creo_Tabellam(&g);      
+      agri_Tabella fn=(agri_Tabella)malloc(sizeof(agri_Cella));
+      g=fn;
+      g->d.visitata=1;
+      g->d.t_o=ALTRO;
+      /*The cell list (agri_Iter in the battlefield)*/
+      agri_creo_Iter(&p);
+      agri_addo_Iter(&p,g);
+    }
+
+
+  /*
+    ITA: cerca un fantasma nelle celle vicine
+
+   */
+  int x = posi.tuki_x;
+  int y = posi.tuki_y;
+  int x_g[4];
+  int y_g[4];
+  x_g[0] = posi.blinky_x;
+  x_g[1] = posi.pinky_x;
+  x_g[2] = posi.inky_x;
+  x_g[3] = posi.clyde_x;
+
+  y_g[0] = posi.blinky_y;
+  y_g[1] = posi.pinky_y;
+  y_g[2] = posi.inky_y;
+  y_g[3] = posi.clyde_y;
+
+  /*
+    ITA: flag di presenza del fantasma
+   */
+  char s_g = 0, d_g = 0,a_g = 0,b_g = 0;
+  for (int ig = 0; ig<4; ig++)
+    {
+      s_g = s_g || ( x_g[ig] < x) && ( x - x_g[ig] <=2 )  && (y == y_g[ig]);
+      s_g = s_g || ((x_g[ig] == x-1) &&  (y_g[ig] == y+1));
+      s_g = s_g || ((x_g[ig] == x-1) &&  (y_g[ig] == y-1));
+      d_g = d_g || ( x_g[ig] > x) && (x_g[ig] - x <= 2) && (y == y_g[ig]);
+      d_g = d_g || ((x_g[ig] == x+1) &&  (y_g[ig] == y+1));
+      d_g = d_g || ((x_g[ig] == x+1) &&  (y_g[ig] == y-1));
+      a_g = a_g || (x == x_g[ig]) && ( y >  y_g[ig]) && ( y - y_g[ig] <=2);
+      a_g = a_g || ((y == y_g[ig] + 1) && (x_g[ig] == x+1));
+      a_g = a_g || ((y == y_g[ig] + 1) && (x_g[ig] == x-1));
+      b_g = b_g || (x == x_g[ig]) && ( y <  y_g[ig]) && ( y_g[ig]- y <=2);
+      b_g = b_g || ((y == y_g[ig] - 1) && (x_g[ig] == x+1));
+      b_g = b_g || ((y == y_g[ig] - 1) && (x_g[ig] == x-1));
+    }
+
+  
+  
+  /*Assigns the neighbors cells */
+  unsigned char c[4];
+  oggetto cx;
+  
+  /*This is the cell where Tuki is*/
+  g=p->posizione;
+  if(!g) exit(-1);
+
+  //Alto
+  cx = a_;
+  
+  if(g->alto==NULL)
+    {
+      agri_Tabella gc=agri_rivela_Cella(p,SU);
+      if(gc)
+	{
+	  agri_colligo_Cellas(g,gc,SU);
+	}
+      else
+	{
+	  Attributi d={0,rivela_tipo_oggetto(cx)};
+	  agri_Tabella tg=agri_addo_Tabellam(g,d,SU);
+	}
+    }
+  else
+    {
+      g->alto->d.t_o=rivela_tipo_oggetto(cx);
+    }
+  
+  //Basso
+  cx = b_;
+  if(g->basso==NULL)
+    {
+      agri_Tabella gc=agri_rivela_Cella(p,GIU);
+      if(gc)
+	{
+	  agri_colligo_Cellas(g,gc,GIU);
+	}
+      else
+	{
+	  Attributi d={0,rivela_tipo_oggetto(cx)};
+	  agri_Tabella tg=agri_addo_Tabellam(g,d,GIU);
+	}
+    }else
+    {
+      g->basso->d.t_o=rivela_tipo_oggetto(cx);
+    }
+
+  //Destra
+  cx = d_;
+  if(g->destra==NULL)
+    {
+      /*check if the cell already exists*/
+      agri_Tabella gc=agri_rivela_Cella(p,DESTRA);
+      if(gc){
+	
+	agri_colligo_Cellas(g,gc,DESTRA);
+
+      }else
+	{
+	  Attributi d={0,rivela_tipo_oggetto(cx)};
+	  agri_Tabella tg=agri_addo_Tabellam(g,d,DESTRA);
+
+	}
+    }else
+    {
+      g->destra->d.t_o=rivela_tipo_oggetto(cx);
+    }
+  
+  //Sinistra
+  cx = s_;
+  if(g->sinistra==NULL)
+    {
+      agri_Tabella gc=agri_rivela_Cella(p,SINISTRA);
+      if(gc)
+	{
+	  
+	  agri_colligo_Cellas(g,gc,SINISTRA);
+	}else
+	{
+	  Attributi d={0,rivela_tipo_oggetto(cx)};
+	  agri_Tabella tg=agri_addo_Tabellam(g,d,SINISTRA);
+	}
+    }else
+    {
+      g->sinistra->d.t_o=rivela_tipo_oggetto(cx);
+    }
+    
+  /*
+    2)Go to the rst unvisitata cell in the neighbor list of
+    the current cell (i.e., go to the rst clockwise
+    unvisitata cell). Insert this cell into the beginniing of
+    the agri_Iter list and mark it as visitata.
+   */
+
+
+/* Se un fantasma è nelle vicinanze prendo la prima cella buona */
+  if(s_g || d_g || a_g || b_g)
+    {
+      if(g->sinistra->d.cell_type!=MURO && !s_g)
+        {
+          g=g->sinistra;
+          g->d.visitata=1;
+          add_head(&p,g);
+          l=p;
+          return SINISTRA;
+        }
+      
+      /* chekcs U */
+      
+      if(g->alto->d.cell_type!=MURO && !a_g)
+        {
+          g=g->alto;
+          g->d.visitata=1;
+          add_head(&p,g);
+          l=p;
+          return SU;
+        }
+      
+      
+      
+      /* chekcs R */
+      
+      if(g->destra->d.cell_type!=MURO && !d_g)
+        {
+          g=g->destra;
+          g->d.visitata=1;
+          add_head(&p,g);
+          l=p;
+          return DESTRA;
+        }
+      /* chekcs D */
+      
+      if(g->basso->d.cell_type!=MURO && !b_g)
+        {
+          g=g->basso;
+          g->d.visitata=1;
+          add_head(&p,g);
+          l=p;
+          return GIU;
+        }
+      
+    }
+  
+ //chekcs L
+  //if(g->sinistra->d.t_o==MURO)g->sinistra->d.visitata=1;
+  if(g->sinistra->d.visitata==0&&g->sinistra->d.t_o!=MURO)
+    {
+      g=g->sinistra;
+      g->d.visitata=1;
+      agri_addo_Iter(&p,g);
+      l=p;
+      return SINISTRA;
+    }
+
+  //chekcs U
+  //if(g->alto->d.t_o==MURO)g->alto->d.visitata=1;
+  if(g->alto->d.visitata==0&&g->alto->d.t_o!=MURO)
+    {
+      g=g->alto;
+      g->d.visitata=1;
+      agri_addo_Iter(&p,g);
+      l=p;
+      return SU;
+    }
+      
+
+
+ //chekcs R
+  //if(g->destra->d.t_o==MURO)g->destra->d.visitata=1;
+  if(g->destra->d.visitata==0&&g->destra->d.t_o!=MURO)
+    {
+      g=g->destra;
+      g->d.visitata=1;
+      agri_addo_Iter(&p,g);
+      l=p;
+      return DESTRA;
+    }
+  //chekcs D
+  //if(g->basso->d.t_o==MURO)g->basso->d.visitata=1;
+  if(g->basso->d.visitata==0&&g->basso->d.t_o!=MURO)
+    {
+      g=g->basso;
+      g->d.visitata=1;
+      agri_addo_Iter(&p,g);
+      l=p;
+      return GIU;
+    }
+ 
+  
+
+  /*
+    3) At this point, back track until a cell with unvis-
+    ited neighbors is encountered. This back tracking is
+    achieved by walking forward through the agri_Iter list,
+    inserting each element that is visitata to the front
+    of the agri_Iter list, until an element with an unvisied
+    neighbor is encountered. Insert this element to the
+    front of the agri_Iter list and repeat the above procedure
+    (i.e., goto step 2).
+   */
+ 
+  /*back to previous cell*/
+  l=l->prev;
+  if(l==NULL) exit(-1);
+  /*Add it to the agri_Iter list*/
+  agri_addo_Iter(&p,l->posizione);
+  
+  /*get the diretion*/
+  direzione nd;//next step direzione
+
+  if(g->destra==l->posizione) nd=DESTRA;
+  else
+  if(g->sinistra==l->posizione) nd=SINISTRA;
+  else
+  if(g->alto==l->posizione) nd=SU;
+  else
+  if(g->basso==l->posizione) nd=GIU;
+
+  /*Set as the online cell*/
+  //g=l->posizione;
+  /*move to the previous one*/
+  
+  return nd;
+  
+}
+
+/*
+  Cerca una eventuale cella nella direzione dir che sia già stata esplorata
+  lungo il cammino ma che non sia ancora stata connessa alla cella corrente
+  del cammino
+ */
+agri_Cella* agri_rivela_Cella(agri_Iter ap,direzione dir){
+  int R=0,U=0;
+  int found=0;
+  
+  while(ap->prev){
+    if(ap->posizione->destra ==ap->prev->posizione) R++;
+    if(ap->posizione->sinistra == ap->prev->posizione) R--;
+    if(ap->posizione->alto == ap->prev->posizione) U++;
+    if(ap->posizione->basso == ap->prev->posizione) U--;
+    /*check neighbor condition*/
+    //DESTRA
+    if(dir==DESTRA && R==1 && U==0)
+      {
+	return ap->prev->posizione;
+      }
+    //R-U
+    if(dir==DESTRA && (R==1) && U==+1)
+      {
+	return ap->prev->posizione->basso;
+      }
+    //R-D
+    if(dir==DESTRA&&(R==1)&&U==-1)
+      {
+	return ap->prev->posizione->alto;
+      }
+    
+    //Sinistra
+    //L
+    if(dir==SINISTRA&&R==-1&&(U==0))
+      {
+	return ap->prev->posizione;
+      }
+    //L-U
+    if(dir==SINISTRA&&(R==-1)&&U==+1)
+      {
+	return ap->prev->posizione->basso;
+      }
+    //L-D
+    if(dir==SINISTRA&&(R==-1)&&U==-1)
+      {
+	return ap->prev->posizione->alto;
+      }
+
+    //ALto
+    //SU
+    if(dir==SU&&R==0&&U==1)
+      {
+	return ap->prev->posizione;
+      }
+    //U-L
+    if(dir==SU&&(R==-1)&&U==+1)
+      {
+	return ap->prev->posizione->destra;
+      }
+    //U-R
+    if(dir==SU&&(R==1)&&U==+1)
+      {
+	return ap->prev->posizione->sinistra;
+      }
+
+    //Basso
+    // D
+    if(dir==GIU&&R==0&&U==-1)
+      {
+	return ap->prev->posizione;
+      }
+    //D-L
+    if(dir==GIU&&(R==-1)&&U==-1)
+      {
+	return ap->prev->posizione->destra;
+      }
+    //D-R
+    if(dir==GIU&&(R==1)&&U==-1)
+      {
+	return ap->prev->posizione->sinistra;
+      }
+
+    ap=ap->prev;
+  }
+  return NULL;
+}
+
+
+
+tipo_oggetto rivela_tipo_oggetto(oggetto code){
+  if(code != 'J' && code != 'U' && code != 'V'){
+    return MURO;
+  }
+  
+  return ALTRO;
+}
+
+void agri_creo_Tabellam(agri_Tabella* g)
+{
+  *g = NULL;
+}
+
+
+/**
+ *Add a cell to the agri_Tabella after checking that a cell
+ *was already present at the same poistion.
+ *For each cell of the actual Tuki agri_Iter is saltoposed
+ *to exist another 4 cells at the ajacent direzione
+ *This functions.
+ *The existence of a possible unlinked cell in the 'd' 
+ *direzione is tested scann2ing the agri_Iter_list untill a
+ *cell 
+ */
+agri_Tabella agri_addo_Tabellam(agri_Tabella tabella,Attributi d,direzione dir)
+{
+  agri_Cella* n=(agri_Cella*)malloc(sizeof(agri_Cella));
+  n->d=d;
+ 
+  switch(dir)
+    {
+    case SU:
+      tabella->alto=n;
+      n->basso=tabella;
+      break;
+    case GIU:
+      tabella->basso=n;
+      n->alto=tabella;
+      break;
+    case DESTRA:
+      tabella->destra=n;
+      n->sinistra=tabella;
+      break;
+    case SINISTRA:
+      tabella->sinistra=n;
+      n->destra=tabella;
+      break;
+    }
+  return n;
+}
+
+void agri_colligo_Cellas
+(agri_Cella * da, agri_Cella * a, direzione da_a)
+{
+  switch(da_a)
+    {
+    case SU:
+      da->alto=a;
+      a->basso=da;
+      break;
+    case GIU:
+      da->basso=a;
+      a->alto=da;
+      break;
+    case DESTRA:
+      da->destra=a;
+      a->sinistra=da;
+      break;
+    case SINISTRA:
+      da->sinistra=a;
+      a->destra=da;
+      break;
+    }
+
+}
+
+void agri_creo_Iter(agri_Iter* p){
+  *p=0;
+}
+void agri_addo_Iter(agri_Iter* l, agri_Tabella g)
+{
+  agri_Passo* aux = (agri_Passo*)malloc(sizeof(agri_Passo));  
+  aux->prev = *l;
+  aux->next = NULL;  
+  aux->posizione = g;
+  if(*l)
+    (*l)->next=aux;
+  *l = aux;
+}
+
+
+
+
+

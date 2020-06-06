@@ -111,7 +111,6 @@ direzione gioca_tuki(posizioni posi, oggetto **labx){
       b_g = b_g || (x == x_g[ig]) && ( y <  y_g[ig]) && ( y_g[ig]- y <=2);
       b_g = b_g || ((y == y_g[ig] - 1) && (x_g[ig] == x+1));
       b_g = b_g || ((y == y_g[ig] - 1) && (x_g[ig] == x-1));
-
     }
   // printf("s %d, d %d, a %d, b %d\n",s_g,d_g,a_g,b_g);
       
@@ -293,7 +292,9 @@ direzione gioca_tuki(posizioni posi, oggetto **labx){
   /* Se non ci sono fantasmi scelgo la strada in base alle celle già visitate */
   /* chekcs L */
   
-  if(g->sinistra->d.visitata==0&&g->sinistra->d.cell_type!=MURO && !s_g)
+  if(g->sinistra->d.visitata==0 &&
+     g->sinistra->d.cell_type!=MURO &&
+     !s_g)
     {
       g=g->sinistra;
       g->d.visitata=1;

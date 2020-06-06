@@ -1,89 +1,17 @@
 #include "tuki5_modello.h"
+#include "libagri.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 
-enum tipo {MURO,ALTRO};
-typedef enum tipo tipo_oggetto;
-
-/*
-  ITA: Attributi della cella
-  ENG: Cell attributes
- */
-typedef struct dato
-{
-  int visitata;
-  tipo_oggetto t_o;
-} Attributi;
-
-/*
-  ITA: vicini di ogni cella
-  ENG: cell's neighbords
- */
-typedef struct cella {
-  Attributi d;
-  struct cella* destra;
-  struct cella* basso;
-  struct cella* sinistra;
-  struct cella* alto;
-} Cella;
-
-/*
-  ITA: Grafo composto da celle
-  ENG: Graph composed by cells
- */
-typedef Cella* Grafo;
-
-/*
-  ITA: elementi della lista dei passi
-  ENG: elements of the step list
- */
-typedef struct nodo{
-  Grafo pcell;
-  struct nodo * next;
-  struct nodo * prev;
-}Nodo;
-
-/*
-  ITA: lista dei passi
-  ENG: step list
- */
-typedef Nodo* Cammino;  
+#define FUGA 1
 
 /*
   ITA: classifica il contenuto in MURO o ALTRO
   ENG: classify the argument into MURO (i.e. wall) or ALTRO (i.e. non wall)
 */
-tipo_oggetto rivela_tipo_oggetto(oggetto contenuto);
-/*
-  ITA: inizializza un grafo vuoto
-  ENG: initialize an empty graph
- */
-void crea_Grafo(Grafo* g);
-/*
-  ITA: Aggiunge al grafo una nuova cella con attributi d, collegandola alla direzione
-  dir cella corrente
-  ENG: Adds a new cell, with the attributes d, to the graph, linking it to the
-  direction dir of the current cell
- */
-Grafo aggiungi_al_Grafo(Cella * p_corrente,Attributi d,direzione dir);
-/*
-  ITA: inizializza una lista di passo puntata da p_camm cammimo vuoto
-  ENG: initialize an empty list of steps
- */
-void crea_Cammino(Cammino* p_camm);
-/*
-  ITA: aggiunge una Cella nella lista puntata da p_camm dei passi compiuti
-  ENG: adds a cell in the list pointed to by p_camm of the steps performed
- */
-void aggiungi_in_testa(Cammino * p_camm, Cella * p_cella);
-/*
-  ITA:
- */
-Cella* rivela_vicini(Cammino ap,direzione inquired_dir);
+rei_genus rivela_rei_genus(oggetto contenuto);
 
-int nn=0;
-int moves=0;
 
 /**
  * Tuki algorithm based on The Boustrophedon Cellular Decomposition
@@ -99,9 +27,9 @@ direzione gioca_tuki(posizioni posi, oggetto **labx){
   labx[14][14]='A';
   
   static int init=0;
-  static Grafo g=NULL;
-  static Cammino p=NULL;
-  static Cammino l=NULL;
+  static agri_Tabella g=NULL;
+  static agri_Iter p=NULL;
+  static agri_Iter l=NULL;
 
   int i = posi.tuki_y;
   int j = posi.tuki_x;
@@ -110,140 +38,228 @@ direzione gioca_tuki(posizioni posi, oggetto **labx){
   oggetto a_ = labx[i-1][j];
   oggetto b_ = labx[i+1][j];
   
-  moves++;
+  
   if(!init)
     {
       init=1;
       /* 1)Start with any cell in the decomposition. 
-       * Insert it into the Cammino list. Mark it as visitata*/
+       * Insert it into the agri_Iter list. Mark it as visitata*/
       /* The list of visitata cells*/
 
       /*the battlefield*/
-      crea_Grafo(&g);      
-      Grafo fn=(Grafo)malloc(sizeof(Cella));
+      agri_creo_Tabellam(&g);      
+      agri_Tabella fn=(agri_Tabella)malloc(sizeof(agri_Cella));
       g=fn;
       g->d.visitata=1;
-      g->d.t_o=ALTRO;
-      /*The cell list (Cammino in the battlefield)*/
-      crea_Cammino(&p);
-      aggiungi_in_testa(&p,g);
+      g->d.rei=ALTRO;
+      /*The cell list (agri_Iter in the battlefield)*/
+      agri_creo_Iter(&p);
+      agri_addo_Iter(&p,g);
     }
+
+
+  /*
+    ITA: cerca un fantasma nelle celle vicine
+
+   */
+  int x = posi.tuki_x;
+  int y = posi.tuki_y;
+  int x_g[4];
+  int y_g[4];
+  x_g[0] = posi.blinky_x;
+  x_g[1] = posi.pinky_x;
+  x_g[2] = posi.inky_x;
+  x_g[3] = posi.clyde_x;
+
+  y_g[0] = posi.blinky_y;
+  y_g[1] = posi.pinky_y;
+  y_g[2] = posi.inky_y;
+  y_g[3] = posi.clyde_y;
+
+  /*
+    ITA: flag di presenza del fantasma
+   */
+  char s_g = 0, d_g = 0,a_g = 0,b_g = 0;
+  for (int ig = 0; ig<4; ig++)
+    {
+      s_g = s_g || ( x_g[ig] < x) && ( x - x_g[ig] <=2 )  && (y == y_g[ig]);
+      s_g = s_g || ((x_g[ig] == x-1) &&  (y_g[ig] == y+1));
+      s_g = s_g || ((x_g[ig] == x-1) &&  (y_g[ig] == y-1));
+      d_g = d_g || ( x_g[ig] > x) && (x_g[ig] - x <= 2) && (y == y_g[ig]);
+      d_g = d_g || ((x_g[ig] == x+1) &&  (y_g[ig] == y+1));
+      d_g = d_g || ((x_g[ig] == x+1) &&  (y_g[ig] == y-1));
+      a_g = a_g || (x == x_g[ig]) && ( y >  y_g[ig]) && ( y - y_g[ig] <=2);
+      a_g = a_g || ((y == y_g[ig] + 1) && (x_g[ig] == x+1));
+      a_g = a_g || ((y == y_g[ig] + 1) && (x_g[ig] == x-1));
+      b_g = b_g || (x == x_g[ig]) && ( y <  y_g[ig]) && ( y_g[ig]- y <=2);
+      b_g = b_g || ((y == y_g[ig] - 1) && (x_g[ig] == x+1));
+      b_g = b_g || ((y == y_g[ig] - 1) && (x_g[ig] == x-1));
+    }
+
+  
   
   /*Assigns the neighbors cells */
   unsigned char c[4];
   oggetto cx;
   
   /*This is the cell where Tuki is*/
-  g=p->pcell;
+  g=p->locus;
   if(!g) exit(-1);
 
-  //Alto
+  //Sursum
   cx = a_;
   
-  if(g->alto==NULL)
+  if(g->sursum==NULL)
     {
-      Grafo gc=rivela_vicini(p,SU);
+      agri_Tabella gc=agri_rivela_Cella(p,SU);
       if(gc)
 	{
-	  g->alto=gc;
-	  gc->basso=g;
+	  agri_colligo_Cellas(g,gc,SU);
 	}
       else
 	{
-	  Attributi d={0,rivela_tipo_oggetto(cx)};
-	  Grafo tg=aggiungi_al_Grafo(g,d,SU);
+	  Attributi d={0,rivela_rei_genus(cx)};
+	  agri_Tabella tg=agri_addo_Tabellam(g,d,SU);
 	}
     }
   else
     {
-      g->alto->d.t_o=rivela_tipo_oggetto(cx);
+      g->sursum->d.rei=rivela_rei_genus(cx);
     }
   
-  //Basso
+  //Deorsum
   cx = b_;
-  if(g->basso==NULL)
+  if(g->deorsum==NULL)
     {
-      Grafo gc=rivela_vicini(p,GIU);
+      agri_Tabella gc=agri_rivela_Cella(p,GIU);
       if(gc)
 	{
-	  g->basso=gc;
-	  gc->alto=g;
+	  agri_colligo_Cellas(g,gc,GIU);
 	}
       else
 	{
-	  Attributi d={0,rivela_tipo_oggetto(cx)};
-	  Grafo tg=aggiungi_al_Grafo(g,d,GIU);
+	  Attributi d={0,rivela_rei_genus(cx)};
+	  agri_Tabella tg=agri_addo_Tabellam(g,d,GIU);
 	}
     }else
     {
-      g->basso->d.t_o=rivela_tipo_oggetto(cx);
+      g->deorsum->d.rei=rivela_rei_genus(cx);
     }
 
-  //Destra
+  //Dextra
   cx = d_;
-  if(g->destra==NULL)
+  if(g->dextra==NULL)
     {
       /*check if the cell already exists*/
-      Grafo gc=rivela_vicini(p,DESTRA);
+      agri_Tabella gc=agri_rivela_Cella(p,DESTRA);
       if(gc){
-	g->destra=gc;
-	gc->sinistra=g;
+	
+	agri_colligo_Cellas(g,gc,DESTRA);
 
       }else
 	{
-	  Attributi d={0,rivela_tipo_oggetto(cx)};
-	  Grafo tg=aggiungi_al_Grafo(g,d,DESTRA);
+	  Attributi d={0,rivela_rei_genus(cx)};
+	  agri_Tabella tg=agri_addo_Tabellam(g,d,DESTRA);
 
 	}
     }else
     {
-      g->destra->d.t_o=rivela_tipo_oggetto(cx);
+      g->dextra->d.rei=rivela_rei_genus(cx);
     }
   
   //Sinistra
   cx = s_;
   if(g->sinistra==NULL)
     {
-      Grafo gc=rivela_vicini(p,SINISTRA);
+      agri_Tabella gc=agri_rivela_Cella(p,SINISTRA);
       if(gc)
 	{
-	  g->sinistra=gc;
-	  gc->destra=g;
+	  
+	  agri_colligo_Cellas(g,gc,SINISTRA);
 	}else
 	{
-	  Attributi d={0,rivela_tipo_oggetto(cx)};
-	  Grafo tg=aggiungi_al_Grafo(g,d,SINISTRA);
+	  Attributi d={0,rivela_rei_genus(cx)};
+	  agri_Tabella tg=agri_addo_Tabellam(g,d,SINISTRA);
 	}
     }else
     {
-      g->sinistra->d.t_o=rivela_tipo_oggetto(cx);
+      g->sinistra->d.rei=rivela_rei_genus(cx);
     }
     
   /*
     2)Go to the rst unvisitata cell in the neighbor list of
     the current cell (i.e., go to the rst clockwise
     unvisitata cell). Insert this cell into the beginniing of
-    the Cammino list and mark it as visitata.
+    the agri_Iter list and mark it as visitata.
    */
- 
+
+
+/* Se un fantasma è nelle vicinanze prendo la prima cella buona */
+  if((s_g || d_g || a_g || b_g) && FUGA)
+    {
+      if(g->sinistra->d.rei!=MURO && !s_g)
+        {
+          g=g->sinistra;
+          g->d.visitata=1;
+          agri_addo_Iter(&p,g);
+          l=p;
+          return SINISTRA;
+        }
+      
+      /* chekcs U */
+      
+      if(g->sursum->d.rei!=MURO && !a_g)
+        {
+          g=g->sursum;
+          g->d.visitata=1;
+          agri_addo_Iter(&p,g);
+          l=p;
+          return SU;
+        }
+      
+      
+      
+      /* chekcs R */
+      
+      if(g->dextra->d.rei!=MURO && !d_g)
+        {
+          g=g->dextra;
+          g->d.visitata=1;
+          agri_addo_Iter(&p,g);
+          l=p;
+          return DESTRA;
+        }
+      /* chekcs D */
+      
+      if(g->deorsum->d.rei!=MURO && !b_g)
+        {
+          g=g->deorsum;
+          g->d.visitata=1;
+          agri_addo_Iter(&p,g);
+          l=p;
+          return GIU;
+        }
+      
+    }
+  
  //chekcs L
-  //if(g->sinistra->d.t_o==MURO)g->sinistra->d.visitata=1;
-  if(g->sinistra->d.visitata==0&&g->sinistra->d.t_o!=MURO)
+  //if(g->sinistra->d.rei==MURO)g->sinistra->d.visitata=1;
+  if(g->sinistra->d.visitata==0&&g->sinistra->d.rei!=MURO)
     {
       g=g->sinistra;
       g->d.visitata=1;
-      aggiungi_in_testa(&p,g);
+      agri_addo_Iter(&p,g);
       l=p;
       return SINISTRA;
     }
 
   //chekcs U
-  //if(g->alto->d.t_o==MURO)g->alto->d.visitata=1;
-  if(g->alto->d.visitata==0&&g->alto->d.t_o!=MURO)
+  //if(g->sursum->d.rei==MURO)g->sursum->d.visitata=1;
+  if(g->sursum->d.visitata==0&&g->sursum->d.rei!=MURO)
     {
-      g=g->alto;
+      g=g->sursum;
       g->d.visitata=1;
-      aggiungi_in_testa(&p,g);
+      agri_addo_Iter(&p,g);
       l=p;
       return SU;
     }
@@ -251,22 +267,22 @@ direzione gioca_tuki(posizioni posi, oggetto **labx){
 
 
  //chekcs R
-  //if(g->destra->d.t_o==MURO)g->destra->d.visitata=1;
-  if(g->destra->d.visitata==0&&g->destra->d.t_o!=MURO)
+  //if(g->destra->d.rei==MURO)g->destra->d.visitata=1;
+  if(g->dextra->d.visitata==0&&g->dextra->d.rei!=MURO)
     {
-      g=g->destra;
+      g=g->dextra;
       g->d.visitata=1;
-      aggiungi_in_testa(&p,g);
+      agri_addo_Iter(&p,g);
       l=p;
       return DESTRA;
     }
   //chekcs D
-  //if(g->basso->d.t_o==MURO)g->basso->d.visitata=1;
-  if(g->basso->d.visitata==0&&g->basso->d.t_o!=MURO)
+  //if(g->deorsum->d.rei==MURO)g->deorsum->d.visitata=1;
+  if(g->deorsum->d.visitata==0&&g->deorsum->d.rei!=MURO)
     {
-      g=g->basso;
+      g=g->deorsum;
       g->d.visitata=1;
-      aggiungi_in_testa(&p,g);
+      agri_addo_Iter(&p,g);
       l=p;
       return GIU;
     }
@@ -276,210 +292,47 @@ direzione gioca_tuki(posizioni posi, oggetto **labx){
   /*
     3) At this point, back track until a cell with unvis-
     ited neighbors is encountered. This back tracking is
-    achieved by walking forward through the Cammino list,
+    achieved by walking forward through the agri_Iter list,
     inserting each element that is visitata to the front
-    of the Cammino list, until an element with an unvisied
+    of the agri_Iter list, until an element with an unvisied
     neighbor is encountered. Insert this element to the
-    front of the Cammino list and repeat the above procedure
+    front of the agri_Iter list and repeat the above procedure
     (i.e., goto step 2).
    */
  
   /*back to previous cell*/
   l=l->prev;
   if(l==NULL) exit(-1);
-  /*Add it to the Cammino list*/
-  aggiungi_in_testa(&p,l->pcell);
+  /*Add it to the agri_Iter list*/
+  agri_addo_Iter(&p,l->locus);
   
   /*get the diretion*/
   direzione nd;//next step direzione
 
-  if(g->destra==l->pcell) nd=DESTRA;
+  if(g->dextra==l->locus) nd=DESTRA;
   else
-  if(g->sinistra==l->pcell) nd=SINISTRA;
+  if(g->sinistra==l->locus) nd=SINISTRA;
   else
-  if(g->alto==l->pcell) nd=SU;
+  if(g->sursum==l->locus) nd=SU;
   else
-  if(g->basso==l->pcell) nd=GIU;
+  if(g->deorsum==l->locus) nd=GIU;
 
   /*Set as the online cell*/
-  //g=l->pcell;
+  //g=l->locus;
   /*move to the previous one*/
   
   return nd;
   
 }
 
-Cella* rivela_vicini(Cammino ap,direzione dir){
-  int R=0,U=0;
-  int found=0;
-  
-  while(ap->prev){
-    if(ap->pcell->destra==ap->prev->pcell) R++;
-    if(ap->pcell->sinistra==ap->prev->pcell) R--;
-    if(ap->pcell->alto==ap->prev->pcell) U++;
-    if(ap->pcell->basso==ap->prev->pcell) U--;
-    /*check neighbor condition*/
-    //DESTRA
-    if(dir==DESTRA&&R==1&&U==0)
-      {
-	return ap->prev->pcell;
-      }
-    //R-U
-    if(dir==DESTRA&&(R==1)&&U==+1)
-      {
-	return ap->prev->pcell->basso;
-      }
-    //R-D
-    if(dir==DESTRA&&(R==1)&&U==-1)
-      {
-	return ap->prev->pcell->alto;
-      }
 
-
-    if(dir==DESTRA&&R==2&&U==0)
-      {
-	//return ap->prev->pcell->sinistra;
-      }
-
-
-
-    
-    //L
-    if(dir==SINISTRA&&R==-1&&(U==0))
-      {
-	return ap->prev->pcell;
-      }
-    //L-U
-    if(dir==SINISTRA&&(R==-1)&&U==+1)
-      {
-	return ap->prev->pcell->basso;
-      }
-    //L-D
-    if(dir==SINISTRA&&(R==-1)&&U==-1)
-      {
-	return ap->prev->pcell->alto;
-      }
-
-
-    if(dir==SINISTRA&&R==-2&&U==0)
-      {
-	//return ap->prev->pcell->destra;
-      }
-    //SU
-    if(dir==SU&&R==0&&U==1)
-      {
-	return ap->prev->pcell;
-      }
-    //U-L
-    if(dir==SU&&(R==-1)&&U==+1)
-      {
-	return ap->prev->pcell->destra;
-      }
-    //U-R
-    if(dir==SU&&(R==1)&&U==+1)
-      {
-	return ap->prev->pcell->sinistra;
-      }
-
-    
-    if(dir==SU&&R==0&&U==2)
-      {
-	//return ap->prev->pcell->basso;
-      }
-    // D
-    if(dir==GIU&&R==0&&U==-1)
-      {
-	return ap->prev->pcell;
-      }
-    //D-L
-    if(dir==GIU&&(R==-1)&&U==-1)
-      {
-	return ap->prev->pcell->destra;
-      }
-    //D-R
-    if(dir==GIU&&(R==1)&&U==-1)
-      {
-	return ap->prev->pcell->sinistra;
-      }
-
-    if(dir==GIU&&R==0&&U==-2)
-      {
-
-	//return ap->prev->pcell->alto;
-      }
-    ap=ap->prev;
-  }
-  return NULL;
-}
-
-
-
-tipo_oggetto rivela_tipo_oggetto(oggetto code){
+rei_genus rivela_rei_genus(oggetto code){
   if(code != 'J' && code != 'U' && code != 'V'){
     return MURO;
   }
   
   return ALTRO;
 }
-
-void crea_Grafo(Grafo* g)
-{
-  *g = NULL;
-}
-
-
-/**
- *Add a cell to the Grafo after checking that a cell
- *was already present at the same poistion.
- *For each cell of the actual Tuki Cammino is saltoposed
- *to exist another 4 cells at the ajacent direzione
- *This functions.
- *The existence of a possible unlinked cell in the 'd' 
- *direzione is tested scann2ing the Cammino_list untill a
- *cell 
- */
-Grafo aggiungi_al_Grafo(Grafo pcell,Attributi d,direzione dir){
-  nn++;
-  Cella* n=(Cella*)malloc(sizeof(Cella));
-  n->d=d;
- 
-  switch(dir)
-    {
-    case SU:
-      pcell->alto=n;
-      n->basso=pcell;
-      break;
-    case GIU:
-      pcell->basso=n;
-      n->alto=pcell;
-      break;
-    case DESTRA:
-      pcell->destra=n;
-      n->sinistra=pcell;
-      break;
-    case SINISTRA:
-      pcell->sinistra=n;
-      n->destra=pcell;
-      break;
-    }
-  return n;
-}
-
-void crea_Cammino(Cammino* p){
-  *p=0;
-}
-void aggiungi_in_testa(Cammino* l, Grafo g) {
-  Nodo* aux = (Nodo*)malloc(sizeof(Nodo));
-  
-  aux->prev = *l;
-  aux->next = NULL;  
-  aux->pcell = g;
-  if(*l)
-    (*l)->next=aux;
-  *l = aux;
-}
-
-
 
 
 

@@ -80,6 +80,17 @@ direzione gioca_clyde(posizioni p, oggetto** lab);
 int main(int argc, char **argv)
 {
 
+  /*
+    ITA: numero di fantasmi nel labirinto (default 4)
+    ENG: number of ghosts in the maze
+   */
+  int n_fantasmi = 4;
+  if(argc>1)
+    {
+      n_fantasmi = atoi(argv[1]);
+      if(n_fantasmi>4) n_fantasmi = 4;
+    }
+  
   /* Presentazione */
   view_init();
   //view_presentazione();
@@ -114,8 +125,19 @@ int main(int argc, char **argv)
     
     direzione c = gioca_clyde(p, lab);
 
-    //char go = mdl_passo(t,b,i,pi,c);
-    char go = mdl_passo(t,FERMO,FERMO,FERMO,FERMO);
+    char go;
+    
+    if(n_fantasmi == 0)
+      go = mdl_passo(t,FERMO,FERMO,FERMO,FERMO);
+    if(n_fantasmi == 1)
+      go = mdl_passo(t,b,FERMO,FERMO,FERMO);
+    if(n_fantasmi == 2)
+      go = mdl_passo(t,b,i,FERMO,FERMO);
+    if(n_fantasmi == 3)
+      go = mdl_passo(t,b,i,pi,FERMO);
+    if(n_fantasmi == 4)
+      go = mdl_passo(t,b,i,pi,c);
+    
     int pnt = mdl_punteggio();
     char inblu=mdl_superpacman();
 
@@ -124,7 +146,7 @@ int main(int argc, char **argv)
     p=mdl_posizioni();//aggiorna le posizioni prima di mostrarle a video
     view_punteggio(pnt);
     view_giocatori(p,lab,inblu);
-    delay(10);
+    delay(5);
     // delay(250);
 
 

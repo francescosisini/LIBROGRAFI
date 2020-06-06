@@ -79,6 +79,8 @@ void agri_Arco_inserisci(agri_Grafo * pg, agri_Arco arco);
 int agri_Vertice_cerca(agri_Grafo g, int riga, int colonna);
 
 
+
+
 void stampa(agri_Grafo g)
 {
   FILE * f = fopen("grafi.csv","w+t");
