@@ -44,19 +44,11 @@ void Ordo_insero_nodus(Ordo * l,int index, double prio);
 
 int Ordo_pop(Ordo * pOrdo);
 
-double euristica_h(int start, int goal)
-{
-  int x1,x2,y1,y2;
-  double d;
-  x1=agri_Vertices_Colligati[start].columna;
-  y1=agri_Vertices_Colligati[start].linea;
-  x2=agri_Vertices_Colligati[goal].columna;
-  y2=agri_Vertices_Colligati[goal].linea;
-  //Euristica uguale al quadrato della distanza euclidea
-  d = (x1-x2)*(x1-x2)+(y1-y2)*(y1-y2);
-  return sqrt(d);
-}
-
+agri_Via agri_astar(int start, int goal,
+		    agri_Vertex * agri_Vertices_Colligati,
+		    double (*spatium)(int ab, int ad),
+		    double (*euristica)(int ab, int ad),
+		    );
 agri_Via agri_astar(int start, int goal,
 		    agri_Vertex * agri_Vertices_Colligati,
 		    double (*spatium)(int ab, int ad),

@@ -9,8 +9,11 @@
 #include <time.h>
 #include <unistd.h>
 
+#define PORTE 10
 #define NNODI 34
 #define SCONOSCIUTO -2
+
+typedef enum  {SX,DEORSUM,DX,SURSUM,FIXO} versus;
 
 /*
   ITA:  I grafi sono implementati come
@@ -27,66 +30,69 @@ typedef struct {
      ITA: Indice univoco nel grafo 
      ENG: Unique index into the graph
   */
-  int indice;
+  int index;
   /* 
     ITA: attributi
     ENG: attributes
   */
-  int riga, colonna;//row and column
-} agri_Vertice;
+  int ianua[PORTE];
+  int linea, columna;//row and column
+} agri_Vertex;
 
 /* 
    ITA: Arco orientato e pesato
-   ENG: diricted and weighted edge ("arco" means edge) 
+   ENG: diricted and weighted edge ("colligatio" means edge) 
 */
-typedef struct arco {
+typedef struct colligatio {
   /* 
      ITA: vertici collegati dall'arco
      ENG: vertices connected by the edge
   */
-  agri_Vertice da, a;
+  agri_Vertex ab, ad;
    /* 
     ITA: attributi
     ENG: attributes
    */
-  direzione partenza, arrivo;
-  int lunghezza;
-} agri_Arco;
+  versus discessus, meta;
+  int longitudo;
+} agri_Colligatio;
 
 /* 
    ITA: Elemento della lista di archi
    ENG: Edges list item
 */
-typedef struct elemento {
-  agri_Arco arco;
-  struct  elemento *  next;
-} agri_Elemento;
+typedef struct membrum {
+  agri_Colligatio colligatio;
+  struct  membrum *  next;
+} agri_Membrum;
 
-typedef agri_Elemento * agri_Grafo;
+typedef agri_Membrum * agri_Colligationes_Colligatae;
 
 /*
   ITA: Inserisce l'arco in testa alla lista
   ENG: inserts an edge on top of the list
 */
-void agri_Arco_inserisci(agri_Grafo * pg, agri_Arco arco);
+void agri_Colligationem_insero(agri_Colligationes_Colligatae * pg, agri_Colligatio colligatio);
 
 /* ITA: Cerca tra gli elementi del grafo se uno degli archi è connesso
-   ad un vertice in riga e colonna. Se lo trova torna l'indice del
+   ad un vertice in linea e columna. Se lo trova torna l'indice del
    vertice, altrimenti -1
    ENG: Looks into the graph for a vertex whose row and column attributes
-   are equal to riga and colonna
+   are equal to linea and columna
 */
-int agri_Vertice_cerca(agri_Grafo g, int riga, int colonna);
+int agri_Vertex_quaero(agri_Colligationes_Colligatae g, int linea, int columna);
 
 
-void stampa(agri_Grafo g)
+
+
+void stampa(agri_Colligationes_Colligatae g)
 {
   FILE * f = fopen("grafi.csv","w+t");
   while(g)
     {
       fprintf(f," %d,%d,\n",
-	      g->arco.da.indice,
-	      g->arco.a.indice);
+	      g->colligatio.ab.index,
+	      g->colligatio.ad.index);
 	      
       g = g->next;
     }
@@ -119,9 +125,7 @@ direzione direzione_opposta(direzione d)
 */
 
 direzione gioca_tuki(posizioni posi, oggetto **labx)
-
 {
-
   /*
     ITA: per generare il grafo impediamo a PAC-MAN di entrare nella
     casa dei fantasmi
@@ -133,7 +137,7 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
   labx[14][11]='A';
   labx[14][14]='A';
   
-  static agri_Grafo g = 0;
+  static agri_Colligationes_Colligatae g = 0;
 
   /* 
      ITA: Se Tuki è su un vertice, deve aggiungere l'arco
@@ -169,7 +173,7 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
   static int direzione_arrivo = FERMO;
   static int direzione_partenza = FERMO;
   
-  static int lunghezza_arco = 0;
+  static int longitudo_colligatio = 0;
   static int i_da, j_da;
 
    /* 
@@ -192,7 +196,7 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
   int i = posi.tuki_y;
   int j = posi.tuki_x;
 
-  lunghezza_arco++;
+  longitudo_colligatio++;
   
   /* Celle confinanti (neighbors) */
   oggetto vicino[4];
@@ -222,7 +226,7 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
       i_da = i;
       j_da = j;
       vertici_contati = 1;
-      lunghezza_arco = 0;
+      longitudo_colligatio = 0;
     }
   else if(nd>2)
     {
@@ -230,36 +234,36 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
 	 ITA: Se siamo qui, Tuki è su un vertice
 	 ENG: If we are here Tuki position is a vertex 
       */
-      int vertice_a = agri_Vertice_cerca(g,i,j);
+      int vertice_a = agri_Vertex_quaero(g,i,j);
       if(vertice_a<0)
 	{
 	  vertice_a = vertici_contati;
 	  vertici_contati++;
 	}
-      agri_Arco arco;
-      agri_Vertice v_a, v_da;
-      v_a.indice = vertice_a;
-      v_a.riga = i;
-      v_a.colonna = j;
+      agri_Colligatio colligatio;
+      agri_Vertex v_a, v_da;
+      v_a.index = vertice_a;
+      v_a.linea = i;
+      v_a.columna = j;
 
-      v_da.indice = vertice_da;
-      v_da.riga = i_da;
-      v_da.colonna = j_da;
+      v_da.index = vertice_da;
+      v_da.linea = i_da;
+      v_da.columna = j_da;
       
-      arco.a = v_a;
-      arco.da = v_da;
-      arco.lunghezza = lunghezza_arco;
-      arco.arrivo = direzione_arrivo;
-      arco.partenza = direzione_partenza;
-      agri_Arco_inserisci(&g, arco);
+      colligatio.ad = v_a;
+      colligatio.ab = v_da;
+      colligatio.longitudo = longitudo_colligatio;
+      colligatio.meta = direzione_arrivo;
+      colligatio.discessus = direzione_partenza;
+      agri_Colligationem_insero(&g, colligatio);
       nodo_rilevato = true;
 
-      lunghezza_arco = 0;
+      longitudo_colligatio = 0;
       vertice_da = vertice_a;
       i_da = i;
       j_da = j;
       
-      //stampa(g);
+      stampa(g);
       
     }
 
@@ -380,12 +384,12 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
 }
 
 
-void agri_Arco_inserisci(agri_Grafo * pg, agri_Arco arco)
+void agri_Colligationem_insero(agri_Colligationes_Colligatae * pg, agri_Colligatio colligatio)
 {
 
-  agri_Grafo cg = *pg;
+  agri_Colligationes_Colligatae cg = *pg;
   
-  if(arco.da.indice == arco.a.indice)
+  if(colligatio.ab.index == colligatio.ad.index)
     return;
   
    while(cg)
@@ -394,26 +398,27 @@ void agri_Arco_inserisci(agri_Grafo * pg, agri_Arco arco)
 	 ITA: l'arco è già nel grafo
 	 ENG: the edge is already in the graph
       */
-      if(cg->arco.da.indice == arco.da.indice && cg->arco.a.indice == arco.a.indice)
+      if(cg->colligatio.ab.index == colligatio.ab.index
+	 && cg->colligatio.ad.index == colligatio.ad.index)
       	return;
-        cg = cg->next;
+      cg = cg->next;
     }
   
-  agri_Elemento * aux = malloc(sizeof(agri_Elemento));
+  agri_Membrum * aux = malloc(sizeof(agri_Membrum));
   if(aux == 0) exit(1);
-  aux -> arco = arco;
+  aux -> colligatio = colligatio;
   aux -> next = *pg;
   *pg = aux;
 }
 
-int agri_Vertice_cerca(agri_Grafo g, int riga, int colonna)
+int agri_Vertex_quaero(agri_Colligationes_Colligatae g, int linea, int columna)
 {
   while(g)
     {
-      if(g->arco.da.riga == riga && g->arco.da.colonna == colonna)
-	return g->arco.da.indice;
-      if(g->arco.a.riga == riga && g->arco.a.colonna == colonna)
-	return g->arco.a.indice;
+      if(g->colligatio.ab.linea == linea && g->colligatio.ab.columna == columna)
+	return g->colligatio.ab.index;
+      if(g->colligatio.ad.linea == linea && g->colligatio.ad.columna == columna)
+	return g->colligatio.ad.index;
       g = g->next;
     }
   return -1;
