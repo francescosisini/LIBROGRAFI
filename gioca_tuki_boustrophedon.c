@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#define FUGA 1
+//#define FUGA 
 
 /*
   ITA: classifica il contenuto in MURO o ALTRO
@@ -12,6 +12,7 @@
 */
 rei_genus rivela_rei_genus(oggetto contenuto);
 
+agri_Tabella moveo_Cellam(agri_Tabella * ptab, versus dir);
 
 /**
  * Tuki algorithm based on The Boustrophedon Cellular Decomposition
@@ -199,7 +200,8 @@ direzione gioca_tuki(posizioni posi, oggetto **labx){
     {
       if(g->sinistra->d.rei!=MURO && !s_g)
         {
-          g=g->sinistra;
+          //g=g->sinistra;
+	  moveo_Cellam(&g, SINISTRA);
           g->d.visitata=1;
           agri_addo_Iter(&p,g);
           l=p;
@@ -210,7 +212,8 @@ direzione gioca_tuki(posizioni posi, oggetto **labx){
       
       if(g->sursum->d.rei!=MURO && !a_g)
         {
-          g=g->sursum;
+          //g=g->sursum;
+	  moveo_Cellam(&g, SU);
           g->d.visitata=1;
           agri_addo_Iter(&p,g);
           l=p;
@@ -223,7 +226,8 @@ direzione gioca_tuki(posizioni posi, oggetto **labx){
       
       if(g->dextra->d.rei!=MURO && !d_g)
         {
-          g=g->dextra;
+          //g=g->dextra;
+	  moveo_Cellam(&g, DESTRA);
           g->d.visitata=1;
           agri_addo_Iter(&p,g);
           l=p;
@@ -233,7 +237,8 @@ direzione gioca_tuki(posizioni posi, oggetto **labx){
       
       if(g->deorsum->d.rei!=MURO && !b_g)
         {
-          g=g->deorsum;
+          //g=g->deorsum;
+	  moveo_Cellam(&g, GIU);
           g->d.visitata=1;
           agri_addo_Iter(&p,g);
           l=p;
@@ -335,4 +340,17 @@ rei_genus rivela_rei_genus(oggetto code){
 }
 
 
+agri_Tabella moveo_Cellam(agri_Tabella * ptab, versus dir)
+{
+  if (dir == SX)
+    *ptab = (*ptab)->sinistra;
+  else if (dir == DX)
+    *ptab = (*ptab)->dextra;
+  else if (dir == DEORSUM)
+    *ptab = (*ptab)->deorsum;
+  else if (dir == SURSUM)
+    *ptab = (*ptab)->sursum;
+  return *ptab;
+
+}
 

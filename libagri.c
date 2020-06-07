@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 
+
 void agri_creo_Tabellam(agri_Tabella* g)
 {
   *g = NULL;
