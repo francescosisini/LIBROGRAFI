@@ -1,5 +1,6 @@
 #include "libagri.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 
 
@@ -58,7 +59,7 @@ int Ordo_pop(Ordo * pOrdo)
 agri_Via agri_astar(int start, int goal,
 		    agri_Vertex * agri_Vertices_Colligati,
 		    double (*spatium)(int ab, int ad),
-		    double (*euristica)(int ab, int ad),
+		    double (*euristica)(int ab, int ad)
 		    )
 {
 
@@ -79,7 +80,7 @@ agri_Via agri_astar(int start, int goal,
       gscore[i] = INFINITO;
     }
   gscore[start] = 0;
-  fscore[start]=euristica_h(start,goal);
+  fscore[start]=euristica(start,goal);
 
   Ordo_insero_nodus(&candidati,start,(1./fscore[start]));
 
@@ -117,13 +118,13 @@ agri_Via agri_astar(int start, int goal,
         }
      
       /* Nel labirinto di Pac-Man ci sono al massimo 4 vicini */
-      int vicino[IANUA];
-      for(int i=0; i<IANUA; i++)
+      int vicino[PORTE];
+      for(int i=0; i<PORTE; i++)
 	{
 	  vicino[i] = agri_Vertices_Colligati[corrente].ianua[i];
 	}
       printf("Il nodus %d\n",corrente);
-      for(int i =0; i<IANUA; i++)
+      for(int i =0; i<PORTE; i++)
         {
           int iv = vicino[i];
 	  printf("ha vicino %d\n",iv);
@@ -160,7 +161,7 @@ agri_Via agri_astar(int start, int goal,
   
 }
 
-int index_nodus_cella(int riga, int col)
+int index_nodus_cella(int riga, int col, agri_Vertex * agri_Vertices_Colligati)
 {
   for(int i=0; i<NNODI;i++)
     {
