@@ -1,1 +1,0 @@
-gcc -o tuki5.game gioca_fantasmi.c gioca_tuki_generagrafo.c tuki5_controllo.c tuki5_modello.c tuki5_visore.c -lm

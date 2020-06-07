@@ -5,6 +5,48 @@
 
 
 /*** GRAFO COME ARRAY DI VERTICI ***/
+
+void agri_Colligationem_insero(agri_Colligationes_Colligatae * pg, agri_Colligatio colligatio)
+{
+
+  agri_Colligationes_Colligatae cg = *pg;
+  
+  if(colligatio.ab.index == colligatio.ad.index)
+    return;
+  
+   while(cg)
+    {
+      /* 
+	 ITA: l'arco è già nel grafo
+	 ENG: the edge is already in the graph
+      */
+      if(cg->colligatio.ab.index == colligatio.ab.index
+	 && cg->colligatio.ad.index == colligatio.ad.index)
+      	return;
+      cg = cg->next;
+    }
+  
+  agri_Membrum * aux = malloc(sizeof(agri_Membrum));
+  if(aux == 0) exit(1);
+  aux -> colligatio = colligatio;
+  aux -> next = *pg;
+  *pg = aux;
+}
+
+int agri_Vertex_quaero(agri_Colligationes_Colligatae g, int linea, int columna)
+{
+  while(g)
+    {
+      if(g->colligatio.ab.linea == linea && g->colligatio.ab.columna == columna)
+	return g->colligatio.ab.index;
+      if(g->colligatio.ad.linea == linea && g->colligatio.ad.columna == columna)
+	return g->colligatio.ad.index;
+      g = g->next;
+    }
+  return -1;
+}
+
+
 void Ordo_amoveo_nodus(Ordo * l, int index)
 {
   

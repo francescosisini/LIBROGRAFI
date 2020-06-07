@@ -1,3 +1,8 @@
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
 #define NNODI 34
 #define PORTE 10
 #define INFINITO 9999
@@ -8,15 +13,63 @@ enum genus {MURO,ALTRO};
 typedef enum genus rei_genus;
 /*** GRAFO COME LISTA DI ARCHI ***/
 
-
-/*** GRAFO COME ARRAY DI VERTICI ***/
-
 typedef struct {
   int linea;
   int columna;
   int index;
   int ianua[PORTE];
 } agri_Vertex;
+
+
+/* 
+   ITA: Arco orientato e pesato
+   ENG: diricted and weighted edge ("colligatio" means edge) 
+*/
+typedef struct colligatio {
+  /* 
+     ITA: vertici collegati dall'arco
+     ENG: vertices connected by the edge
+  */
+  agri_Vertex ab, ad;
+   /* 
+    ITA: attributi
+    ENG: attributes
+   */
+  versus discessus, meta;
+  int longitudo;
+} agri_Colligatio;
+
+/* 
+   ITA: Elemento della lista di archi
+   ENG: Edges list item
+*/
+typedef struct membrum {
+  agri_Colligatio colligatio;
+  struct  membrum *  next;
+} agri_Membrum;
+
+typedef agri_Membrum * agri_Colligationes_Colligatae;
+
+/*
+  ITA: Inserisce l'arco in testa alla lista
+  ENG: inserts an edge on top of the list
+*/
+void agri_Colligationem_insero
+(agri_Colligationes_Colligatae * pg, agri_Colligatio colligatio);
+
+/* ITA: Cerca tra gli elementi del grafo se uno degli archi è connesso
+   ad un vertice in linea e columna. Se lo trova torna l'indice del
+   vertice, altrimenti -1
+   ENG: Looks into the graph for a vertex whose row and column attributes
+   are equal to linea and columna
+*/
+int agri_Vertex_quaero(agri_Colligationes_Colligatae g, int linea, int columna);
+
+
+
+
+/*** GRAFO COME ARRAY DI VERTICI ***/
+
 
 typedef struct nodus_coda
 {

@@ -3,104 +3,44 @@
  * FILE: gioca_tuki_generagrafo.c
  */
 #include "tuki5_modello.h"
+#include "libagri.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <unistd.h>
 
+#define PORTE 10
 #define NNODI 34
 #define SCONOSCIUTO -2
 
-/********* SEZIONE GRAFO ***************/
+
 
 /*
- * Data Model: il grafo è implementato come
- * una lista di archi tra vertici
+  ITA:  I grafi sono implementati come
+  liste di archi tra vertici
+  ENG: Graphs are edges lists 
  */
 
-/* Verice del grafo */
-typedef struct {
-  /* Chiave unica */
-  int indice;
-  /* attributi */
-  int riga, colonna;
-} grafo_Vertice;
 
-/* Arco orientato e pesato */
-typedef struct arco {
-  /* vertici collegati - chiave unica composta */
-  grafo_Vertice da, a;
-  /* attributi */
-  direzione partenza, arrivo;
-  int lunghezza;
-} grafo_Arco;
 
-/* Elemento della lista di archi */
-typedef struct elemento {
-  grafo_Arco arco;
-  /* Navigazione lista*/
-  struct  elemento *  next;
-} grafo_Elemento;
 
-/* Puntatore alla lista di archi */
-typedef grafo_Elemento * grafo_Grafo;
 
-/* Inserisce l'arco in testa alla lista */
-void grafo_inserisci(grafo_Grafo * pg, grafo_Arco arco)
+
+
+
+
+
+
+
+void stampa(agri_Colligationes_Colligatae g)
 {
-
-  grafo_Grafo cg = *pg;
-  
-  /* Non sono ammessi   */
-
-  
-  if(arco.da.indice == arco.a.indice)
-    return;
-  
-   while(cg)
-    {
-      /* 
-	 ITA: l'arco è già nel grafo
-	 ENG: the edge is already in the graph
-      */
-      if(cg->arco.da.indice == arco.da.indice && cg->arco.a.indice == arco.a.indice)
-      	return;
-        cg = cg->next;
-    }
-  
-  grafo_Elemento * aux = malloc(sizeof(grafo_Elemento));
-  if(aux == 0) exit(1);
-  aux -> arco = arco;
-  aux -> next = *pg;
-  *pg = aux;
-}
-
-/* Cerca tra gli elementi del grafo se uno degli archi è connesso
-   ad un vertice in riga e colonna. Se lo trova torna l'indice del
-   vertice, altrimenti -1
-*/
-int grafo_Vertice_cerca(grafo_Grafo g, int riga, int colonna)
-{
+  FILE * f = fopen("grafi.csv","w+t");
   while(g)
     {
-      if(g->arco.da.riga == riga && g->arco.da.colonna == colonna)
-	return g->arco.da.indice;
-      if(g->arco.a.riga == riga && g->arco.a.colonna == colonna)
-	return g->arco.a.indice;
-      g = g->next;
-    }
-  return -1;
-}
-
-void grafo_stampa(grafo_Grafo g)
-{
-  FILE * f = fopen("grafi.txt","w+t");
-  while(g)
-    {
-      fprintf(f," Arco (%d,%d)\n",
-	      g->arco.da.indice,
-	      g->arco.a.indice);
+      fprintf(f," %d,%d,\n",
+	      g->colligatio.ab.index,
+	      g->colligatio.ad.index);
 	      
       g = g->next;
     }
@@ -109,7 +49,10 @@ void grafo_stampa(grafo_Grafo g)
 
 
 
-/* Controlla se l'oggetto nella cella non è un muro */
+/* 
+   ITA: Controlla se l'oggetto nella cella non è un muro
+   ENG: chcks if the object into the cell is or not a wall
+*/
 bool oggetto_accessibile(oggetto s)
 {
   if(s == 'J' || s == 'U' || s == 'V')
@@ -117,7 +60,7 @@ bool oggetto_accessibile(oggetto s)
   else
     return false;
 }
-
+/*
 direzione direzione_opposta(direzione d)
 {
   if(d == SINISTRA) return DESTRA;
@@ -127,14 +70,22 @@ direzione direzione_opposta(direzione d)
   return FERMO;
 
 }
-
+*/
 
 direzione gioca_tuki(posizioni posi, oggetto **labx)
-
 {
-
-  /* Grafo del labirinto */
-  static grafo_Grafo g = 0;
+  /*
+    ITA: per generare il grafo impediamo a PAC-MAN di entrare nella
+    casa dei fantasmi
+    ENG: to generte maze graph we prevent PAC-MAN to get into 
+    ghosts' house
+   */
+  labx[14][12]='A';
+  labx[14][13]='A';
+  labx[14][11]='A';
+  labx[14][14]='A';
+  
+  static agri_Colligationes_Colligatae g = 0;
 
   /* 
      ITA: Se Tuki è su un vertice, deve aggiungere l'arco
@@ -163,14 +114,20 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
     and so on, are also  present in the Pac-Man maze.
    */
   
-  /* Direzione presa nel turno di gioco precedente */
+  /* 
+     ITA: Direzione presa nel turno di gioco precedente 
+     ENG: Direction taken into the previous game cycle
+  */
   static int direzione_arrivo = FERMO;
-  /* Direzione presa nel turno di gioco precedente */
   static int direzione_partenza = FERMO;
-  static int lunghezza_arco = 0;
+  
+  static int longitudo_colligatio = 0;
   static int i_da, j_da;
 
-  /* Direzione presa in questo turno di gioco */
+   /* 
+     ITA: Direzione presa nel turno di gioco corrente 
+     ENG: Direction taken into the current game cycle
+  */
   static direzione ld = SINISTRA;
   
   static bool init = false;
@@ -180,18 +137,21 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
       init = true;
     }
   
-  /* Posizione di Tuki o Pac-Man nel labirinto*/
+  /* 
+     ITA: Posizione di Pac-Man nel labirinto
+     ENG: PAC-MAN's row and column
+   */
   int i = posi.tuki_y;
   int j = posi.tuki_x;
 
-  lunghezza_arco++;
+  longitudo_colligatio++;
   
   /* Celle confinanti (neighbors) */
   oggetto vicino[4];
-  vicino[0] = labx[i][j-1]; //sinistra
-  vicino[1] = labx[i][j+1]; //destra
-  vicino[2] = labx[i-1][j]; //su
-  vicino[3] = labx[i+1][j]; //giu
+  vicino[0] = labx[i][j-1]; //sinistra - left
+  vicino[1] = labx[i][j+1]; //destra - right
+  vicino[2] = labx[i-1][j]; //su - up
+  vicino[3] = labx[i+1][j]; //giu - down
 
   /*  
       ITA: Conta il numero di vicini accessibili
@@ -203,57 +163,55 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
   
   fflush(stdout);
 
-  /* IT: È vero se nel ciclo di gioco corrente viene rilevato un nodo */
-  /* EN: Is true if in the current game cycle a node is detetcted  */
+  /* ITA: È vero se nel ciclo di gioco corrente viene rilevato un nodo */
+  /* ENG: Is true if in the current game cycle a node is detetcted  */
   bool nodo_rilevato = false;
 
   if(vertice_da == SCONOSCIUTO && nd>2)
     {
-      printf("caz");
       fflush(stdout);
       vertice_da = 0;
       i_da = i;
       j_da = j;
       vertici_contati = 1;
-      lunghezza_arco = 0;
+      longitudo_colligatio = 0;
     }
   else if(nd>2)
     {
-      
       /* 
 	 ITA: Se siamo qui, Tuki è su un vertice
 	 ENG: If we are here Tuki position is a vertex 
       */
-      int vertice_a = grafo_Vertice_cerca(g,i,j);
+      int vertice_a = agri_Vertex_quaero(g,i,j);
       if(vertice_a<0)
 	{
 	  vertice_a = vertici_contati;
 	  vertici_contati++;
 	}
-      grafo_Arco arco;
-      grafo_Vertice v_a, v_da;
-      v_a.indice = vertice_a;
-      v_a.riga = i;
-      v_a.colonna = j;
+      agri_Colligatio colligatio;
+      agri_Vertex v_a, v_da;
+      v_a.index = vertice_a;
+      v_a.linea = i;
+      v_a.columna = j;
 
-      v_da.indice = vertice_da;
-      v_da.riga = i_da;
-      v_da.colonna = j_da;
+      v_da.index = vertice_da;
+      v_da.linea = i_da;
+      v_da.columna = j_da;
       
-      arco.a = v_a;
-      arco.da = v_da;
-      arco.lunghezza = lunghezza_arco;
-      arco.arrivo = direzione_arrivo;
-      arco.partenza = direzione_partenza;
-      grafo_inserisci(&g, arco);
+      colligatio.ad = v_a;
+      colligatio.ab = v_da;
+      colligatio.longitudo = longitudo_colligatio;
+      colligatio.meta = direzione_arrivo;
+      colligatio.discessus = direzione_partenza;
+      agri_Colligationem_insero(&g, colligatio);
       nodo_rilevato = true;
 
-      lunghezza_arco = 0;
+      longitudo_colligatio = 0;
       vertice_da = vertice_a;
       i_da = i;
       j_da = j;
       
-      grafo_stampa(g);
+      stampa(g);
       
     }
 
@@ -263,19 +221,27 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
   oggetto a = vicino[2];
   oggetto b = vicino[3];
 
-   /* Gestione ostacoli */
+   /* ITA: Gestione ostacoli
+      ENG: dealing with obstacles
+    */
   bool disponibile = false;
   
-  /* Questo bool garantisce che per ogni 
-     ciclo di gioco la scelta della direzione abbia 
+  /* ITA: Questo bool garantisce che per ogni 
+     turno di gioco la scelta della direzione abbia 
      una componente casuale. 
      Questo al fine di evitare loop che sarebbero causati 
-     dall'assenza della squadra fantasma */
+     dall'assenza della squadra fantasma 
+     ENG: this bool is set to true if during the direction
+     decision a random step has been taken. This in order to
+     avoid loops that would be caused by runs without ghosts
+  */
   bool aleatorio = false;
   
   /* 
-     se la cella successiva nella direzione corrente non è disponibile,
+     ITA: se la cella successiva nella direzione corrente non è disponibile,
      ne viene scelta un'altra e viene eseguita una nuova iterazione
+     ENG: if the next cell in the current direction is not available, it chooses
+     another one and new iteration is executed
   */
   while(!disponibile)
     {
@@ -321,7 +287,7 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
               disponibile = true;
     }
     
-    // Memorizzazione per il pac_grafo
+    
     direzione_arrivo = ld;
     if(nodo_rilevato)
       direzione_partenza = ld;
@@ -329,7 +295,11 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
     if(aleatorio) return ld;
     
         
-    /* Se la direzione non è aleatoria la cambiamo qui */
+    /*
+      ITA: Se la direzione non è aleatoria la cambiamo qui
+      ENG: If a random step has not been taken during the
+      direction decision, we do it here
+    */
     if(oggetto_accessibile(a) && ld !=SU && ld!=GIU)
       {
 	int sv = rand()%10;
@@ -355,10 +325,10 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
 	  ld = DESTRA;
       }
 
-    // Memorizzazione per il pac_grafo
     direzione_arrivo = ld;
     if(nodo_rilevato)
       direzione_partenza = ld;
     return ld;
-  
 }
+
+
