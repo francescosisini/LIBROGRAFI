@@ -11,7 +11,8 @@
 typedef enum  {SX,DEORSUM,DX,SURSUM,FIXO} versus;
 enum genus {MURO,ALTRO};
 typedef enum genus rei_genus;
-/*** GRAFO COME LISTA DI ARCHI ***/
+
+/*** TIPI COMUNUI ***/
 
 typedef struct {
   int linea;
@@ -20,6 +21,7 @@ typedef struct {
   int ianua[PORTE];
 } agri_Vertex;
 
+/*** GRAFO COME LISTA DI ARCHI ***/
 
 /* 
    ITA: Arco orientato e pesato
@@ -70,6 +72,7 @@ int agri_Vertex_quaero(agri_Colligationes_Colligatae g, int linea, int columna);
 
 /*** GRAFO COME ARRAY DI VERTICI ***/
 
+typedef agri_Vertex * agri_Verticum_Dispositio;
 
 typedef struct nodus_coda
 {
@@ -201,4 +204,13 @@ agri_Cella* agri_rivela_Cella(agri_Iter ap,versus ricerca);
 
 
 
+/*** TRAFFORMAZIONI ***/
 
+/*
+  ITA: da un grafo di archi ad un grafo di vertici
+ */
+int  agri_Muto(agri_Colligationes_Colligatae ge, agri_Verticum_Dispositio *a);
+
+int list_to_array(agri_Colligationes_Colligatae list ,agri_Colligationes_Colligatae * array);
+
+int cerca_vertice(agri_Verticum_Dispositio v, int index, int size);

@@ -14,78 +14,13 @@
 #define NNODI 34
 #define SCONOSCIUTO -2
 
-typedef enum  {SX,DEORSUM,DX,SURSUM,FIXO} versus;
+
 
 /*
   ITA:  I grafi sono implementati come
   liste di archi tra vertici
   ENG: Graphs are edges lists 
  */
-
-/* 
-   ITA: Verice del grafo 
-   ENG: Graph vertex
-*/
-typedef struct {
-  /* 
-     ITA: Indice univoco nel grafo 
-     ENG: Unique index into the graph
-  */
-  int index;
-  /* 
-    ITA: attributi
-    ENG: attributes
-  */
-  int ianua[PORTE];
-  int linea, columna;//row and column
-} agri_Vertex;
-
-/* 
-   ITA: Arco orientato e pesato
-   ENG: diricted and weighted edge ("colligatio" means edge) 
-*/
-typedef struct colligatio {
-  /* 
-     ITA: vertici collegati dall'arco
-     ENG: vertices connected by the edge
-  */
-  agri_Vertex ab, ad;
-   /* 
-    ITA: attributi
-    ENG: attributes
-   */
-  versus discessus, meta;
-  int longitudo;
-} agri_Colligatio;
-
-/* 
-   ITA: Elemento della lista di archi
-   ENG: Edges list item
-*/
-typedef struct membrum {
-  agri_Colligatio colligatio;
-  struct  membrum *  next;
-} agri_Membrum;
-
-typedef agri_Membrum * agri_Colligationes_Colligatae;
-
-/*
-  ITA: Inserisce l'arco in testa alla lista
-  ENG: inserts an edge on top of the list
-*/
-void agri_Colligationem_insero(agri_Colligationes_Colligatae * pg, agri_Colligatio colligatio);
-
-/* ITA: Cerca tra gli elementi del grafo se uno degli archi è connesso
-   ad un vertice in linea e columna. Se lo trova torna l'indice del
-   vertice, altrimenti -1
-   ENG: Looks into the graph for a vertex whose row and column attributes
-   are equal to linea and columna
-*/
-int agri_Vertex_quaero(agri_Colligationes_Colligatae g, int linea, int columna);
-
-
-
-
 void stampa(agri_Colligationes_Colligatae g)
 {
   FILE * f = fopen("grafi.csv","w+t");
@@ -385,42 +320,3 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
 }
 
 
-void agri_Colligationem_insero(agri_Colligationes_Colligatae * pg, agri_Colligatio colligatio)
-{
-
-  agri_Colligationes_Colligatae cg = *pg;
-  
-  if(colligatio.ab.index == colligatio.ad.index)
-    return;
-  
-   while(cg)
-    {
-      /* 
-	 ITA: l'arco è già nel grafo
-	 ENG: the edge is already in the graph
-      */
-      if(cg->colligatio.ab.index == colligatio.ab.index
-	 && cg->colligatio.ad.index == colligatio.ad.index)
-      	return;
-      cg = cg->next;
-    }
-  
-  agri_Membrum * aux = malloc(sizeof(agri_Membrum));
-  if(aux == 0) exit(1);
-  aux -> colligatio = colligatio;
-  aux -> next = *pg;
-  *pg = aux;
-}
-
-int agri_Vertex_quaero(agri_Colligationes_Colligatae g, int linea, int columna)
-{
-  while(g)
-    {
-      if(g->colligatio.ab.linea == linea && g->colligatio.ab.columna == columna)
-	return g->colligatio.ab.index;
-      if(g->colligatio.ad.linea == linea && g->colligatio.ad.columna == columna)
-	return g->colligatio.ad.index;
-      g = g->next;
-    }
-  return -1;
-}

@@ -1,6 +1,7 @@
 #include "libagri.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 
 
@@ -381,4 +382,117 @@ agri_Cella* agri_rivela_Cella(agri_Iter ap,versus dir){
     ap=ap->prev;
   }
   return NULL;
+}
+
+/*
+  ITA: da un grafo di archi ad un grafo di vertici
+ */
+int  agri_Muto(agri_Colligationes_Colligatae g,agri_Verticum_Dispositio* d)
+{
+  //1 detremino il numero di nodi nella lista
+  //2 alloco spazio nello heap
+  //3
+
+  //1.Trasformo prima la losta di archi in un array di archi
+  agri_Colligationes_Colligatae array;
+  int n = list_to_array(g , &array);
+
+  //Array di vertici
+  int sz = 0;
+  agri_Verticum_Dispositio v = malloc(2*n*sizeof(agri_Vertex));
+  memset(v,-1,2*n*sizeof(agri_Vertex));
+  
+  for(int i=0; i<n; i++)
+    {
+      printf("i=%d\n",i);
+      int ix_ab = (array+i)->colligatio.ab.index;
+      int ix_ad = (array+i)->colligatio.ad.index;
+      int ix = cerca_vertice(v,ix_ab,sz);
+      
+      if(ix<0)
+	{
+	  memcpy(v+sz,&((array+i)->colligatio.ab),sizeof(agri_Vertex));
+	  ix = sz;
+	  sz++;
+	}
+      int iy = cerca_vertice(v,ix_ad,sz);
+      
+      if(iy<0)
+	{
+	  memcpy(v+sz,&((array+i)->colligatio.ad),sizeof(agri_Vertex));
+	  iy = sz;
+	  sz++;
+	}
+
+      /* collego i vertici */
+      if (((char*) &((array+i)->colligatio.discessus))[0] != -1)
+	{
+	  printf("Assegno collegamenti direzionali\n");
+	  //Assegna la porta in base alla direzione
+	  (v+ix)->ianua[(array+i)->colligatio.meta]=ix_ad;
+	  (v+iy)->ianua[(array+i)->colligatio.discessus]=ix_ab;
+	}
+      else
+	{
+	  
+	  //Cerco la prima porta libera
+	  int k = 0;
+	  while((v+ix)->ianua[k]!=-1)k++;
+	  (v+ix)->ianua[k] = ix_ad;
+
+	  k = 0;
+	  while((v+iy)->ianua[k]!=-1)k++;
+	  (v+iy)->ianua[k] = ix_ab;
+	  printf("Assegno collegamento libero\n");
+	}
+      
+      
+    }
+  *d = v;
+  return sz;
+     
+
+}
+
+int cerca_vertice(agri_Verticum_Dispositio v, int index, int size)
+{
+  for(int i=0; i<size;i++)
+    {
+      if((v+i)->index==index)
+	return i;
+    }
+  
+  return -1;
+  
+}
+
+/*
+  ITA: crea un'array di vertici partendo da una lista collegata di vertici
+
+ */
+int list_to_array(agri_Colligationes_Colligatae list ,agri_Colligationes_Colligatae * array)
+{
+  agri_Colligationes_Colligatae g = list;
+  
+  int n = 0;
+  while(g)
+    { 
+      n++;
+      g = g->next;
+    }
+  if (n==0) return NULL;
+  
+  (*array) = malloc(n*sizeof(agri_Membrum));
+  g = list;
+  
+  for(int i=0; i<n;i++)
+    { 
+      memcpy(*array+i,g,sizeof(agri_Membrum));
+      
+      if(i<n+1)
+	(*array+i)->next = (*array+i+1);
+      
+      g = g->next;
+    }
+  return n;
 }
