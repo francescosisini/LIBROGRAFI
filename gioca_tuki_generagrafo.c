@@ -4,15 +4,53 @@
  */
 #include "tuki5_modello.h"
 #include "libagri.h"
+#include <math.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+
 #include <time.h>
 #include <unistd.h>
 
-#define PORTE 10
-#define NNODI 34
+
 #define SCONOSCIUTO -2
+
+char * dir(versus d)
+{
+  if(d == SX) return "SX";
+  if(d == DX) return "DX";
+  if(d == DEORSUM) return "DEORSUM";
+  if(d == SURSUM) return "SURSUM";
+  if(d == FIXO) return "FIXO";
+  return "-1";
+  
+}
+
+
+agri_Vertex agri_Vertices_Colligati[NNODI];
+double euri(int start, int goal)
+{
+  int x1,x2,y1,y2;
+  double d;
+  x1=agri_Vertices_Colligati[start].columna;
+  y1=agri_Vertices_Colligati[start].linea;
+  x2=agri_Vertices_Colligati[goal].columna;
+  y2=agri_Vertices_Colligati[goal].linea;
+  //Euristica uguale al quadrato della distanza euclidea
+  d = (x1-x2)*(x1-x2)+(y1-y2)*(y1-y2);
+  return sqrt(d);
+}
+
+int d[NNODI][NNODI];
+
+double dist(int da_nodus, int a_nodus)
+{
+  int s = da_nodus;
+  int g = a_nodus;
+  
+  return (double)d[s][g];
+
+}
 
 
 
@@ -62,6 +100,8 @@ direzione direzione_opposta(direzione d)
 
 direzione gioca_tuki(posizioni posi, oggetto **labx)
 {
+  static int mosse = 0;
+  mosse++;
   /*
     ITA: per generare il grafo impediamo a PAC-MAN di entrare nella
     casa dei fantasmi
@@ -72,7 +112,11 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
   labx[14][13]='A';
   labx[14][11]='A';
   labx[14][14]='A';
-  
+
+  /*
+    ITA: grafo di archi
+    ENG: edges graph
+   */
   static agri_Colligationes_Colligatae g = 0;
 
   /* 
@@ -170,7 +214,7 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
 	 ITA: Se siamo qui, Tuki è su un vertice
 	 ENG: If we are here Tuki position is a vertex 
       */
-      int vertice_a = agri_Vertex_quaero(g,i,j);
+      int vertice_a = agri_Verticem_quaero(g,i,j);
       if(vertice_a<0)
 	{
 	  vertice_a = vertici_contati;
@@ -178,14 +222,12 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
 	}
       agri_Colligatio colligatio;
       agri_Vertex v_a, v_da;
-      v_a.index = vertice_a;
-      v_a.linea = i;
-      v_a.columna = j;
+      v_a = agri_Verticem_creo(vertice_a,i,j);
+      v_da = agri_Verticem_creo(vertice_da,i_da,j_da);
 
-      v_da.index = vertice_da;
-      v_da.linea = i_da;
-      v_da.columna = j_da;
-      
+      //Aggiorno per la funzioen dist
+      d[vertice_da][vertice_a] = longitudo_colligatio;
+            
       colligatio.ad = v_a;
       colligatio.ab = v_da;
       colligatio.longitudo = longitudo_colligatio;
@@ -313,10 +355,33 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
 	  ld = DESTRA;
       }
 
+    if(mosse > 500)
+      {
+	FILE * fcaz=  fopen("caz.txt","wt");
+	agri_Verticum_Dispositio d;
+	int s = agri_muto(g,&d);
+	for(int i=0; i<s;i++)
+	  {
+	    fprintf(fcaz,"inx %d\t",d[i].index);
+	    for(int j=0;j<PORTE;j++)
+	      fprintf(fcaz,"conn. %d\t",(d[i].ianua[j]));
+	    fprintf(fcaz,"\n");
+	    
+	  }
+	fclose(fcaz);
+	int * pc = agri_astar(21,12,d,&dist,&euri);
+	while(*pc>=0)
+	  {
+	    printf("->%d\n",*pc);
+	    pc++;
+	  }
+	exit(0);
+      }
+    
     direzione_arrivo = ld;
     if(nodo_rilevato)
       direzione_partenza = ld;
     return ld;
+
+
 }
-
-

@@ -9,6 +9,7 @@
 #define INFINITO 9999
 #define NNODI 34
 
+
 /*___________________________________________________________
  *|
  *| I nodi del grafo del labirinto

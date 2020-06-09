@@ -7,6 +7,18 @@
 
 /*** GRAFO COME ARRAY DI VERTICI ***/
 
+
+agri_Vertex agri_Verticem_creo(int index, int linea, int columna)
+{
+  agri_Vertex v;
+  v.index =  index;
+  v.linea = linea;
+  v.columna = columna;
+  for(int i = 0;i<PORTE; i++)
+    v.ianua[i] = -1;
+  return v;
+}
+
 void agri_Colligationem_insero(agri_Colligationes_Colligatae * pg, agri_Colligatio colligatio)
 {
 
@@ -34,7 +46,7 @@ void agri_Colligationem_insero(agri_Colligationes_Colligatae * pg, agri_Colligat
   *pg = aux;
 }
 
-int agri_Vertex_quaero(agri_Colligationes_Colligatae g, int linea, int columna)
+int agri_Verticem_quaero(agri_Colligationes_Colligatae g, int linea, int columna)
 {
   while(g)
     {
@@ -114,8 +126,6 @@ agri_Via agri_astar(int start, int goal,
 
   //Nodi in valutazione per il path da start a goal
   Ordo candidati = 0;
-
-  
   
   for(int i=0;i<NNODI;i++)
     {
@@ -129,7 +139,7 @@ agri_Via agri_astar(int start, int goal,
 
   while(candidati != 0)
     {
-      printf("Pop ");
+      printf("->stcz<-\n");
       fflush(stdout);
       int corrente = Ordo_pop(&candidati);
       printf("%d\n",corrente);
@@ -165,12 +175,13 @@ agri_Via agri_astar(int start, int goal,
       for(int i=0; i<PORTE; i++)
 	{
 	  vicino[i] = agri_Vertices_Colligati[corrente].ianua[i];
+	  printf("%d => %d\n",corrente, vicino[i]);
 	}
       printf("Il nodus %d\n",corrente);
       for(int i =0; i<PORTE; i++)
         {
           int iv = vicino[i];
-	  printf("ha vicino %d\n",iv);
+	  printf("%d ha vicino %d\n",corrente,iv);
           /* ogni nodus è predisposto per 4 vicini, ma molti nodi ne hanno
              solo 3*/
           if(iv == -1)continue;
@@ -197,9 +208,13 @@ agri_Via agri_astar(int start, int goal,
       while(cd)
 	{
 	  printf("Ordo: nodus %d, %lf\n",cd->index,cd->prio);
+	  fflush(stdout);
 	  cd=cd->post;
 	}
+      printf("\\\\\\\\\\\\\\\\\\\\\\\n");
+      fflush(stdout);
     }
+  printf("ok ret\n");
   return 0;
   
 }
@@ -387,7 +402,7 @@ agri_Cella* agri_rivela_Cella(agri_Iter ap,versus dir){
 /*
   ITA: da un grafo di archi ad un grafo di vertici
  */
-int  agri_Muto(agri_Colligationes_Colligatae g,agri_Verticum_Dispositio* d)
+int  agri_muto(agri_Colligationes_Colligatae g,agri_Verticum_Dispositio* d)
 {
   //1 detremino il numero di nodi nella lista
   //2 alloco spazio nello heap
@@ -395,19 +410,18 @@ int  agri_Muto(agri_Colligationes_Colligatae g,agri_Verticum_Dispositio* d)
 
   //1.Trasformo prima la losta di archi in un array di archi
   agri_Colligationes_Colligatae array;
-  int n = list_to_array(g , &array);
+  int n = agri_dispono(g , &array);
 
   //Array di vertici
   int sz = 0;
   agri_Verticum_Dispositio v = malloc(2*n*sizeof(agri_Vertex));
-  memset(v,-1,2*n*sizeof(agri_Vertex));
   
   for(int i=0; i<n; i++)
     {
-      printf("i=%d\n",i);
+      
       int ix_ab = (array+i)->colligatio.ab.index;
       int ix_ad = (array+i)->colligatio.ad.index;
-      int ix = cerca_vertice(v,ix_ab,sz);
+      int ix = Verticem_quaero(v,ix_ab,sz);
       
       if(ix<0)
 	{
@@ -415,7 +429,7 @@ int  agri_Muto(agri_Colligationes_Colligatae g,agri_Verticum_Dispositio* d)
 	  ix = sz;
 	  sz++;
 	}
-      int iy = cerca_vertice(v,ix_ad,sz);
+      int iy = Verticem_quaero(v,ix_ad,sz);
       
       if(iy<0)
 	{
@@ -425,16 +439,18 @@ int  agri_Muto(agri_Colligationes_Colligatae g,agri_Verticum_Dispositio* d)
 	}
 
       /* collego i vertici */
-      if (((char*) &((array+i)->colligatio.discessus))[0] != -1)
+      if ((array+i)->colligatio.discessus != -1)
 	{
-	  printf("Assegno collegamenti direzionali\n");
+	  printf("CHK: %d==%d, %d==%d\n",(v+ix)->index,ix_ab,(v+iy)->index,ix_ad);
+	  printf("\n collego lo %d\t a %d\n", (v+ix)->index,  (v+iy)->index);
 	  //Assegna la porta in base alla direzione
-	  (v+ix)->ianua[(array+i)->colligatio.meta]=ix_ad;
-	  (v+iy)->ianua[(array+i)->colligatio.discessus]=ix_ab;
+	  (v+ix)->ianua[(array+i)->colligatio.discessus]=ix_ad;
+	  (v+iy)->ianua[agri_Versum_inverto((array+i)->colligatio.meta)]=ix_ab;
+	  printf("Alle porte %d:%d\n",(array+i)->colligatio.discessus,agri_Versum_inverto((array+i)->colligatio.meta));
 	}
       else
 	{
-	  
+	  printf("\n************\n");
 	  //Cerco la prima porta libera
 	  int k = 0;
 	  while((v+ix)->ianua[k]!=-1)k++;
@@ -443,18 +459,24 @@ int  agri_Muto(agri_Colligationes_Colligatae g,agri_Verticum_Dispositio* d)
 	  k = 0;
 	  while((v+iy)->ianua[k]!=-1)k++;
 	  (v+iy)->ianua[k] = ix_ab;
-	  printf("Assegno collegamento libero\n");
+	  
 	}
       
       
     }
+  qsort(v, sz, sizeof(agri_Vertex),&compar);
+  
+  
   *d = v;
   return sz;
-     
-
 }
 
-int cerca_vertice(agri_Verticum_Dispositio v, int index, int size)
+int compar(const void * a, const void * b)
+{
+  return (((agri_Vertex*)a)->index-((agri_Vertex*)b)->index);
+}
+
+int Verticem_quaero(agri_Verticum_Dispositio v, int index, int size)
 {
   for(int i=0; i<size;i++)
     {
@@ -470,7 +492,7 @@ int cerca_vertice(agri_Verticum_Dispositio v, int index, int size)
   ITA: crea un'array di vertici partendo da una lista collegata di vertici
 
  */
-int list_to_array(agri_Colligationes_Colligatae list ,agri_Colligationes_Colligatae * array)
+int agri_dispono(agri_Colligationes_Colligatae list ,agri_Colligationes_Colligatae * array)
 {
   agri_Colligationes_Colligatae g = list;
   
@@ -496,3 +518,15 @@ int list_to_array(agri_Colligationes_Colligatae list ,agri_Colligationes_Colliga
     }
   return n;
 }
+
+versus agri_Versum_inverto(versus v)
+{
+  if (v == SX) return DX;
+  if (v == DX) return SX;
+  if (v == DEORSUM) return SURSUM;
+  if (v == SURSUM) return DEORSUM;
+  if (v == FIXO) return FIXO;
+  return FIXO;
+
+}
+

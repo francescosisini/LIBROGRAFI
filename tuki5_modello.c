@@ -279,7 +279,7 @@ int mdl_genera_campo(){
 
   /** inizializza la posizione dei giocatori */
   g.tuki_y = 25;
-  g.tuki_x = 14;
+  g.tuki_x = 16;
   g.blinky_y = 17;
   g.blinky_x = 14;
   g.inky_y = 17;

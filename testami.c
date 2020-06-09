@@ -69,10 +69,10 @@ int main()
   
   
   agri_Colligationes_Colligatae array;
-  int n = list_to_array(g , &array);
+  int n = agri_dispono(g , &array);
 
   agri_Verticum_Dispositio d;
-  int s = agri_Muto(g,&d);
+  int s = agri_muto(g,&d);
   for(int i=0; i<s;i++)
     {
       printf("inx %d\n",d[i].index);

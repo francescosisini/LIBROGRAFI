@@ -65,7 +65,7 @@ void agri_Colligationem_insero
    ENG: Looks into the graph for a vertex whose row and column attributes
    are equal to linea and columna
 */
-int agri_Vertex_quaero(agri_Colligationes_Colligatae g, int linea, int columna);
+int agri_Verticem_quaero(agri_Colligationes_Colligatae g, int linea, int columna);
 
 
 
@@ -73,6 +73,8 @@ int agri_Vertex_quaero(agri_Colligationes_Colligatae g, int linea, int columna);
 /*** GRAFO COME ARRAY DI VERTICI ***/
 
 typedef agri_Vertex * agri_Verticum_Dispositio;
+
+agri_Vertex agri_Verticem_creo(int index, int linea, int columna);
 
 typedef struct nodus_coda
 {
@@ -209,8 +211,12 @@ agri_Cella* agri_rivela_Cella(agri_Iter ap,versus ricerca);
 /*
   ITA: da un grafo di archi ad un grafo di vertici
  */
-int  agri_Muto(agri_Colligationes_Colligatae ge, agri_Verticum_Dispositio *a);
+int  agri_muto(agri_Colligationes_Colligatae ge, agri_Verticum_Dispositio *a);
 
-int list_to_array(agri_Colligationes_Colligatae list ,agri_Colligationes_Colligatae * array);
+int agri_dispono(agri_Colligationes_Colligatae list ,agri_Colligationes_Colligatae * array);
 
-int cerca_vertice(agri_Verticum_Dispositio v, int index, int size);
+int Verticem_quaero(agri_Verticum_Dispositio v, int index, int amplitudo);
+
+versus agri_Versum_inverto(versus v);
+
+int compar(const void * a, const void * b);
