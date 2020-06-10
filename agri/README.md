@@ -185,7 +185,12 @@ The library components
 ##### typedef enum genus rei_genus
 - <b>rei_genus</b>: type of object
 
-
+##### typedef struct {
+#####   int linea;
+#####   int columna;
+#####   int index;
+#####   int ianua[PORTE];
+##### } agri_Vertex;
 
 
 
