@@ -166,4 +166,12 @@ declension.
   Re         Rebus
 </pre>
 
+The library components
+----------------------
+## Types
+##### typedef enum  {SX,DEORSUM,DX,SURSUM,FIXO} versus
+versus,us, decl. 4: direction
+sx stands for sinistra,ae, decl. 1: left
+deorsum, adverb: down
+dx stands for dextra,ae, decl. 1: right
 
