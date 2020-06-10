@@ -169,7 +169,7 @@ declension.
 The library components
 ----------------------
 ### Types
-##### typedef enum  {SX,DEORSUM,DX,SURSUM,FIXUS} versus
+`typedef enum  {SX,DEORSUM,DX,SURSUM,FIXUS} versus`
 - <b>versus,us</b> decl. 4: direction
 - <b>sx</b> stands for sinistra,ae decl. 1: left
 - <b>deorsum</b> adverb: down
@@ -177,7 +177,7 @@ The library components
 - <b>sursum</b> adverb: up
 - <b>fuxus</b> adjective: still
 
-##### enum genus {MURUS,ALIUS}
+`enum genus {MURUS,ALIUS}`
 - <b>genus, generis</b> decl. 3: type
 - <b>murus, i</b> decl. 2: wall
 - <b>alius</b> adj: something else
@@ -192,8 +192,15 @@ The library components
 - <b>index, indicis</b> decl. 3: index
 - <b>ianua, ae</b> decl. 1: door
 
-
-
+##### typedef struct colligatio { agri_Vertex ab, ad; versus discessus, meta; int longitudo; } agri_Colligatio;
+- <b>colligatio, colligationis</b> decl. 3: edge
+- <b></b>
+- <b></b>
+- <b></b>
+- <b></b>
+- <b></b>
+- <b></b>
+- <b></b>
 
 - <b></b>
 - <b></b>
