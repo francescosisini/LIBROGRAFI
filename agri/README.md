@@ -1,7 +1,7 @@
-# ReLe
-Libreria didattica per la creazione, addestramento e test di reti neurali fino a tre strati in linguaggio C
+# Agri
+Libreria didattica per la creazione e l'elaborazione di grafi in linguaggio C
 
-## Caratteristiche di ReLe
+## Caratteristiche di Agri
 - Rete neurale mulistrato (completamente connessa) in linguaggio C
 - Addestramento con Backpropagation
 - Facile da usare: bastano 3 chiamate per creare, addestare e provare una rete
@@ -24,5 +24,7 @@ Lanciare `make`
 
 ## Esempi d'uso
 Per testare la libreria e provare ad usarla nelle proprie applicazioni guardare gli esempi della cartella [esempi](esempi)
+
+
 
 
