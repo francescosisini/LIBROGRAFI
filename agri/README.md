@@ -2,28 +2,25 @@
 Libreria didattica per la creazione e l'elaborazione di grafi in linguaggio C
 
 ## Caratteristiche di Agri
-- Rete neurale mulistrato (completamente connessa) in linguaggio C
-- Addestramento con Backpropagation
-- Facile da usare: bastano 3 chiamate per creare, addestare e provare una rete
-- Possibilità di salvare la rete in formato CSV (Tabulazioni al posto delle virgole TSV)
-- Caricare una rete da file con una sola chiamata
-- Anlizzare la struttra delle connessioni con Calc (o Excel) o con un editor di testo
-- Modificare i pesi delle connessioni manualmente per vedere gli effetti
-- Valutare l'errore quadratico della rete per sapere quando completere l'addestramento
+- Grafi e algoritmi in linguaggio C
+- Rappresentazione del grafo come array di vertici
+- Rappresentazione del grafo come lista di archi
+- Passaggio rapido tra le rappresentazioni
+- Facile da usare
+- In lingua latina, per tutte le nazionalità
+
 
 - Multipiattaforma
 
 ## Installazione
 Clonare il repository
 
-`git clone https://github.com/francescosisini/ReLe.git`
+`git clone https://github.com/francescosisini/LIBROGRAFI/agri.git`
 
-Entrare nella directory  `ReLe` dalla directory di clone: `cd ReLe`
+Entrare nella directory  `agri` dalla directory di clone: `cd agri`
 
 Lanciare `make`
 
-## Esempi d'uso
-Per testare la libreria e provare ad usarla nelle proprie applicazioni guardare gli esempi della cartella [esempi](esempi)
 
 
 Latin fundamentals
