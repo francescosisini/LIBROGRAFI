@@ -105,56 +105,60 @@ declension.
 #### First declension
 
   Singular   Plural
-  ---------- ----------
+
   Cella      Cellae<br>
-  Cellae     Cellarum
-  Cellae     Cellis
-  Cellam     Cellas
-  Cella      Cellae
+  Cellae     Cellarum<br>
+  Cellae     Cellis<br>
+  Cellam     Cellas<br>
+  Cella      Cellae<br>
   Cella      Cellis
+  ---------- ---------
 
 #### Second declension
 
   Singular   Plural
-  ---------- ---------
-  Nodus      Nodi
-  Nodi       Nodorum
-  Nodo       Nodis
-  Nodum      Nodos
-  Node       Nodi
+
+  Nodus      Nodi<br>
+  Nodi       Nodorum<br>
+  Nodo       Nodis<br>
+  Nodum      Nodos<br>
+  Node       Nodi<br>
   Nodi       Nodis
+  ---------- ---------
 
 #### Third declension
 
   Singular        Plural
-  --------------- -----------------
-  Colligatio      Colligationes
-  Colligationis   Colligationum
-  Colligationi    Colligationibus
-  Colligationem   Colligationes
-  Colligatio      Colligationes
+
+  Colligatio      Colligationes<br>
+  Colligationis   Colligationum<br>
+  Colligationi    Colligationibus<br>
+  Colligationem   Colligationes<br>
+  Colligatio      Colligationes<br>
   Colligatione    Colligationibus
+  ---------- ---------
 
 #### Fourth declension
 
-  Singular   Plural
-  ---------- ---------
-  Manus      Manus
-  Manus      Manuum
-  Manui      Manibus
-  Manum      Manus
-  Manus      Manus
+  Singular   Plural<br>
+  
+  Manus      Manus<br>
+  Manus      Manuum<br>
+  Manui      Manibus<br>
+  Manum      Manus<br>
+  Manus      Manus<br>
   Manu       Manibus
+  ---------- ---------
 
 #### Fifth declension
 
   Singular   Plural
-  ---------- --------
-  Res        Res
-  Rei        Rerum
-  Rei        Rebus
-  Rem        Res
-  Res        Res
+
+  Res        Res<br>
+  Rei        Rerum<br>
+  Rei        Rebus<br>
+  Rem        Res<br>
+  Res        Res<br>
   Re         Rebus
 
 
