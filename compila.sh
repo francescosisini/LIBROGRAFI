@@ -1,1 +1,1 @@
-gcc -o tuki5.game -DFUGA=$2  gioca_fantasmi.c $1 tuki5_controllo.c tuki5_modello.c tuki5_visore.c libagri.c -lm 
+gcc -o tuki5.game -DFUGA=$2  ghost_team/gioca_fantasmi.c $1 mvc/tuki5_controllo.c mvc/tuki5_modello.c mvc/tuki5_visore.c agri/lib/src/libagri.c -Iagri/lib/include -Imvc  -lm 

@@ -1,0 +1,1 @@
+gcc -o As test_star.c agri/lib/libagri.o  -Iagri/lib/include -lm
