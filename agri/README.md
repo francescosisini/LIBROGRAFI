@@ -169,9 +169,26 @@ declension.
 The library components
 ----------------------
 ## Types
-##### typedef enum  {SX,DEORSUM,DX,SURSUM,FIXO} versus
+##### typedef enum  {SX,DEORSUM,DX,SURSUM,FIXUS} versus
 - <b>versus,us</b> decl. 4: direction
-- sx stands for sinistra,ae decl. 1: left
-- deorsum adverb: down
-- dx stands for dextra,ae decl. 1: right
+- <b>sx</b> stands for sinistra,ae decl. 1: left
+- <b>deorsum</b> adverb: down
+- <b>dx</b> stands for dextra,ae decl. 1: right
+- <b>sursum</b> adverb: up
+- <b>fuxus</b> adjective: still
+
+##### enum genus {MURUS,ALIUS}
+- <b>genus, generis</b> decl. 3: type
+- <b>murus, i</b> decl. 2: wall
+- <b>alius</b> adj: something else
+
+##### typedef enum genus rei_genus
+- <b>rei_genus</b>: type of object
+
+
+
+
+
+- <b></b>
+- <b></b>
 
