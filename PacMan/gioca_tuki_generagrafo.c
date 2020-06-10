@@ -357,9 +357,10 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
 
     if(mosse > 500)
       {
-	FILE * fcaz=  fopen("caz.txt","wt");
+	FILE * fcaz=  fopen("vertici.txt","wt");
 	agri_Verticum_Dispositio d;
 	int s = agri_muto(g,&d);
+	agri_libero(g);
 	for(int i=0; i<s;i++)
 	  {
 	    fprintf(fcaz,"inx %d\t",d[i].index);

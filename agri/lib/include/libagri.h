@@ -67,8 +67,7 @@ void agri_Colligationem_insero
 */
 int agri_Verticem_quaero(agri_Colligationes_Colligatae g, int linea, int columna);
 
-
-
+void agri_libero(agri_Colligationes_Colligatae g);
 
 /*** GRAFO COME ARRAY DI VERTICI ***/
 

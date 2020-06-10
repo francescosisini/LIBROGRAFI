@@ -59,6 +59,17 @@ int agri_Verticem_quaero(agri_Colligationes_Colligatae g, int linea, int columna
   return -1;
 }
 
+void agri_libero(agri_Colligationes_Colligatae g)
+{
+  agri_Colligationes_Colligatae g_t;
+  while(g)
+    {
+      g_t = g;
+      g = g->next;
+      free(g);
+      
+    }
+}
 
 void Ordo_amoveo_nodus(Ordo * l, int index)
 {
