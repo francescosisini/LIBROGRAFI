@@ -116,51 +116,54 @@ declension.
   ---------- ---------
 
 #### Second declension
-
+<pre>
   Singular   Plural
 
-  Nodus      Nodi<br>
-  Nodi       Nodorum<br>
-  Nodo       Nodis<br>
-  Nodum      Nodos<br>
-  Node       Nodi<br>
+  Nodus      Nodi
+  Nodi       Nodorum
+  Nodo       Nodis
+  Nodum      Nodos
+  Node       Nodi
   Nodi       Nodis
+</pre>
   ---------- ---------
 
 #### Third declension
-
+<pre>
   Singular        Plural
 
-  Colligatio      Colligationes<br>
-  Colligationis   Colligationum<br>
-  Colligationi    Colligationibus<br>
-  Colligationem   Colligationes<br>
-  Colligatio      Colligationes<br>
+  Colligatio      Colligationes
+  Colligationis   Colligationum
+  Colligationi    Colligationibus
+  Colligationem   Colligationes
+  Colligatio      Colligationes
   Colligatione    Colligationibus
+</pre>
   ---------- ---------
 
 #### Fourth declension
-
-  Singular   Plural<br>
+<pre>
+  Singular   Plural
   
-  Manus      Manus<br>
-  Manus      Manuum<br>
-  Manui      Manibus<br>
-  Manum      Manus<br>
-  Manus      Manus<br>
+  Manus      Manus
+  Manus      Manuum
+  Manui      Manibus
+  Manum      Manus
+  Manus      Manus
   Manu       Manibus
+</pre>
   ---------- ---------
 
 #### Fifth declension
-
+<pre>
   Singular   Plural
 
-  Res        Res<br>
-  Rei        Rerum<br>
-  Rei        Rebus<br>
-  Rem        Res<br>
-  Res        Res<br>
+  Res        Res
+  Rei        Rerum
+  Rei        Rebus
+  Rem        Res
+  Res        Res
   Re         Rebus
-
+</pre>
 
 
