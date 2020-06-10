@@ -106,7 +106,7 @@ declension.
 
   Singular   Plural
   ---------- ----------
-  Cella      Cellae
+  Cella      Cellae<br>
   Cellae     Cellarum
   Cellae     Cellis
   Cellam     Cellas
