@@ -168,7 +168,7 @@ declension.
 
 The library components
 ----------------------
-## Types
+### Types
 ##### typedef enum  {SX,DEORSUM,DX,SURSUM,FIXUS} versus
 - <b>versus,us</b> decl. 4: direction
 - <b>sx</b> stands for sinistra,ae decl. 1: left
