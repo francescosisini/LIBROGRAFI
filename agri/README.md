@@ -103,15 +103,16 @@ characterizes the genitive of each word that belongs to the first
 declension.
 
 #### First declension
-
+<pre>
   Singular   Plural
 
-  Cella      Cellae<br>
-  Cellae     Cellarum<br>
-  Cellae     Cellis<br>
-  Cellam     Cellas<br>
-  Cella      Cellae<br>
+  Cella      Cellae
+  Cellae     Cellarum
+  Cellae     Cellis
+  Cellam     Cellas
+  Cella      Cellae
   Cella      Cellis
+</pre>
   ---------- ---------
 
 #### Second declension
