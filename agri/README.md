@@ -15,7 +15,7 @@ Libreria didattica per la creazione e l'elaborazione di grafi in linguaggio C
 ## Installazione
 Clonare il repository
 
-`git clone https://github.com/francescosisini/LIBROGRAFI/agri.git`
+`git clone https://github.com/francescosisini/LIBROGRAFI.git`
 
 Entrare nella directory  `agri` dalla directory di clone: `cd agri`
 
