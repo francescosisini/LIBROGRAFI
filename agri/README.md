@@ -183,14 +183,14 @@ The library components
 - <b>rei_genus</b>: type of object
 
 ##### typedef struct { int linea; int columna; int index; int ianua[PORTE]; } agri_Vertex;
-- <b>vertex, vertices</b> decl. 3: vertex
+- <b>vertex</b> decl. 3: vertex
 - <b>linea</b> decl. 1: row
 - <b>columna</b> decl. 1: column
 - <b>index</b> decl. 3: index
 - <b>ianua</b> decl. 1: door
 
 ##### typedef struct colligatio { agri_Vertex ab, ad; versus discessus, meta; int longitudo; } agri_Colligatio;
-- <b>colligatio, colligationis</b> decl. 3: edge
+- <b>colligatio</b> decl. 3: edge
 - <b></b>
 - <b></b>
 - <b></b>
