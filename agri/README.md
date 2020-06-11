@@ -167,7 +167,7 @@ The library components
 ----------------------
 ### Types
 `typedef enum  {SX,DEORSUM,DX,SURSUM,FIXUS} versus`
-- <b>versus,us</b> decl. 4: direction
+- <b>versus</b> decl. 4: direction
 - <b>sx</b> stands for sinistra,ae decl. 1: left
 - <b>deorsum</b> adverb: down
 - <b>dx</b> stands for dextra,ae decl. 1: right
@@ -175,8 +175,8 @@ The library components
 - <b>fuxus</b> adjective: still
 
 `enum genus {MURUS,ALIUS}`
-- <b>genus, generis</b> decl. 3: type
-- <b>murus, i</b> decl. 2: wall
+- <b>genus</b> decl. 3: type
+- <b>murus</b> decl. 2: wall
 - <b>alius</b> adj: something else
 
 ##### typedef enum genus rei_genus
@@ -184,10 +184,10 @@ The library components
 
 ##### typedef struct { int linea; int columna; int index; int ianua[PORTE]; } agri_Vertex;
 - <b>vertex, vertices</b> decl. 3: vertex
-- <b>linea,ae</b> decl. 1: row
-- <b>columna, ae</b> decl. 1: column
-- <b>index, indicis</b> decl. 3: index
-- <b>ianua, ae</b> decl. 1: door
+- <b>linea</b> decl. 1: row
+- <b>columna</b> decl. 1: column
+- <b>index</b> decl. 3: index
+- <b>ianua</b> decl. 1: door
 
 ##### typedef struct colligatio { agri_Vertex ab, ad; versus discessus, meta; int longitudo; } agri_Colligatio;
 - <b>colligatio, colligationis</b> decl. 3: edge
