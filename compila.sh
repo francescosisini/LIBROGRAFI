@@ -8,7 +8,7 @@ if [ "$#" -ne 3 ]; then
     exit
 fi
 
-gcc -o tuki5.game -DFUGA=$2 -DDELAY=$3 \
+gcc -pedantic -std=c99 -o tuki5.game -DFUGA=$2 -DDELAY=$3 \
 $1 \
 ghost_team/gioca_fantasmi.c \
 mvc/tuki5_controllo.c \
