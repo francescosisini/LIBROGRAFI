@@ -165,7 +165,6 @@ declension.
 
 The library components
 ----------------------
-### Types
 `typedef enum  {SX,DEORSUM,DX,SURSUM,FIXUS} versus`
 - <b>versus</b> decl. 4: direction
 - <b>sx</b> stands for sinistra,ae decl. 1: left
@@ -179,25 +178,38 @@ The library components
 - <b>murus</b> decl. 2: wall
 - <b>alius</b> adj: something else
 
-##### typedef enum genus rei_genus
+
+`typedef enum genus rei_genus`
 - <b>rei_genus</b>: type of object
 
-##### typedef struct { int linea; int columna; int index; int ianua[PORTE]; } agri_Vertex;
+### Graph as a list of edges
+
+`typedef struct { int linea; int columna; int index; int ianua[PORTE]; } agri_Vertex;`
 - <b>vertex</b> decl. 3: vertex
 - <b>linea</b> decl. 1: row
 - <b>columna</b> decl. 1: column
 - <b>index</b> decl. 3: index
 - <b>ianua</b> decl. 1: door
 
-##### typedef struct colligatio { agri_Vertex ab, ad; versus discessus, meta; int longitudo; } agri_Colligatio;
+`typedef struct colligatio { agri_Vertex ab, ad; versus discessus, meta; int longitudo; } agri_Colligatio;`
 - <b>colligatio</b> decl. 3: edge
-- <b></b>
-- <b></b>
-- <b></b>
-- <b></b>
-- <b></b>
-- <b></b>
-- <b></b>
+- <b>discessus</b> decl. 4: starting point
+- <b>meta</b> decl. 1: destination 
+- <b>longitudo</b> decl.3: length
+
+`typedef struct membrum { agri_Colligatio colligatio; struct  membrum *  next; } agri_Membrum;`
+- <b>membrum</b> decl. 2: element 
+
+`typedef agri_Membrum * agri_Colligationes_Colligatae;`
+- <b>colligationes colligatae</b>: connected edges
+
+`void agri_Colligationem_insero`
+- <b>colligationem insero</b>: insert edge
+
+`int agri_Verticem_quaero`
+- <b>verticem quaero</b>: look for vertex
+
+### Graph as a list of vertices
 
 - <b></b>
 - <b></b>
