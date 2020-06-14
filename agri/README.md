@@ -211,6 +211,31 @@ The library components
 
 ### Graph as a list of vertices
 
+`typedef agri_Vertex * agri_Verticum_Dispositio;`
+- <b>verticum dispositio</b>: array of vertices
+
+`agri_Vertex agri_Verticem_creo(int index, int linea, int columna);`
+- <b>verticem creo</b>: create a vertex
+
+`typedef struct nodus_coda { int index; double prio; struct nodus_coda * post;
+  
+} Nodus;`
+- <b></b>
+- <b></b>
+- <b></b>
+- <b></b>
+- <b></b>
+- <b></b>
+
+- <b></b>
+- <b></b>
+- <b></b>
+- <b></b>
+- <b></b>
+- <b></b>
+- <b></b>
+- <b></b>
+
 - <b></b>
 - <b></b>
 - <b></b>
