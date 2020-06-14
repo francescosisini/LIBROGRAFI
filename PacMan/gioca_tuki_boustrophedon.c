@@ -24,7 +24,7 @@ direzione gioca_tuki(posizioni posi, oggetto **labx){
   //Modifica il labirinto per non imboccare il tunnel 
   labx[16][2]='A';
   labx[16][23]='A';
-   labx[14][13]='A';
+  labx[14][13]='A';
   labx[14][14]='A';
   
   static int init=0;

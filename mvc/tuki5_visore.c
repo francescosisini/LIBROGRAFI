@@ -89,7 +89,7 @@ void abilita_modo_raw() {
 
 void view_init()
 {
-  abilita_modo_raw();
+  //abilita_modo_raw();
   leggi_dimensioni_terminale(&rows, &cols);
   setlocale(LC_CTYPE, "");
 }
