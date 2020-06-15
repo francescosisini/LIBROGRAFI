@@ -354,9 +354,35 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
 	if(sv>=5)
 	  ld = DESTRA;
       }
-       
+
+    if(mosse > 500)
+      {
+	FILE * fcaz=  fopen("vertici.txt","wt");
+	agri_Verticum_Dispositio d;
+	int s = agri_muto(g,&d);
+	agri_libero(g);
+	for(int i=0; i<s;i++)
+	  {
+	    fprintf(fcaz,"inx %d\t",d[i].index);
+	    for(int j=0;j<PORTE;j++)
+	      fprintf(fcaz,"conn. %d\t",(d[i].ianua[j]));
+	    fprintf(fcaz,"\n");
+	    
+	  }
+	fclose(fcaz);
+	int * pc = agri_astar(21,12,d,&dist,&euri);
+	while(*pc>=0)
+	  {
+	    printf("->%d\n",*pc);
+	    pc++;
+	  }
+	exit(0);
+      }
+    
     direzione_arrivo = ld;
     if(nodo_rilevato)
       direzione_partenza = ld;
     return ld;
+
+
 }
