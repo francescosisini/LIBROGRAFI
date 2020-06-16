@@ -14,7 +14,10 @@
 
 
 #define SCONOSCIUTO -2
+<<<<<<< HEAD
 #define GUINZAGLIO 10
+=======
+>>>>>>> cbadcd0f9b4ec37052228f6665a58c71b40c9193
 
 char * dir(versus d)
 {
@@ -200,6 +203,7 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
   oggetto b = vicino[3];
 
 
+<<<<<<< HEAD
 /*
     ITA: cerca un fantasma nelle celle vicine
 
@@ -240,6 +244,8 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
   
 
 
+=======
+>>>>>>> cbadcd0f9b4ec37052228f6665a58c71b40c9193
   /*  
       ITA: Conta il numero di vicini accessibili
       ENG: Counts the number of accessible neighbors
@@ -320,6 +326,7 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
   /*
     ITA: Stabilsco il modo di gioco
   */
+<<<<<<< HEAD
   if(nodi_percorsi == GUINZAGLIO)
     modo_gioco = DECIDI;
 
@@ -371,6 +378,12 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
 	direzione_partenza = ld;
       return ld;
     }
+=======
+  if(nodi_percorsi == 3)
+    modo_gioco = DECIDI;
+  
+  
+>>>>>>> cbadcd0f9b4ec37052228f6665a58c71b40c9193
   
   if(modo_gioco == ESPLORA)
     {
@@ -497,7 +510,10 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
 	      nodi_percorsi = 0;
 	      modo_gioco = ESPLORA;
 	      free(copia);
+<<<<<<< HEAD
 	      copia = 0;
+=======
+>>>>>>> cbadcd0f9b4ec37052228f6665a58c71b40c9193
 	      return FERMO;
 	    }
 	  percorso_fuga++;
@@ -522,6 +538,10 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
 	    {
 	      ld = GIU;
 	    }
+<<<<<<< HEAD
+=======
+	  
+>>>>>>> cbadcd0f9b4ec37052228f6665a58c71b40c9193
 	}
       //SINISTRA
       if(ld == SINISTRA && oggetto_accessibile(s))
