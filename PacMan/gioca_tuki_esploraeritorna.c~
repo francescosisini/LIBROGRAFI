@@ -41,14 +41,14 @@ double euri(int start, int goal)
   return sqrt(d);
 }
 
-int d[NNODI][NNODI];
+int distanze[NNODI][NNODI];
 
 double dist(int da_nodus, int a_nodus)
 {
   int s = da_nodus;
   int g = a_nodus;
   
-  return (double)d[s][g];
+  return (double)distanze[s][g];
 
 }
 
@@ -98,8 +98,15 @@ direzione direzione_opposta(direzione d)
 }
 */
 
+typedef enum {ESPLORA, DECIDI, RITORNA} Modo;
+
 direzione gioca_tuki(posizioni posi, oggetto **labx)
 {
+  static agri_Verticum_Dispositio vert_disp;
+  static int nodi_percorsi = 0;
+  static int * percorso_fuga = 0;
+  static int * copia;
+  static Modo modo_gioco = ESPLORA;
   static int mosse = 0;
   mosse++;
   /*
@@ -185,6 +192,13 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
   vicino[2] = labx[i-1][j]; //su - up
   vicino[3] = labx[i+1][j]; //giu - down
 
+  /* Variabile ausiliarie con nomi più comodi */
+  oggetto s = vicino[0];
+  oggetto d = vicino[1];
+  oggetto a = vicino[2];
+  oggetto b = vicino[3];
+
+
   /*  
       ITA: Conta il numero di vicini accessibili
       ENG: Counts the number of accessible neighbors
@@ -210,6 +224,7 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
     }
   else if(nd>2)
     {
+      
       /* 
 	 ITA: Se siamo qui, Tuki è su un vertice
 	 ENG: If we are here Tuki position is a vertex 
@@ -219,6 +234,7 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
 	{
 	  vertice_a = vertici_contati;
 	  vertici_contati++;
+	  nodi_percorsi++;
 	}
       agri_Colligatio colligatio;
       agri_Vertex v_a, v_da;
@@ -226,7 +242,7 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
       v_da = agri_Verticem_creo(vertice_da,i_da,j_da);
 
       //Aggiorno per la funzioen dist
-      d[vertice_da][vertice_a] = longitudo_colligatio;
+      distanze[vertice_da][vertice_a] = longitudo_colligatio;
             
       colligatio.ad = v_a;
       colligatio.ab = v_da;
@@ -242,18 +258,11 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
       j_da = j;
       
       stampa(g);
-      
     }
 
-  /* Variabile ausiliarie con nomi più comodi */
-  oggetto s = vicino[0];
-  oggetto d = vicino[1];
-  oggetto a = vicino[2];
-  oggetto b = vicino[3];
-
-   /* ITA: Gestione ostacoli
-      ENG: dealing with obstacles
-    */
+  /* ITA: Gestione ostacoli
+     ENG: dealing with obstacles
+  */
   bool disponibile = false;
   
   /* ITA: Questo bool garantisce che per ogni 
@@ -267,96 +276,198 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
   */
   bool aleatorio = false;
   
-  /* 
-     ITA: se la cella successiva nella direzione corrente non è disponibile,
-     ne viene scelta un'altra e viene eseguita una nuova iterazione
-     ENG: if the next cell in the current direction is not available, it chooses
-     another one and new iteration is executed
+  /*
+    ITA: Stabilsco il modo di gioco
   */
-  while(!disponibile)
+  if(nodi_percorsi == 3)
+    modo_gioco = DECIDI;
+  
+  
+  
+  if(modo_gioco == ESPLORA)
     {
-      if(!oggetto_accessibile(s) && ld == SINISTRA)
-        {
-          ld = rand()%2;
-          if(ld==0)
-            ld = SU;
-          else
-            ld = GIU;
-          aleatorio = true;
-        }
-      else
-        
-        if(!oggetto_accessibile(d) && ld == DESTRA)
-          {
+      /* 
+	 ITA: se la cella successiva nella direzione corrente non è disponibile,
+	 ne viene scelta un'altra e viene eseguita una nuova iterazione
+	 ENG: if the next cell in the current direction is not available, it chooses
+	 another one and new iteration is executed
+      */
+      while(!disponibile)
+	{
+	  if(!oggetto_accessibile(s) && ld == SINISTRA)
+	    {
+	      ld = rand()%2;
+	      if(ld==0)
+		ld = SU;
+	      else
+		ld = GIU;
+	      aleatorio = true;
+	    }
+	  else
 	    
-            ld = rand()%2;
-            if(ld==0) ld = SU;
-            else
-              ld = GIU;
-            aleatorio = true;
-          }
-        else
-	  if(!oggetto_accessibile(a) && ld == SU)
-            {
-              ld = rand()%2;
-              if(ld==0) ld = SINISTRA;
-              else
-                ld = DESTRA;
-              aleatorio = true;
-            }
-          else
-            if(!oggetto_accessibile(b) && ld == GIU)
+	    if(!oggetto_accessibile(d) && ld == DESTRA)
 	      {
-                ld = rand()%2;
-                if(ld==0) ld = SINISTRA;
-                else
-                  ld = DESTRA;
-                aleatorio = true;
+		
+		ld = rand()%2;
+		if(ld==0) ld = SU;
+		else
+		  ld = GIU;
+		aleatorio = true;
 	      }
-            else
-              disponibile = true;
+	    else
+	      if(!oggetto_accessibile(a) && ld == SU)
+		{
+		  ld = rand()%2;
+		  if(ld==0) ld = SINISTRA;
+		  else
+		    ld = DESTRA;
+		  aleatorio = true;
+		}
+	      else
+		if(!oggetto_accessibile(b) && ld == GIU)
+		  {
+		    ld = rand()%2;
+		    if(ld==0) ld = SINISTRA;
+		    else
+		      ld = DESTRA;
+		    aleatorio = true;
+		  }
+		else
+		  disponibile = true;
+	}
+      
+      
+      direzione_arrivo = ld;
+      if(nodo_rilevato)
+	direzione_partenza = ld;
+      
+      if(aleatorio) return ld;
+      
+      
+      /*
+	ITA: Se la direzione non è aleatoria la cambiamo qui
+	ENG: If a random step has not been taken during the
+	direction decision, we do it here
+      */
+      if(oggetto_accessibile(a) && ld !=SU && ld!=GIU)
+	{
+	  int sv = rand()%10;
+	  if(sv>=5)
+	    ld = SU;
+	}
+      if(oggetto_accessibile(b) && ld !=GIU && ld!=SU)
+	{
+	  int sv = rand()%10;
+	  if(sv>=5)
+	    ld = GIU;
+	}
+      if(oggetto_accessibile(s) && ld !=SINISTRA && ld!=DESTRA)
+	{
+	  int sv = rand()%10;
+	  if(sv>=5)
+	    ld = SINISTRA;
+	}
+      if(oggetto_accessibile(d) && ld !=DESTRA && ld!=SINISTRA)
+	{
+	  int sv = rand()%10;
+	  if(sv>=5)
+	    ld = DESTRA;
+	}
+      direzione_arrivo = ld;
+
+      if(nodo_rilevato)
+	direzione_partenza = ld;
+      
+      return ld;
     }
-    
-    
-    direzione_arrivo = ld;
-    if(nodo_rilevato)
-      direzione_partenza = ld;
-    
-    if(aleatorio) return ld;
-    
-        
-    /*
-      ITA: Se la direzione non è aleatoria la cambiamo qui
-      ENG: If a random step has not been taken during the
-      direction decision, we do it here
-    */
-    if(oggetto_accessibile(a) && ld !=SU && ld!=GIU)
-      {
-	int sv = rand()%10;
-	if(sv>=5)
-	  ld = SU;
-      }
-    if(oggetto_accessibile(b) && ld !=GIU && ld!=SU)
-      {
-	int sv = rand()%10;
-	if(sv>=5)
-	  ld = GIU;
-      }
-    if(oggetto_accessibile(s) && ld !=SINISTRA && ld!=DESTRA)
-      {
-	int sv = rand()%10;
-	if(sv>=5)
-	  ld = SINISTRA;
-      }
-    if(oggetto_accessibile(d) && ld !=DESTRA && ld!=SINISTRA)
-      {
-	int sv = rand()%10;
-	if(sv>=5)
-	  ld = DESTRA;
-      }
-       
-    direzione_arrivo = ld;
-    if(nodo_rilevato)
-      direzione_partenza = ld;
-    return ld;
+  else if(modo_gioco == DECIDI)
+    {
+      nodi_percorsi = 0;
+      int s = agri_muto(g,&vert_disp);
+      printf("##Torno da %d a %d\n",vertice_da,0);
+      percorso_fuga = agri_astar(vertice_da,0,vert_disp,&dist,&euri);
+      if(percorso_fuga == 0)
+	{
+	  modo_gioco = ESPLORA;
+	  ld = FERMO;
+	  return ld;
+	}
+      copia = percorso_fuga;
+      modo_gioco = RITORNA;
+    }
+  if(modo_gioco == RITORNA)
+    {
+      if(nodo_rilevato == true)
+	{
+	  /*
+	    ITA: pesco il prossimo nodo
+	  */
+	  int indice_nodo = *percorso_fuga;
+	  if(indice_nodo == -1)
+	    {
+	      printf("***Completato il cammino\n");
+	      nodi_percorsi = 0;
+	      modo_gioco = ESPLORA;
+	      free(copia);
+	      return FERMO;
+	    }
+	  percorso_fuga++;
+	  /*
+	    ITA: Cerco il percorso per il nodo indice_nodo
+	    antro in d[vertice_da] e controllo le sue porte
+	    finché non trovo quella che collega a indice_nodo
+	  */
+	  if(vert_disp[vertice_da].ianua[SINISTRA] == indice_nodo)
+	    {
+	      ld = SINISTRA;
+	    }
+	  if(vert_disp[vertice_da].ianua[DESTRA] == indice_nodo)
+	    {
+	      ld = DESTRA;
+	    }
+	  if(vert_disp[vertice_da].ianua[SU] == indice_nodo)
+	    {
+	      ld = SU;
+	    }
+	  if(vert_disp[vertice_da].ianua[GIU] == indice_nodo)
+	    {
+	      ld = GIU;
+	    }
+	  
+	}
+      //SINISTRA
+      if(ld == SINISTRA && oggetto_accessibile(s))
+	return ld;
+      if(ld == SINISTRA && oggetto_accessibile(a))
+	return ld = SU;
+      if(ld == SINISTRA && oggetto_accessibile(b))
+	return ld = GIU;
+
+       //DESTRA
+      if(ld == DESTRA && oggetto_accessibile(d))
+	return ld;
+      if(ld == DESTRA && oggetto_accessibile(a))
+	return ld = SU;
+      if(ld == DESTRA && oggetto_accessibile(b))
+	return ld = GIU;
+
+      //SU
+      if(ld == SU && oggetto_accessibile(a))
+	return ld;
+      if(ld == SU && oggetto_accessibile(s))
+	return ld = SINISTRA;
+      if(ld == SU && oggetto_accessibile(d))
+	return ld = DESTRA;
+
+      //GIU
+      if(ld == GIU && oggetto_accessibile(b))
+	return ld;
+      if(ld == GIU && oggetto_accessibile(s))
+	return ld = SINISTRA;
+      if(ld == GIU && oggetto_accessibile(d))
+	return ld = DESTRA;
+      
+      
+    }
+
 }

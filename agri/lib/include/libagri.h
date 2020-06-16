@@ -219,3 +219,5 @@ int Verticem_quaero(agri_Verticum_Dispositio v, int index, int amplitudo);
 versus agri_Versum_inverto(versus v);
 
 int compar(const void * a, const void * b);
+
+
