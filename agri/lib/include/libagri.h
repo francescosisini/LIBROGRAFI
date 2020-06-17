@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define NNODI 34
-#define PORTE 10
+#define NNODI 44
+#define PORTE 4
 #define INFINITO 9999
 
 

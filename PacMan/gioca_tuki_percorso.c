@@ -16,10 +16,11 @@
 #define SCONOSCIUTO -2
 #define GUINZAGLIO 10
 
+
 /*
   ITA: array di vertici del grafo completo del Pac-Man
  */
-static agri_Vertex grafo[34];
+static agri_Vertex grafo[NNODI];
 
 /*
   ITA: array della sequnza dei vertici più efficiente
@@ -52,17 +53,6 @@ double euri(int start, int goal)
   return sqrt(d);
 }
 
-int distanze[NNODI][NNODI];
-
-double dist(int da_nodus, int a_nodus)
-{
-  int s = da_nodus;
-  int g = a_nodus;
-  
-  return (double)distanze[s][g];
-
-}
-
 /* 
    ITA: Controlla se l'oggetto nella cella non è un muro
    ENG: chcks if the object into the cell is or not a wall
@@ -74,18 +64,6 @@ bool oggetto_accessibile(oggetto s)
   else
     return false;
 }
-/*
-direzione direzione_opposta(direzione d)
-{
-  if(d == SINISTRA) return DESTRA;
-  if(d == DESTRA) return SINISTRA;
-  if(d == SU) return GIU;
-  if(d == GIU) return SU;
-  return FERMO;
-
-}
-*/
-
 
 /*___________________________________________________________
  *|
@@ -93,26 +71,31 @@ direzione direzione_opposta(direzione d)
  */
 void collega_tuki_nodi()
 {
-  static int cam[]={3,10,2,0,3,2,3,0,5,6,3,4,12,13,17,
-	     6,5,6,1,8,1,9,8,11,17,16,13,12,15,
-	     14,17,23,22,19,16,19,18,15,18,21,20,
-	     14,20,30,32,33,31,23,29,28,33,28,27,
-	     22,27,26,21,26,25,32,25,20,24,30};
+  static int cam[]=
+    {
+      3,10,38,2,34,0,3,2,3,0,35,5,4,3,4,12,13,
+      7,6,5,6,36,1,8,7,8,1,37,9,39,11,39,9,8,11,17,
+      16,13,12,15,14,17,23,22,19,16,19,15,
+      21,40,20,14,20,40,30,42,32,33,43,31,41,
+      23,29,31,29,28,33,28,27,22,27,26,21,26,
+      25,32,25,24,20,24,30
+    };
+  
   cammino = cam;
   
   grafo[0].linea = 3;
   grafo[0].columna = 6;
   grafo[0].index = 0;
-  grafo[0].ianua[SINISTRA] = 2;
-  grafo[0].ianua[DESTRA] = 5;
+  grafo[0].ianua[SINISTRA] = 34;
+  grafo[0].ianua[DESTRA] = 35;
   grafo[0].ianua[SU] = -1;
   grafo[0].ianua[GIU] = 3;
 
   grafo[1].linea = 3;
   grafo[1].columna = 21;
   grafo[1].index = 1;
-  grafo[1].ianua[SINISTRA] = 6;
-  grafo[1].ianua[DESTRA] = 9;
+  grafo[1].ianua[SINISTRA] = 36;
+  grafo[1].ianua[DESTRA] = 37;
   grafo[1].ianua[SU] = -1;
   grafo[1].ianua[GIU] = 8;
 
@@ -121,8 +104,8 @@ void collega_tuki_nodi()
   grafo[2].index = 2;
   grafo[2].ianua[SINISTRA] = -1;
   grafo[2].ianua[DESTRA] = 3;
-  grafo[2].ianua[SU] = 0;
-  grafo[2].ianua[GIU] = 10;
+  grafo[2].ianua[SU] = 34;
+  grafo[2].ianua[GIU] = 38;
 
   grafo[3].linea = 7;
   grafo[3].columna = 6;
@@ -145,7 +128,7 @@ void collega_tuki_nodi()
   grafo[5].index = 5;
   grafo[5].ianua[SINISTRA] = 4;
   grafo[5].ianua[DESTRA] = 6;
-  grafo[5].ianua[SU] = 0;
+  grafo[5].ianua[SU] = 35;
   grafo[5].ianua[GIU] = -1;
 
   grafo[6].linea = 7;
@@ -153,7 +136,7 @@ void collega_tuki_nodi()
   grafo[6].index = 6;
   grafo[6].ianua[SINISTRA] = 5;
   grafo[6].ianua[DESTRA] = 7;
-  grafo[6].ianua[SU] = 1;
+  grafo[6].ianua[SU] = 36;
   grafo[6].ianua[GIU] = -1;
 
   grafo[7].linea = 7;
@@ -177,13 +160,13 @@ void collega_tuki_nodi()
   grafo[9].index = 9;
   grafo[9].ianua[SINISTRA] = 8;
   grafo[9].ianua[DESTRA] = -1;
-  grafo[9].ianua[SU] = 1;
-  grafo[9].ianua[GIU] = 11;
+  grafo[9].ianua[SU] = 37;
+  grafo[9].ianua[GIU] = 39;
 
   grafo[10].linea = 10;
   grafo[10].columna = 6;
   grafo[10].index = 10;
-  grafo[10].ianua[SINISTRA] = 2;
+  grafo[10].ianua[SINISTRA] = 38;
   grafo[10].ianua[DESTRA] = -1;
   grafo[10].ianua[SU] = 3;
   grafo[10].ianua[GIU] = 14;
@@ -192,7 +175,7 @@ void collega_tuki_nodi()
   grafo[11].columna = 21;
   grafo[11].index = 11;
   grafo[11].ianua[SINISTRA] = -1;
-  grafo[11].ianua[DESTRA] = 9;
+  grafo[11].ianua[DESTRA] = 39;
   grafo[11].ianua[SU] = 8;
   grafo[11].ianua[GIU] = 17;
 
@@ -263,7 +246,7 @@ void collega_tuki_nodi()
   grafo[20].linea = 22;
   grafo[20].columna = 6;
   grafo[20].index = 20;
-  grafo[20].ianua[SINISTRA] = 30;
+  grafo[20].ianua[SINISTRA] = 40;
   grafo[20].ianua[DESTRA] = 21;
   grafo[20].ianua[SU] = 14;
   grafo[20].ianua[GIU] = 24;
@@ -288,7 +271,7 @@ void collega_tuki_nodi()
   grafo[23].columna = 21;
   grafo[23].index = 23;
   grafo[23].ianua[SINISTRA] = 22;
-  grafo[23].ianua[DESTRA] = 31;
+  grafo[23].ianua[DESTRA] = 41;
   grafo[23].ianua[SU] = 17;
   grafo[23].ianua[GIU] = 29;
 
@@ -343,23 +326,23 @@ void collega_tuki_nodi()
   grafo[30].linea = 28;
   grafo[30].columna = 3;
   grafo[30].index = 30;
-  grafo[30].ianua[SINISTRA] = 32;
+  grafo[30].ianua[SINISTRA] = 42;
   grafo[30].ianua[DESTRA] = 24;
-  grafo[30].ianua[SU] = 20;
+  grafo[30].ianua[SU] = 40;
   grafo[30].ianua[GIU] = -1;
 
   grafo[31].linea = 28;
   grafo[31].columna = 24;
   grafo[31].index = 31;
   grafo[31].ianua[SINISTRA] = 29;
-  grafo[31].ianua[DESTRA] = 33;
-  grafo[31].ianua[SU] = 23;
+  grafo[31].ianua[DESTRA] = 43;
+  grafo[31].ianua[SU] = 41;
   grafo[31].ianua[GIU] = -1;
 
   grafo[32].linea = 31;
   grafo[32].columna = 12;
   grafo[32].index = 32;
-  grafo[32].ianua[SINISTRA] = 30;
+  grafo[32].ianua[SINISTRA] = 42;
   grafo[32].ianua[DESTRA] = 33;
   grafo[32].ianua[SU] = 25;
   grafo[32].ianua[GIU] = -1;
@@ -368,9 +351,89 @@ void collega_tuki_nodi()
   grafo[33].columna = 15;
   grafo[33].index = 33;
   grafo[33].ianua[SINISTRA] = 32;
-  grafo[33].ianua[DESTRA] = 31;
+  grafo[33].ianua[DESTRA] = 43;
   grafo[33].ianua[SU] = 28;
   grafo[33].ianua[GIU] = -1;
+
+  grafo[34].linea = 3;
+  grafo[34].columna = 1;
+  grafo[34].index = 34;
+  grafo[34].ianua[SINISTRA] = -1;
+  grafo[34].ianua[DESTRA] = 0;
+  grafo[34].ianua[SU] = -1;
+  grafo[34].ianua[GIU] = 2;
+
+  grafo[35].linea = 3;
+  grafo[35].columna = 12;
+  grafo[35].index = 35;
+  grafo[35].ianua[SINISTRA] = 0;
+  grafo[35].ianua[DESTRA] = -1;
+  grafo[35].ianua[SU] = -1;
+  grafo[35].ianua[GIU] = 5;
+
+  grafo[36].linea = 3;
+  grafo[36].columna = 15;
+  grafo[36].index = 36;
+  grafo[36].ianua[SINISTRA] = -1;
+  grafo[36].ianua[DESTRA] = 1;
+  grafo[36].ianua[SU] = -1;
+  grafo[36].ianua[GIU] = 6;
+
+  grafo[37].linea = 3;
+  grafo[37].columna = 26;
+  grafo[37].index = 37;
+  grafo[37].ianua[SINISTRA] = 1;
+  grafo[37].ianua[DESTRA] = -1;
+  grafo[37].ianua[SU] = -1;
+  grafo[37].ianua[GIU] = 9;
+
+  grafo[38].linea = 10;
+  grafo[38].columna = 1;
+  grafo[38].index = 38;
+  grafo[38].ianua[SINISTRA] = -1;
+  grafo[38].ianua[DESTRA] = 10;
+  grafo[38].ianua[SU] = 2;
+  grafo[38].ianua[GIU] = -1;
+
+  grafo[39].linea = 10;
+  grafo[39].columna = 26;
+  grafo[39].index = 39;
+  grafo[39].ianua[SINISTRA] = 11;
+  grafo[39].ianua[DESTRA] = -1;
+  grafo[39].ianua[SU] = 9;
+  grafo[39].ianua[GIU] = -1;
+
+  grafo[40].linea = 22;
+  grafo[40].columna = 1;
+  grafo[40].index = 40;
+  grafo[40].ianua[SINISTRA] = -1;
+  grafo[40].ianua[DESTRA] = 20;
+  grafo[40].ianua[SU] = -1;
+  grafo[40].ianua[GIU] = 30;
+
+  grafo[41].linea = 22;
+  grafo[41].columna = 26;
+  grafo[41].index = 41;
+  grafo[41].ianua[SINISTRA] = 23;
+  grafo[41].ianua[DESTRA] = -1;
+  grafo[41].ianua[SU] = -1;
+  grafo[41].ianua[GIU] = 31;
+
+  grafo[42].linea = 31;
+  grafo[42].columna = 1;
+  grafo[42].index = 42;
+  grafo[42].ianua[SINISTRA] = -1;
+  grafo[42].ianua[DESTRA] = 32;
+  grafo[42].ianua[SU] = 30;
+  grafo[42].ianua[GIU] = -1;
+
+  grafo[43].linea = 31;
+  grafo[43].columna = 26;
+  grafo[43].index = 43;
+  grafo[43].ianua[SINISTRA] = 33;
+  grafo[43].ianua[DESTRA] = -1;
+  grafo[43].ianua[SU] = 31;
+  grafo[43].ianua[GIU] = -1;
   
 }
 
@@ -480,7 +543,7 @@ double distanza_esatta(int da_nodo, int a_nodo)
       distanze[20][21]=2;
       distanze[30][20]=12;
       distanze[24][20]=2;
-      distanze[21][30]=2;
+      distanze[21][20]=2;
       
       distanze[21][26]=5;
       distanze[26][21]=5;
@@ -528,6 +591,66 @@ double distanza_esatta(int da_nodo, int a_nodo)
       distanze[32][33]=2;
       distanze[33][32]=2;
 
+      distanze[34][0]=4;
+      distanze[0][34]=4;
+
+      distanze[34][2]=3;
+      distanze[2][34]=3;
+
+      distanze[35][0]=5;
+      distanze[0][35]=5;
+
+      distanze[35][5]=3;
+      distanze[5][35]=3;
+
+      distanze[36][1]=5;
+      distanze[1][36]=5;
+
+      distanze[36][6]=3;
+      distanze[6][36]=3;
+
+      distanze[37][1]=4;
+      distanze[1][37]=4;
+
+      distanze[37][9]=3;
+      distanze[9][37]=3;
+
+      distanze[38][2]=2;
+      distanze[2][38]=2;
+
+      distanze[38][10]=4;
+      distanze[10][38]=4;
+
+      distanze[39][9]=2;
+      distanze[9][39]=2;
+
+      distanze[39][11]=4;
+      distanze[11][39]=4;
+
+      distanze[40][20]=4;
+      distanze[20][40]=4;
+
+      distanze[40][30]=7;
+      distanze[30][40]=7;
+
+      distanze[41][23]=4;
+      distanze[23][41]=4;
+
+      distanze[41][31]=7;
+      distanze[31][41]=7;
+
+      distanze[42][30]=4;
+      distanze[30][42]=4;
+
+      distanze[42][32]=10;
+      distanze[32][42]=10;
+
+      distanze[43][31]=4;
+      distanze[31][43]=4;
+
+      distanze[43][33]=10;
+      distanze[33][43]=10;
+
       init=1;
     }
   return (double)distanze[s][g];
@@ -542,7 +665,7 @@ double distanza_esatta(int da_nodo, int a_nodo)
  */
 int indice_tuki_nodo_cella(int riga, int col)
 {
-  for(int i=0; i<34;i++)
+  for(int i=0; i<NNODI;i++)
     {
       if(grafo[i].columna == col && grafo[i].linea == riga)
         return grafo[i].index;
@@ -550,16 +673,16 @@ int indice_tuki_nodo_cella(int riga, int col)
   return -1;
 }
 
-
-typedef enum {ESPLORA, DECIDI, NAVIGA} Modo;
+typedef enum {ESPLORA, CALCOLA, NAVIGA} Modo;
 
 direzione gioca_tuki(posizioni posi, oggetto **labx)
 {
   static int * percorso_fuga = 0;
   static int * copia;
   static Modo modo_gioco = ESPLORA;
-  static int nodo_bersaglio = 0;
-  
+  static int indice_array_vertice_bersaglio = 0;
+
+  int vertice_corrente = -1;
   /*
     ITA: per generare il grafo impediamo a PAC-MAN di entrare nella
     casa dei fantasmi
@@ -575,9 +698,6 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
     ITA: creazione esterna del grafo del labirinto
    */
   collega_tuki_nodi();
-
-  static int vertice_da = SCONOSCIUTO;
-  static int vertici_contati = SCONOSCIUTO;
 
   /* 
      ITA: Direzione presa nel turno di gioco corrente 
@@ -598,8 +718,6 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
    */
   int i = posi.tuki_y;
   int j = posi.tuki_x;
-
-  longitudo_colligatio++;
   
   /* Celle confinanti (neighbors) */
   oggetto vicino[4];
@@ -665,55 +783,30 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
   /* ITA: È vero se nel ciclo di gioco corrente viene rilevato un nodo */
   /* ENG: Is true if in the current game cycle a node is detetcted  */
   bool nodo_rilevato = false;
-  
-  if(nd>2)
+  if(nd>=2)
     {
-      
       /* 
 	 ITA: Se siamo qui, Tuki è su un vertice
 	 ENG: If we are here Tuki position is a vertex 
       */
-      int vertice_a = agri_Verticem_quaero(grafo,i,j);
-      if(vertice_a<0)
+      vertice_corrente = indice_tuki_nodo_cella(i,j);
+      if(vertice_corrente>=0)
 	{
-	  vertice_a = vertici_contati;
-	  vertici_contati++;
-	  nodi_percorsi++;
+	  nodo_rilevato = true;
+	  if(modo_gioco == ESPLORA)
+	    modo_gioco = CALCOLA;
 	}
-      agri_Colligatio colligatio;
-      agri_Vertex v_a, v_da;
-      v_a = agri_Verticem_creo(vertice_a,i,j);
-      v_da = agri_Verticem_creo(vertice_da,i_da,j_da);
-
-      //Aggiorno per la funzioen dist
-      distanze[vertice_da][vertice_a] = longitudo_colligatio;
-            
-      colligatio.ad = v_a;
-      colligatio.ab = v_da;
-      colligatio.longitudo = longitudo_colligatio;
-      colligatio.meta = direzione_arrivo;
-      colligatio.discessus = direzione_partenza;
-      
-      nodo_rilevato = true;
-
-      longitudo_colligatio = 0;
-      vertice_da = vertice_a;
-      i_da = i;
-      j_da = j;
     }
 
   /* ITA: Gestione ostacoli
      ENG: dealing with obstacles
   */
   bool disponibile = false;
-    
   bool aleatorio = false;
-  
  
   /* Se un fantasma è nelle vicinanze prendo la prima cella buona */
   if((s_g || d_g || a_g || b_g) && FUGA)
     {
-
       /*
 	ITA: direzioni possibili di fuga
        */
@@ -807,12 +900,8 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
 		  disponibile = true;
 	}
             
-      if(nodo_rilevato)
-	direzione_partenza = ld;
-      
       if(aleatorio) return ld;
-      
-      
+            
       /*
 	ITA: Se la direzione non è aleatoria la cambiamo qui
 	ENG: If a random step has not been taken during the
@@ -842,23 +931,36 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
 	  if(sv>=5)
 	    ld = DESTRA;
 	}
-      direzione_arrivo = ld;
-
-      if(nodo_rilevato)
-	direzione_partenza = ld;
-      
+            
       return ld;
     }
-  else if(modo_gioco == DECIDI)
+  else if(modo_gioco == CALCOLA)
     {
-      printf("##Torno da %d a %d\n",vertice_da,0);
-      percorso_fuga = agri_astar(vertice_da,0,grafo,&dist,&euri);
+      
+      printf("##Calcola itinerario da %d a %d    \n",
+	     vertice_corrente,
+	     cammino[indice_array_vertice_bersaglio]);
+      if( vertice_corrente ==  cammino[indice_array_vertice_bersaglio])
+	{
+	  printf("Partenza == Destinazione\n");
+	  indice_array_vertice_bersaglio++;
+	}
+      
+      
+      percorso_fuga = agri_astar
+	(
+	 vertice_corrente,
+	 cammino[indice_array_vertice_bersaglio],
+	 grafo,&distanza_esatta,&euri
+	 );
+      
       if(percorso_fuga == 0)
 	{
 	  modo_gioco = ESPLORA;
 	  ld = FERMO;
 	  return ld;
 	}
+
       copia = percorso_fuga;
       modo_gioco = NAVIGA;
     }
@@ -870,10 +972,10 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
 	    ITA: pesco il prossimo nodo
 	  */
 	  int indice_nodo = *percorso_fuga;
-	  if(indice_nodo == -1)
+	  if(indice_nodo == -1 ||(vertice_corrente ==cammino[indice_array_vertice_bersaglio] ) )
 	    {
 	      printf("***Completato il cammino\n");
-	      nodo_bersaglio++;
+	      indice_array_vertice_bersaglio++;
 	      modo_gioco = ESPLORA;
 	      free(copia);
 	      copia = 0;
@@ -882,22 +984,22 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
 	  percorso_fuga++;
 	  /*
 	    ITA: Cerco il percorso per il nodo indice_nodo
-	    antro in d[vertice_da] e controllo le sue porte
+	    antro in d[vertice_corrente] e controllo le sue porte
 	    finché non trovo quella che collega a indice_nodo
 	  */
-	  if(grafo[vertice_da].ianua[SINISTRA] == indice_nodo)
+	  if(grafo[vertice_corrente].ianua[SINISTRA] == indice_nodo)
 	    {
 	      ld = SINISTRA;
 	    }
-	  if(grafo[vertice_da].ianua[DESTRA] == indice_nodo)
+	  if(grafo[vertice_corrente].ianua[DESTRA] == indice_nodo)
 	    {
 	      ld = DESTRA;
 	    }
-	  if(grafo[vertice_da].ianua[SU] == indice_nodo)
+	  if(grafo[vertice_corrente].ianua[SU] == indice_nodo)
 	    {
 	      ld = SU;
 	    }
-	  if(grafo[vertice_da].ianua[GIU] == indice_nodo)
+	  if(grafo[vertice_corrente].ianua[GIU] == indice_nodo)
 	    {
 	      ld = GIU;
 	    }
@@ -933,8 +1035,6 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
 	return ld = SINISTRA;
       if(ld == GIU && oggetto_accessibile(d))
 	return ld = DESTRA;
-      
-      
     }
 
 }

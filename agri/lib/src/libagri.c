@@ -9,7 +9,6 @@
 
 
 
-static FILE * dbf; 
 
 agri_Vertex agri_Verticem_creo(int index, int linea, int columna)
 {
@@ -131,10 +130,10 @@ agri_Via agri_astar(int start, int goal,
 		    double (*euristica)(int ab, int ad)
 		    )
 {
-  dbf = stdout;
-  dbf = fopen("agri.debug.txt","a");
-  if(start==goal) return 0;
-  
+  if(start==goal)
+    {
+      return 0;
+    }
   double fscore[NNODI];
   double gscore[NNODI];
   int precedente[NNODI];
@@ -154,14 +153,13 @@ agri_Via agri_astar(int start, int goal,
 
   while(candidati != 0)
     {
-      fprintf(dbf,"->stcz<-\n");
       fflush(stdout);
       int corrente = Ordo_pop(&candidati);
-      fprintf(dbf,"%d\n",corrente);
+     
       /* Arrivato al nodus goal torna il cammino */
       if(corrente == goal)
         {
-	  fprintf(dbf,"-start == goal-\n");
+	  
 	  fflush(stdout);
           int i = 0;
           int aux[NNODI];
@@ -178,7 +176,7 @@ agri_Via agri_astar(int start, int goal,
           for(int k = i-1;k >=0 ;k--,j++)
             {
               percorso[j] = aux[k];
-	      fprintf(dbf,"Costruzione percorso + =%d\n", percorso[j]); 
+	      
             }
 	  // Segnale di fine percorso
 	  percorso[j]=-1;
@@ -190,20 +188,20 @@ agri_Via agri_astar(int start, int goal,
       for(int i=0; i<PORTE; i++)
 	{
 	  vicino[i] = agri_Vertices_Colligati[corrente].ianua[i];
-	  fprintf(dbf,"%d => %d\n",corrente, vicino[i]);
+
 	}
-      printf("Nodo corrente %d\n",corrente);
+
       for(int i =0; i<PORTE; i++)
         {
           int iv = vicino[i];
-	  fprintf(dbf,"%d ha vicino %d\n",corrente,iv);
+
           /* ogni nodus è predisposto per 4 vicini, ma molti nodi ne hanno
              solo 3*/
           if(iv == -1)continue;
 
           double d =  spatium(corrente, iv);
           double tent_gscore = gscore[corrente]+d;
-	  fprintf(dbf,"a distanza %lf\n",d);
+
           if(tent_gscore <= gscore[iv])
             {
 	      
@@ -219,17 +217,17 @@ agri_Via agri_astar(int start, int goal,
 	}
        //Stampiamo la Ordo corrente
       Ordo cd = candidati;
-      fprintf(dbf,"----------------------\n");
+
       while(cd)
 	{
-	  fprintf(dbf,"Ordo: nodus %d, %lf\n",cd->index,cd->prio);
+
 	  fflush(stdout);
 	  cd=cd->post;
 	}
-      fprintf(dbf,"\\\\\\\\\\\\\\\\\\\\\\\n");
+
       fflush(stdout);
     }
-  fprintf(dbf,"ok ret\n");
+  
   return 0;
   
 }
@@ -425,8 +423,6 @@ int  agri_muto(agri_Colligationes_Colligatae g,agri_Verticum_Dispositio* d)
   //3
   
   //1.Trasformo prima la losta di archi in un array di archi
-  dbf = stdout;
-  dbf = fopen("agri.debug.txt","a");
   agri_Colligationes_Colligatae array;
   int n = agri_dispono(g , &array);
   
@@ -459,16 +455,13 @@ int  agri_muto(agri_Colligationes_Colligatae g,agri_Verticum_Dispositio* d)
       /* collego i vertici */
       if ((array+i)->colligatio.discessus != -1)
 	{
-	  fprintf(dbf,"CHK: %d==%d, %d==%d\n",(v+ix)->index,ix_ab,(v+iy)->index,ix_ad);
-	  fprintf(dbf,"\n collego lo %d\t a %d\n", (v+ix)->index,  (v+iy)->index);
 	  //Assegna la porta in base alla direzione
 	  (v+ix)->ianua[(array+i)->colligatio.discessus]=ix_ad;
 	  (v+iy)->ianua[agri_Versum_inverto((array+i)->colligatio.meta)]=ix_ab;
-	  fprintf(dbf,"Alle porte %d:%d\n",(array+i)->colligatio.discessus,agri_Versum_inverto((array+i)->colligatio.meta));
+	  
 	}
       else
 	{
-	  fprintf(dbf,"\n************\n");
 	  //Cerco la prima porta libera
 	  int k = 0;
 	  while((v+ix)->ianua[k]!=-1)k++;
@@ -483,8 +476,6 @@ int  agri_muto(agri_Colligationes_Colligatae g,agri_Verticum_Dispositio* d)
       
     }
   qsort(v, sz, sizeof(agri_Vertex),&compar);
-  
-  
   *d = v;
   return sz;
 }
