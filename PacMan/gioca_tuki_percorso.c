@@ -16,11 +16,12 @@
 #define SCONOSCIUTO -2
 #define GUINZAGLIO 10
 
+#define NODI_LAB_POT 44
 
 /*
   ITA: array di vertici del grafo completo del Pac-Man
  */
-static agri_Vertex grafo[NNODI];
+static agri_Vertex grafo[NODI_LAB_POT];
 
 /*
   ITA: array della sequnza dei vertici più efficiente
@@ -39,7 +40,7 @@ char * dir(versus d)
 }
 
 
-agri_Vertex agri_Vertices_Colligati[NNODI];
+agri_Vertex agri_Vertices_Colligati[NODI_LAB_POT];
 double euri(int start, int goal)
 {
   int x1,x2,y1,y2;
@@ -441,12 +442,12 @@ double distanza_esatta(int da_nodo, int a_nodo)
 {
   int s = da_nodo;
   int g = a_nodo;
-  static int distanze[NNODI][NNODI];
+  static int distanze[NODI_LAB_POT][NODI_LAB_POT];
   static int init = 0;
   if(!init)
     {
-      for(int i=0; i<NNODI;i++)
-        for(int j=0; j<NNODI;j++)
+      for(int i=0; i<NODI_LAB_POT;i++)
+        for(int j=0; j<NODI_LAB_POT;j++)
           distanze[i][j]=INFINITO;
 
       distanze[0][2]=8;
@@ -665,7 +666,7 @@ double distanza_esatta(int da_nodo, int a_nodo)
  */
 int indice_tuki_nodo_cella(int riga, int col)
 {
-  for(int i=0; i<NNODI;i++)
+  for(int i=0; i<NODI_LAB_POT;i++)
     {
       if(grafo[i].columna == col && grafo[i].linea == riga)
         return grafo[i].index;
@@ -937,12 +938,12 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
   else if(modo_gioco == CALCOLA)
     {
       
-      printf("##Calcola itinerario da %d a %d    \n",
-	     vertice_corrente,
-	     cammino[indice_array_vertice_bersaglio]);
+      //printf("##Calcola itinerario da %d a %d    \n",
+      //vertice_corrente,
+      //cammino[indice_array_vertice_bersaglio]);
       if( vertice_corrente ==  cammino[indice_array_vertice_bersaglio])
 	{
-	  printf("Partenza == Destinazione\n");
+	  //printf("Partenza == Destinazione\n");
 	  indice_array_vertice_bersaglio++;
 	}
       
@@ -951,7 +952,7 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
 	(
 	 vertice_corrente,
 	 cammino[indice_array_vertice_bersaglio],
-	 grafo,&distanza_esatta,&euri
+	 grafo,&distanza_esatta,&euri,NODI_LAB_POT
 	 );
       
       if(percorso_fuga == 0)
@@ -974,7 +975,7 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
 	  int indice_nodo = *percorso_fuga;
 	  if(indice_nodo == -1 ||(vertice_corrente ==cammino[indice_array_vertice_bersaglio] ) )
 	    {
-	      printf("***Completato il cammino\n");
+	      //printf("***Completato il cammino\n");
 	      indice_array_vertice_bersaglio++;
 	      modo_gioco = ESPLORA;
 	      free(copia);

@@ -483,7 +483,7 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
       nodi_percorsi = 0;
       int s = agri_muto(g,&vert_disp);
       printf("##Torno da %d a %d\n",vertice_da,0);
-      percorso_fuga = agri_astar(vertice_da,0,vert_disp,&dist,&euri);
+      percorso_fuga = agri_astar(vertice_da,0,vert_disp,&dist,&euri,vertici_contati);
       if(percorso_fuga == 0)
 	{
 	  modo_gioco = ESPLORA;
@@ -503,7 +503,7 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
 	  int indice_nodo = *percorso_fuga;
 	  if(indice_nodo == -1)
 	    {
-	      printf("***Completato il cammino\n");
+	      //printf("***Completato il cammino\n");
 	      nodi_percorsi = 0;
 	      modo_gioco = ESPLORA;
 	      free(copia);

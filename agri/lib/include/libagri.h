@@ -106,7 +106,8 @@ int Ordo_pop(Ordo * pOrdo);
 agri_Via agri_astar(int start, int goal,
 		    agri_Vertex * agri_Vertices_Colligati,
 		    double (*spatium)(int ab, int ad),
-		    double (*euristica)(int ab, int ad)
+		    double (*euristica)(int ab, int ad),
+		    int nmembri
 		    );
 
 
@@ -117,7 +118,7 @@ agri_Via agri_astar(int start, int goal,
  *| Se non è presente alcun nodus (il fantasma è su un ramo)
  *| torna -1
  */
-int index_nodus_cella(int riga, int col, agri_Vertex * av);
+int index_nodus_cella(int riga, int col, agri_Vertex * av,int nmembri);
 
 
 /*** GRAFO COME LISTA DI CELLE  ***/

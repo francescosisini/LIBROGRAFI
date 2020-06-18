@@ -127,21 +127,22 @@ int Ordo_pop(Ordo * pOrdo)
 agri_Via agri_astar(int start, int goal,
 		    agri_Vertex * agri_Vertices_Colligati,
 		    double (*spatium)(int ab, int ad),
-		    double (*euristica)(int ab, int ad)
+		    double (*euristica)(int ab, int ad),
+		    int nmembri
 		    )
 {
   if(start==goal)
     {
       return 0;
     }
-  double fscore[NNODI];
-  double gscore[NNODI];
-  int precedente[NNODI];
+  double fscore[nmembri];
+  double gscore[nmembri];
+  int precedente[nmembri];
 
   //Nodi in valutazione per il path da start a goal
   Ordo candidati = 0;
   
-  for(int i=0;i<NNODI;i++)
+  for(int i=0;i<nmembri;i++)
     {
       fscore[i] = INFINITO;
       gscore[i] = INFINITO;
@@ -162,7 +163,7 @@ agri_Via agri_astar(int start, int goal,
 	  
 	  fflush(stdout);
           int i = 0;
-          int aux[NNODI];
+          int aux[nmembri];
           
           do{
             aux[i]=corrente;
@@ -232,9 +233,9 @@ agri_Via agri_astar(int start, int goal,
   
 }
 
-int index_nodus_cella(int riga, int col, agri_Vertex * agri_Vertices_Colligati)
+int index_nodus_cella(int riga, int col, agri_Vertex * agri_Vertices_Colligati,int nmembri)
 {
-  for(int i=0; i<NNODI;i++)
+  for(int i=0; i<nmembri;i++)
     {
       if(agri_Vertices_Colligati[i].columna == col && agri_Vertices_Colligati[i].linea == riga)
         return agri_Vertices_Colligati[i].index;
