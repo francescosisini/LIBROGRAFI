@@ -217,11 +217,9 @@ The library components
 `agri_Vertex agri_Verticem_creo(int index, int linea, int columna);`
 - <b>verticem creo</b>: create a vertex
 
-`typedef struct nodus_coda { int index; double prio; struct nodus_coda * post;
-  
-} Nodus;`
-- <b></b>
-- <b></b>
+`typedef struct nodus_coda { int index; double prio; struct nodus_coda * post; } Nodus;`
+- <b>nodus</b> decl.2: node (element of the queue)
+- <b>coda</b> decl.1: queue
 - <b></b>
 - <b></b>
 - <b></b>
