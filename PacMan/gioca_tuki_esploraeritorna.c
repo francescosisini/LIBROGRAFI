@@ -367,7 +367,10 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
 	  ki++;
 	}
       
-      if(ki == 0) return FERMO;
+      if(ki == 0)
+	{
+	  return FERMO;
+	}
       ld = esc[rand()%ki];
       
       direzione_arrivo = ld;
@@ -375,12 +378,6 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
 	direzione_partenza = ld;
       return ld;
     }
-
-  if(nodi_percorsi == 3)
-    modo_gioco = DECIDI;
-  
-  
-
   
   if(modo_gioco == ESPLORA)
     {
@@ -482,7 +479,7 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
     {
       nodi_percorsi = 0;
       int s = agri_muto(g,&vert_disp);
-      printf("##Torno da %d a %d\n",vertice_da,0);
+      
       percorso_fuga = agri_astar(vertice_da,0,vert_disp,&dist,&euri,vertici_contati);
       if(percorso_fuga == 0)
 	{
@@ -503,14 +500,12 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
 	  int indice_nodo = *percorso_fuga;
 	  if(indice_nodo == -1)
 	    {
-	      //printf("***Completato il cammino\n");
 	      nodi_percorsi = 0;
 	      modo_gioco = ESPLORA;
 	      free(copia);
-
 	      copia = 0;
-
-	      return FERMO;
+	      return rand()%4;
+	      
 	    }
 	  percorso_fuga++;
 	  /*

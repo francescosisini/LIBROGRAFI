@@ -205,8 +205,7 @@ agri_Via agri_astar(int start, int goal,
 
           if(tent_gscore <= gscore[iv])
             {
-	      
-              /* Trovato cammino migliore a questo nodus passando per corrente*/
+	      /* Trovato cammino migliore a questo nodus passando per corrente*/
               precedente[iv] = corrente;
               gscore[iv] = tent_gscore;
               fscore[iv] = gscore[iv] +  euristica(iv, goal);
@@ -216,17 +215,6 @@ agri_Via agri_astar(int start, int goal,
 	      fflush(stdout);
             }
 	}
-       //Stampiamo la Ordo corrente
-      Ordo cd = candidati;
-
-      while(cd)
-	{
-
-	  fflush(stdout);
-	  cd=cd->post;
-	}
-
-      fflush(stdout);
     }
   
   return 0;
