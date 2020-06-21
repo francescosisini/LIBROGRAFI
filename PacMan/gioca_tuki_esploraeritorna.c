@@ -15,7 +15,7 @@
 
 #define SCONOSCIUTO -2
 
-#define GUINZAGLIO 10
+#define GUINZAGLIO 5
 
 char * dir(versus d)
 {

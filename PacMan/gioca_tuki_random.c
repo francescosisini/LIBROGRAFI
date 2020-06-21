@@ -54,6 +54,91 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
   d = labx[i][j+1]; //destra, right
   a = labx[i-1][j]; //su, up
   b = labx[i+1][j]; //giu, down
+
+  
+/*
+    ITA: cerca un fantasma nelle celle vicine
+
+   */
+  int x = posi.tuki_x;
+  int y = posi.tuki_y;
+  int x_g[4];
+  int y_g[4];
+  x_g[0] = posi.blinky_x;
+  x_g[1] = posi.pinky_x;
+  x_g[2] = posi.inky_x;
+  x_g[3] = posi.clyde_x;
+
+  y_g[0] = posi.blinky_y;
+  y_g[1] = posi.pinky_y;
+  y_g[2] = posi.inky_y;
+  y_g[3] = posi.clyde_y;
+
+  /*
+    ITA: flag di presenza del fantasma
+   */
+  char s_g = 0, d_g = 0,a_g = 0,b_g = 0;
+  for (int ig = 0; ig<4; ig++)
+    {
+      s_g = s_g || ( x_g[ig] < x) && ( x - x_g[ig] <=2 )  && (y == y_g[ig]);
+      s_g = s_g || ((x_g[ig] == x-1) &&  (y_g[ig] == y+1));
+      s_g = s_g || ((x_g[ig] == x-1) &&  (y_g[ig] == y-1));
+      d_g = d_g || ( x_g[ig] > x) && (x_g[ig] - x <= 2) && (y == y_g[ig]);
+      d_g = d_g || ((x_g[ig] == x+1) &&  (y_g[ig] == y+1));
+      d_g = d_g || ((x_g[ig] == x+1) &&  (y_g[ig] == y-1));
+      a_g = a_g || (x == x_g[ig]) && ( y >  y_g[ig]) && ( y - y_g[ig] <=2);
+      a_g = a_g || ((y == y_g[ig] + 1) && (x_g[ig] == x+1));
+      a_g = a_g || ((y == y_g[ig] + 1) && (x_g[ig] == x-1));
+      b_g = b_g || (x == x_g[ig]) && ( y <  y_g[ig]) && ( y_g[ig]- y <=2);
+      b_g = b_g || ((y == y_g[ig] - 1) && (x_g[ig] == x+1));
+      b_g = b_g || ((y == y_g[ig] - 1) && (x_g[ig] == x-1));
+    }
+  
+
+  /* Se un fantasma è nelle vicinanze prendo la prima cella buona */
+  if((s_g || d_g || a_g || b_g) && FUGA)
+    {
+
+      /*
+	ITA: direzioni possibili di fuga
+       */
+      direzione esc[4];
+      for(int i=0;i<4;i++) esc[i]=FERMO;
+      int ki = 0; //direzioni buone
+          
+      if(oggetto_accessibile(s) && !s_g)
+	{
+	  esc[ki] = SINISTRA;
+	  ki++;
+	}
+      
+      if(oggetto_accessibile(a) && !a_g)
+	{
+	  esc[ki] = SU;
+	  ki++;
+	}
+      
+      if(oggetto_accessibile(d) && !d_g)
+	{
+	  esc[ki] = DESTRA;
+	  ki++;
+	}
+      
+      if(oggetto_accessibile(b) && !b_g)
+	{
+	  esc[ki] = GIU;
+	  ki++;
+	}
+      
+      if(ki == 0)
+	{
+	  return FERMO;
+	}
+      ld = esc[rand()%ki];
+      
+      
+      return ld;
+    }
   
   /* 
      ITA: Vera quando la cella nella direzione scelta
