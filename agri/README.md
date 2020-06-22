@@ -301,10 +301,7 @@ Add a cell into the path
 `versus agri_Versum_inverto(versus v);`
 - <b>versum inverto</b>: reverse direction
 
-``
-- <b></b>
-- <b></b>
-- <b></b>
-- <b></b>
-- <b></b>
+`int compar(const void * a, const void * b);`
+- <b>compar</b> stands for comparo verb: compare
+
 
