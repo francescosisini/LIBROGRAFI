@@ -1,11 +1,12 @@
 - Clona il progetto: ``git clone https://github.com/francescosisini/LIBROGRAFI.git``
 - Scegli uno degli agent Pac-Man tra:
-  - ``gioca_tuki_random.c`` Pac-Man esplora il labirinto scegliendo casualmete dove svoltare
+  - ``gioca_tuki_random.c`` Pac-Man esplora il labirinto scegliendo casualmente dove svoltare
   - ``gioca_tuki_boustrophedon.c`` Pac-Man esplora il labirinto in modo deterministico con l'algoritmo boustrophedon
   - ``gioca_tuki_generagrafo.c``Pac-Man genera un grafo vertici-archi mentre esplora il labirinto
   - ``gioca_tuki_esploraeritorna.c``Pac-Man usa il grafo che genera on-line per navigare il labirinto
   - ``gioca_tuki_percorso.c`` Pac-Man inizia il gioco con il grafo di tutto il labirinto e lo sfrutta per completarlo in modo subottimale
- - Compila sepcificando se attivare il meccanismo di fuga e l'intervallo in millisecondi tra i passi: ``./compila.sh PacMan/gioca_tuki_percorso.c  1 50`` 
+ - Compila specificando se attivare il meccanismo di fuga e l'intervallo in millisecondi tra i passi: 
+ ``./compila.sh PacMan/gioca_tuki_percorso.c  1 50`` 
  - Dimensioni il terminale ad almeno 60x60
  - esegui ``./tuki5.game 1`` dove 1 indica il numero dei fantasmi (da 0 a 4)
 
