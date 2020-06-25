@@ -6,7 +6,6 @@
  * Gli oggetti nel campo
  */
 typedef enum {
-  //Angoli
    a='a', 
    A = 'A', //ANGOLO ALTO SIN BORDO
    B = 'B', //ANGOLO ALTO DES BORDO
@@ -39,7 +38,6 @@ typedef enum {
    PILLOLA = 'O'
 } oggetto;
 
-
 /**
  * I 5 giocatori
  */
@@ -53,7 +51,6 @@ typedef enum {
 
 } giocatore;
 
-
 #ifndef PLAYER
 typedef enum  {SINISTRA,SU,DESTRA,GIU,FERMO} direzione;
 #define PLAYER 
@@ -66,8 +63,6 @@ typedef struct  {
   int pinky_x, pinky_y;
   int clyde_x, clyde_y;
 } posizioni;
-
-
 
 /*** interfaccia***/
 

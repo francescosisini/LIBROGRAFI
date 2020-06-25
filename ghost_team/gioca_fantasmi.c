@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <math.h>
 
-
 /*__________________________________________________________
  *|
  *| Nodo del grafo che rappresenta il labirinto
@@ -23,9 +22,6 @@ typedef struct {
  *| I nodi del grafo el labirinto
  */
 nodo grafo[34];
-
-
-
 
 /*___________________________________________________________
  *|
@@ -201,7 +197,7 @@ void collega_nodi()
   grafo[20].n_su = 14;
   grafo[20].n_giu = 24;
 
-   grafo[21].riga = 22;
+  grafo[21].riga = 22;
   grafo[21].colonna = 9;
   grafo[21].indice = 21;
   grafo[21].n_sx = 20;
@@ -376,7 +372,6 @@ direzione prossima_cella(cella corrente, cella precedente, oggetto **lab)
         if(precedente.riga != riga + 1)
           return GIU;
       }
-    
 }
 
 /*____________________________________________
@@ -388,7 +383,6 @@ double distanza_celle(cella a, cella b)
   double d=(a.riga-b.riga)*(a.riga-b.riga)+(a.colonna-b.colonna)*(a.colonna-b.colonna);
   return sqrt(d);
 }
-
 
 direzione gioca_blinky(posizioni p, oggetto **lab)
 {
@@ -575,7 +569,6 @@ direzione gioca_blinky(posizioni p, oggetto **lab)
   return ld;
 }
 
-
 direzione gioca_pinky(posizioni p, oggetto **lab)
 {
 
@@ -618,8 +611,6 @@ direzione gioca_pinky(posizioni p, oggetto **lab)
   /* Sono su un nodo? */
   int inx = indice_nodo_cella(riga,colonna);
   
-  
-  
   /* cella su cui si trova e cella precedente */
   cella c, pr;
   c.riga = riga;
@@ -643,7 +634,6 @@ direzione gioca_pinky(posizioni p, oggetto **lab)
       riga_old = riga;
       
       return ld; 
-            
     }
   else
     {
@@ -794,22 +784,18 @@ direzione gioca_pinky(posizioni p, oggetto **lab)
 
 direzione gioca_inky(posizioni p, oggetto **lab)
 {
-   static int turno = 0;
-
+  static int turno = 0;
   static int colonna_old,riga_old;
-
   
-      
   turno+=1;
-    
+  
   /* indica l'edge su cui si sta muovendo il fantasma */
   static nodo nodo_da, nodo_a;
-
+  
   int riga = p.inky_y;
   int colonna = p.inky_x;
- 
-  direzione ld =  FERMO;
   
+  direzione ld =  FERMO;
 
   /* uscita dalla casetta dei fantasmi */
   if(turno<10)
@@ -818,13 +804,13 @@ direzione gioca_inky(posizioni p, oggetto **lab)
     {
       if(turno<15)
         return SU;
-
+      
       nodo_a = grafo[13];
       nodo_da = grafo[13];
       
       colonna_old = -1;
       colonna = nodo_a.colonna;
-
+      
       riga_old = -1;
       riga = nodo_a.riga;
       return DESTRA;
@@ -832,8 +818,6 @@ direzione gioca_inky(posizioni p, oggetto **lab)
   
   /* Sono su un nodo? */
   int inx = indice_nodo_cella(riga,colonna);
-  
-  
   
   /* cella su cui si trova e cella precedente */
   cella c, pr;
@@ -858,7 +842,6 @@ direzione gioca_inky(posizioni p, oggetto **lab)
       riga_old = riga;
       
       return ld; 
-            
     }
   else
     {
@@ -893,8 +876,6 @@ direzione gioca_inky(posizioni p, oggetto **lab)
       tuki.colonna = p.tuki_x;
       blinky.riga = p.blinky_y;
       blinky.colonna = p.blinky_x;
-
-      
       
       int m_colonna, m_riga;
       m_colonna = (tuki.colonna + blinky.colonna)/2;
@@ -990,36 +971,30 @@ direzione gioca_inky(posizioni p, oggetto **lab)
         }
         
       return ld;
-     
     }
-      
-      
   return ld;
- 
 }
 
 direzione gioca_clyde(posizioni p, oggetto **lab)
 {
-
-
   static int turno = 0;
-
+  
   static int colonna_old,riga_old;
-   
+  
   turno+=1;
-    
+  
   /* indica l'edge su cui si sta muovendo il fantasma */
   static nodo nodo_da, nodo_a;
-
+  
   int riga = p.clyde_y;
   int colonna = p.clyde_x;
- 
+  
   direzione ld =  FERMO;
   static FILE * f;
   if(turno == 1)
     {
       collega_nodi();
-      f=fopen("debugs.txt","w+");
+      //f=fopen("debugs.txt","w+");
     }
 
   /* uscita dalla casetta dei fantasmi */
@@ -1041,7 +1016,7 @@ direzione gioca_clyde(posizioni p, oggetto **lab)
   
   /* Sono su un nodo? */
   int inx = indice_nodo_cella(riga,colonna);
-  fprintf(f,"R: %d, C: %d, inx:%d\n",riga,colonna,inx);
+  //fprintf(f,"R: %d, C: %d, inx:%d\n",riga,colonna,inx);
   
   
   /* cella su cui si trova e cella precedente */
@@ -1067,7 +1042,6 @@ direzione gioca_clyde(posizioni p, oggetto **lab)
       riga_old = riga;
       
       return ld; 
-            
     }
   else
     {
@@ -1110,7 +1084,7 @@ direzione gioca_clyde(posizioni p, oggetto **lab)
 
       cella s;
 
-      fprintf(f,"1) nodo_a.indice %d\n",nodo_a.indice);
+      //fprintf(f,"1) nodo_a.indice %d\n",nodo_a.indice);
       
       if(nodo_a.n_sx >= 0)
         {
@@ -1160,26 +1134,26 @@ direzione gioca_clyde(posizioni p, oggetto **lab)
         {
           ind = nodo_a.n_sx;
           nodo_a = grafo[ind];
-          fprintf(f,"1.1) noda_a.n_sx:%d ->nodo_a.indice:%d\n",ind,nodo_a.indice);
+          //fprintf(f,"1.1) noda_a.n_sx:%d ->nodo_a.indice:%d\n",ind,nodo_a.indice);
           ld = SINISTRA;   
         }else if(d_dx<=d_sx && d_dx<=d_su && d_dx<=d_giu)
         {
           ind = nodo_a.n_dx;
           nodo_a = grafo[ind];
-          fprintf(f,"1.1) noda_a.n_dx:%d ->nodo_a.indice:%d\n",ind,nodo_a.indice);
+          //fprintf(f,"1.1) noda_a.n_dx:%d ->nodo_a.indice:%d\n",ind,nodo_a.indice);
           ld = DESTRA;
         } else if(d_su<=d_sx && d_su<=d_dx && d_su<=d_giu)
         {
           ind = nodo_a.n_su;
           nodo_a = grafo[ind];
-          fprintf(f,"1.1) noda_a.n_su:%d ->nodo_a.indice:%d\n",ind,nodo_a.indice);
+          //fprintf(f,"1.1) noda_a.n_su:%d ->nodo_a.indice:%d\n",ind,nodo_a.indice);
           ld = SU;
         } else if(d_giu<=d_sx && d_giu<=d_dx && d_giu<=d_su)
         {
           ind = nodo_a.n_giu;
           
           nodo_a = grafo[ind];
-          fprintf(f,"1.1) noda_a.n_giu:%d ->nodo_a.indice:%d\n",ind,nodo_a.indice);
+          //fprintf(f,"1.1) noda_a.n_giu:%d ->nodo_a.indice:%d\n",ind,nodo_a.indice);
           ld = GIU;          
         }
       
@@ -1191,15 +1165,10 @@ direzione gioca_clyde(posizioni p, oggetto **lab)
           //printf("Errore: da %d != a %d direzione: %d",nodo_da.indice,nodo_a.indice,ld);
           //exit(0);
         }
-      fprintf(f,"2) nodo_a.indice %d\n",nodo_a.indice);
-  
-      
-      
+      //fprintf(f,"2) nodo_a.indice %d\n",nodo_a.indice);
       return ld;
-     
     }
-      
-      
+        
   return ld;
   
   

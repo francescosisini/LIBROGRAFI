@@ -58,7 +58,6 @@ direzione gioca_tuki(posizioni posi, oggetto **labx){
       agri_addo_Iter(&p,g);
     }
 
-
   /*
     ITA: cerca un fantasma nelle celle vicine
 
@@ -96,8 +95,6 @@ direzione gioca_tuki(posizioni posi, oggetto **labx){
       b_g = b_g || ((y == y_g[ig] - 1) && (x_g[ig] == x+1));
       b_g = b_g || ((y == y_g[ig] - 1) && (x_g[ig] == x-1));
     }
-
-  
   
   /*Assigns the neighbors cells */
   unsigned char c[4];
@@ -153,11 +150,11 @@ direzione gioca_tuki(posizioni posi, oggetto **labx){
     {
       /*check if the cell already exists*/
       agri_Tabella gc=agri_rivela_Cella(p,DESTRA);
-      if(gc){
-	
-	agri_colligo_Cellas(g,gc,DESTRA);
-
-      }else
+      if(gc)
+	{
+	  agri_colligo_Cellas(g,gc,DESTRA);
+	}
+      else
 	{
 	  Attributi d={0,rivela_rei_genus(cx)};
 	  agri_Tabella tg=agri_addo_Tabellam(g,d,DESTRA);
@@ -220,8 +217,6 @@ direzione gioca_tuki(posizioni posi, oggetto **labx){
           return SU;
         }
       
-      
-      
       /* chekcs R */
       
       if(g->dextra->d.rei!=MURO && !d_g)
@@ -252,6 +247,7 @@ direzione gioca_tuki(posizioni posi, oggetto **labx){
   if(g->sinistra->d.visitata==0&&g->sinistra->d.rei!=MURO)
     {
       g=g->sinistra;
+      //moveo_Cellam(&g, SINISTRA); //Anlogo, stessa cosa
       g->d.visitata=1;
       agri_addo_Iter(&p,g);
       l=p;
@@ -327,9 +323,7 @@ direzione gioca_tuki(posizioni posi, oggetto **labx){
   /*move to the previous one*/
   
   return nd;
-  
 }
-
 
 rei_genus rivela_rei_genus(oggetto code){
   if(code != 'J' && code != 'U' && code != 'V'){
@@ -338,7 +332,6 @@ rei_genus rivela_rei_genus(oggetto code){
   
   return ALTRO;
 }
-
 
 agri_Tabella moveo_Cellam(agri_Tabella * ptab, versus dir)
 {

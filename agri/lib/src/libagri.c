@@ -3,12 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 
-
-
 /*** GRAFO COME ARRAY DI VERTICI ***/
-
-
-
 
 agri_Vertex agri_Verticem_creo(int index, int linea, int columna)
 {
@@ -69,7 +64,6 @@ void agri_libero(agri_Colligationes_Colligatae g)
       g_t = g;
       g = g->next;
       free(g);
-      
     }
 }
 
@@ -237,7 +231,6 @@ void agri_creo_Tabellam(agri_Tabella* g)
 {
   *g = NULL;
 }
-
 
 /**
  *Add a cell to the agri_Tabella after checking that a cell
@@ -461,8 +454,6 @@ int  agri_muto(agri_Colligationes_Colligatae g,agri_Verticum_Dispositio* d)
 	  (v+iy)->ianua[k] = ix_ab;
 	  
 	}
-      
-      
     }
   qsort(v, sz, sizeof(agri_Vertex),&compar);
   *d = v;
@@ -525,7 +516,5 @@ versus agri_Versum_inverto(versus v)
   if (v == SURSUM) return DEORSUM;
   if (v == FIXO) return FIXO;
   return FIXO;
-
 }
-
 

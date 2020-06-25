@@ -1,5 +1,5 @@
 /*
-  The Green Race - A C-Language coding game based on  Path planning problem
+  The Tuki5 - A C-Language coding game based on  Path planning problem
   
   Copyright (C) 2018  Francesco Sisini (scuolaSisini)
   
@@ -40,10 +40,7 @@
 struct termios orig_termios;
 int rows,cols;
 
-
 /*** Terminal ***/
-
-
 void die(const char *s) {
   write(STDOUT_FILENO, "\x1b[2J", 4);
   write(STDOUT_FILENO, "\x1b[H", 3);
@@ -51,8 +48,6 @@ void die(const char *s) {
   perror(s);
   exit(1);
 }
-
-
   
 int leggi_dimensioni_terminale(int *rows, int *cols) {
   struct winsize ws;
@@ -63,8 +58,7 @@ int leggi_dimensioni_terminale(int *rows, int *cols) {
     *rows = ws.ws_row;
     return 0;
   }
-  }
-  
+}
   
 void disabilita_modo_raw() {
     if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig_termios) == -1)
@@ -94,11 +88,9 @@ void view_init()
   setlocale(LC_CTYPE, "");
 }
 
-
 /*** output ***/
 char * terminale_str(oggetto e)
 {
-  
   static char bc,ic,pc,cc,tc=0;
   static char st[2];
   st[0]=e;
@@ -114,7 +106,6 @@ char * terminale_str(oggetto e)
         }
       else
         {
-          
           bc=0;
           return "B";
           //return "\u2126";
@@ -176,8 +167,6 @@ char * terminale_str(oggetto e)
           return "O";
         }
     }
-
-  
   
   if(e==B)
     return "\u2557";
@@ -265,7 +254,6 @@ char * terminale_str(oggetto e)
 }
 
 
-
 void view_labirinto(oggetto **campo)
 {
   int x,y;
@@ -315,11 +303,7 @@ void view_mangiato(posizioni g)
       write(STDOUT_FILENO, str, strlen(str));
       delay(50);
     }
-
-
 }
-
-
 
 int view_giocatori(posizioni g, oggetto ** lab,char in_blue)
 {
@@ -352,7 +336,6 @@ int view_giocatori(posizioni g, oggetto ** lab,char in_blue)
   int rof=ROFFSET(ALTEZZA);
   int cof=COFFSET(LARGHEZZA);
   char str[80];
-
 
   /** Tuki */
   // Ripristina il campo
@@ -421,7 +404,6 @@ int view_giocatori(posizioni g, oggetto ** lab,char in_blue)
 
   /** Memorizza le posizioni del turno appena visualizzato */
   g_prec=g;
-
   
 }
 
@@ -483,10 +465,7 @@ void fading( char * str,int r, int c)
       gray+=vrs*inc;
     } 
   fflush(stdout);
-    
-
 }
-
 
 void view_presentazione(){
   char str2[50];

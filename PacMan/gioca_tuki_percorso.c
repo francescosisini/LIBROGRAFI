@@ -1,6 +1,6 @@
 /*___________________________________________________________
  * 
- * FILE: gioca_tuki_generagrafo.c
+ * FILE: gioca_tuki_percorso.c
  */
 #include "tuki5_modello.h"
 #include "libagri.h"
@@ -8,7 +8,6 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-
 #include <time.h>
 #include <unistd.h>
 

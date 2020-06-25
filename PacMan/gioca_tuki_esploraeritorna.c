@@ -1,6 +1,6 @@
 /*___________________________________________________________
  * 
- * FILE: gioca_tuki_generagrafo.c
+ * FILE: gioca_tuki_esploraeritorna.c
  */
 #include "tuki5_modello.h"
 #include "libagri.h"
@@ -8,13 +8,10 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-
 #include <time.h>
 #include <unistd.h>
 
-
 #define SCONOSCIUTO -2
-
 #define GUINZAGLIO 5
 
 char * dir(versus d)
@@ -27,7 +24,6 @@ char * dir(versus d)
   return "-1";
   
 }
-
 
 agri_Vertex agri_Vertices_Colligati[NNODI];
 double euri(int start, int goal)
@@ -54,8 +50,6 @@ double dist(int da_nodus, int a_nodus)
 
 }
 
-
-
 /*
   ITA:  I grafi sono implementati come
   liste di archi tra vertici
@@ -75,8 +69,6 @@ void stampa(agri_Colligationes_Colligatae g)
       fclose(f);
 }
 
-
-
 /* 
    ITA: Controlla se l'oggetto nella cella non è un muro
    ENG: chcks if the object into the cell is or not a wall
@@ -88,17 +80,6 @@ bool oggetto_accessibile(oggetto s)
   else
     return false;
 }
-/*
-direzione direzione_opposta(direzione d)
-{
-  if(d == SINISTRA) return DESTRA;
-  if(d == DESTRA) return SINISTRA;
-  if(d == SU) return GIU;
-  if(d == GIU) return SU;
-  return FERMO;
-
-}
-*/
 
 typedef enum {ESPLORA, DECIDI, RITORNA} Modo;
 
@@ -200,11 +181,8 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
   oggetto a = vicino[2];
   oggetto b = vicino[3];
 
-
-
-/*
+  /*
     ITA: cerca un fantasma nelle celle vicine
-
    */
   int x = posi.tuki_x;
   int y = posi.tuki_y;
@@ -240,9 +218,6 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
       b_g = b_g || ((y == y_g[ig] - 1) && (x_g[ig] == x-1));
     }
   
-
-
-
   /*  
       ITA: Conta il numero di vicini accessibili
       ENG: Counts the number of accessible neighbors

@@ -18,7 +18,6 @@
  */
 
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -308,7 +307,6 @@ int mdl_genera_campo(){
           copia_campo[i][j]=campo[i][j];
 	}
     }
-
   
   /*Conto i fiori rimasti nel campo*/
   for(int i=0;i<h;i+=1)
@@ -326,7 +324,6 @@ void mdl_libera_campo()
     {
       free(*(copia_campo+in));
     }
-  
   
   free(copia_campo);
 }

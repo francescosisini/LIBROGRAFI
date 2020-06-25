@@ -8,7 +8,6 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-
 #include <time.h>
 #include <unistd.h>
 
@@ -52,8 +51,6 @@ double dist(int da_nodus, int a_nodus)
 
 }
 
-
-
 /*
   ITA:  I grafi sono implementati come
   liste di archi tra vertici
@@ -73,8 +70,6 @@ void stampa(agri_Colligationes_Colligatae g)
       fclose(f);
 }
 
-
-
 /* 
    ITA: Controlla se l'oggetto nella cella non è un muro
    ENG: chcks if the object into the cell is or not a wall
@@ -86,17 +81,6 @@ bool oggetto_accessibile(oggetto s)
   else
     return false;
 }
-/*
-direzione direzione_opposta(direzione d)
-{
-  if(d == SINISTRA) return DESTRA;
-  if(d == DESTRA) return SINISTRA;
-  if(d == SU) return GIU;
-  if(d == GIU) return SU;
-  return FERMO;
-
-}
-*/
 
 direzione gioca_tuki(posizioni posi, oggetto **labx)
 {

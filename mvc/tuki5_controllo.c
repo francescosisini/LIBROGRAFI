@@ -75,11 +75,8 @@ direzione gioca_inky(posizioni p, oggetto** lab);
 direzione gioca_pinky(posizioni p, oggetto** lab);
 direzione gioca_clyde(posizioni p, oggetto** lab);
 
-
-
 int main(int argc, char **argv)
 {
-
   /*
     ITA: numero di fantasmi nel labirinto (default 4)
     ENG: number of ghosts in the maze
@@ -103,8 +100,7 @@ int main(int argc, char **argv)
   /* Labirinto */
   oggetto ** lab = mdl_campo();
   view_labirinto(lab);
-  
-  
+   
   /**
    * START GAME
    */
@@ -147,8 +143,6 @@ int main(int argc, char **argv)
     view_punteggio(pnt);
     view_giocatori(p,lab,inblu);
     delay(DELAY);
-    // delay(250);
-
 
     /** Pacman è stato mangiato **/
     if(go==0)
@@ -161,11 +155,10 @@ int main(int argc, char **argv)
     /** Pacman ha finito le pastiglie 245 */
     if(pnt == 244)
       {
-        view_gameover("Ha vinto TUKI!");
+        view_gameover("Hai vinto!");
         exit(0);
       }
-    
-  }  
+   }  
   /*end of the game*/
   
 }
