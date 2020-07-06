@@ -14,14 +14,18 @@ rei_genus rivela_rei_genus(oggetto contenuto);
 
 agri_Tabella moveo_Cellam(agri_Tabella * ptab, versus dir);
 
-/**
- * Tuki algorithm based on The Boustrophedon Cellular Decomposition
- * Choset e Pignon
- */
+/*
+  ITA: algoritmo basato su sulla Decomposizione Cellulare del 
+  Boustrophedon di Choset e Pignon
+  ENG: Tuki algorithm based on The Boustrophedon Cellular Decomposition
+  Choset e Pignon
+*/
 direzione gioca_tuki(posizioni posi, oggetto **labx){
-
-
-  //Modifica il labirinto per non imboccare il tunnel 
+  
+  /*
+    ITA: Modifica il labirinto per non imboccare il tunnel
+    ENG: Modify the maze to avoid entering the tunnel
+  */ 
   labx[16][2]='A';
   labx[16][23]='A';
   labx[14][13]='A';
@@ -31,7 +35,7 @@ direzione gioca_tuki(posizioni posi, oggetto **labx){
   static agri_Tabella g=NULL;
   static agri_Iter p=NULL;
   static agri_Iter l=NULL;
-
+  
   int i = posi.tuki_y;
   int j = posi.tuki_x;
   oggetto s_ = labx[i][j-1];
@@ -39,29 +43,43 @@ direzione gioca_tuki(posizioni posi, oggetto **labx){
   oggetto a_ = labx[i-1][j];
   oggetto b_ = labx[i+1][j];
   
-  
   if(!init)
     {
       init=1;
-      /* 1)Start with any cell in the decomposition. 
-       * Insert it into the agri_Iter list. Mark it as visitata*/
-      /* The list of visitata cells*/
-
-      /*the battlefield*/
+      /*
+	ITA: 1) Comincia con una cella qualsiasi nella 
+	decomposizione. La inserisce nella lista afri_Iter e 
+	la marca come visitata
+	ENG: 1)Start with any cell in the decomposition. 
+	Insert it into the agri_Iter list. Mark it as visitata
+      */
+      
+      /*
+	ITA: La lista di celle visitate
+	ENG: The list of visitata cells
+      */
+      
+      /*
+	ITA: Il campo di gioco
+	ENG: The battlefield
+      */
       agri_creo_Tabellam(&g);      
       agri_Tabella fn=(agri_Tabella)malloc(sizeof(agri_Cella));
       g=fn;
       g->d.visitata=1;
       g->d.rei=ALTRO;
-      /*The cell list (agri_Iter in the battlefield)*/
+      /*
+	ITA: La lista di celle (agri_Iter nel campo di gioco)
+	ENG: The cell list (agri_Iter in the battlefield)
+      */
       agri_creo_Iter(&p);
       agri_addo_Iter(&p,g);
     }
-
+  
   /*
     ITA: cerca un fantasma nelle celle vicine
-
-   */
+    ENG: looks for a ghost in the neighboring cells 
+  */
   int x = posi.tuki_x;
   int y = posi.tuki_y;
   int x_g[4];
@@ -70,15 +88,16 @@ direzione gioca_tuki(posizioni posi, oggetto **labx){
   x_g[1] = posi.pinky_x;
   x_g[2] = posi.inky_x;
   x_g[3] = posi.clyde_x;
-
+  
   y_g[0] = posi.blinky_y;
   y_g[1] = posi.pinky_y;
   y_g[2] = posi.inky_y;
   y_g[3] = posi.clyde_y;
-
+  
   /*
     ITA: flag di presenza del fantasma
-   */
+    ENG: ghost flag on
+  */
   char s_g = 0, d_g = 0,a_g = 0,b_g = 0;
   for (int ig = 0; ig<4; ig++)
     {
@@ -96,19 +115,29 @@ direzione gioca_tuki(posizioni posi, oggetto **labx){
       b_g = b_g || ((y == y_g[ig] - 1) && (x_g[ig] == x-1));
     }
   
-  /*Assigns the neighbors cells */
+  /*
+    ITA: Dichiara le celle vicine
+    ENG: Assigns the neighboring cells
+  */
   unsigned char c[4];
   oggetto cx;
   
-  /*This is the cell where Tuki is*/
+  /*
+    ITA: Questa è la cella in cui si trova Pacman
+    ENG: This is the cell where Pacman is
+  */
   g=p->locus;
   if(!g) exit(-1);
-
+  
   //Sursum
   cx = a_;
   
   if(g->sursum==NULL)
     {
+      /*
+	ITA: controlla se la cella esiste già
+	ENG: check if the cell already exists
+      */
       agri_Tabella gc=agri_rivela_Cella(p,SU);
       if(gc)
 	{
@@ -139,16 +168,16 @@ direzione gioca_tuki(posizioni posi, oggetto **labx){
 	  Attributi d={0,rivela_rei_genus(cx)};
 	  agri_Tabella tg=agri_addo_Tabellam(g,d,GIU);
 	}
-    }else
+    }
+  else
     {
       g->deorsum->d.rei=rivela_rei_genus(cx);
     }
-
+  
   //Dextra
   cx = d_;
   if(g->dextra==NULL)
     {
-      /*check if the cell already exists*/
       agri_Tabella gc=agri_rivela_Cella(p,DESTRA);
       if(gc)
 	{
@@ -158,9 +187,9 @@ direzione gioca_tuki(posizioni posi, oggetto **labx){
 	{
 	  Attributi d={0,rivela_rei_genus(cx)};
 	  agri_Tabella tg=agri_addo_Tabellam(g,d,DESTRA);
-
 	}
-    }else
+    }
+  else
     {
       g->dextra->d.rei=rivela_rei_genus(cx);
     }
@@ -174,30 +203,41 @@ direzione gioca_tuki(posizioni posi, oggetto **labx){
 	{
 	  
 	  agri_colligo_Cellas(g,gc,SINISTRA);
-	}else
+	}
+      else
 	{
 	  Attributi d={0,rivela_rei_genus(cx)};
 	  agri_Tabella tg=agri_addo_Tabellam(g,d,SINISTRA);
 	}
-    }else
+    }
+  else
     {
       g->sinistra->d.rei=rivela_rei_genus(cx);
     }
-    
+  
   /*
-    2)Go to the rst unvisitata cell in the neighbor list of
-    the current cell (i.e., go to the rst clockwise
-    unvisitata cell). Insert this cell into the beginniing of
+    2) ITA: Va nella prima cella non visitata nella lista dei vicini
+    della cella corrente (ovvero nella prima in senso orario).
+    La inserisce all'inizio della lista agri_Iter e la marc come 
+    visitata.
+    2) ENG: Go to the first unvisited cell in the neighbor list of
+    the current cell (i.e., go to the first clockwise
+    unvisited cell). Insert this cell into the beginning of
     the agri_Iter list and mark it as visitata.
-   */
-
-
-/* Se un fantasma è nelle vicinanze prendo la prima cella buona */
+  */
+  
+  /* 
+     ITA: Se un fantasma è nelle vicinanze prendo la prima cella accessibile 
+     ENG: If a ghost is nearby take the first accessible cell
+  */
   if((s_g || d_g || a_g || b_g) && FUGA)
     {
+      /* 
+	 ITA: Controlla a sinistra 
+	 ENG: Chekcs a cestra
+      */
       if(g->sinistra->d.rei!=MURO && !s_g)
         {
-          //g=g->sinistra;
 	  moveo_Cellam(&g, SINISTRA);
           g->d.visitata=1;
           agri_addo_Iter(&p,g);
@@ -205,11 +245,12 @@ direzione gioca_tuki(posizioni posi, oggetto **labx){
           return SINISTRA;
         }
       
-      /* chekcs U */
-      
+      /* 
+	 ITA: Controlla su 
+	 ENG: Chekcs up 
+      */
       if(g->sursum->d.rei!=MURO && !a_g)
         {
-          //g=g->sursum;
 	  moveo_Cellam(&g, SU);
           g->d.visitata=1;
           agri_addo_Iter(&p,g);
@@ -217,45 +258,50 @@ direzione gioca_tuki(posizioni posi, oggetto **labx){
           return SU;
         }
       
-      /* chekcs R */
-      
+      /* 
+	 ITA: Controlla a destra 
+	 ENG: Chekcs right
+      */
       if(g->dextra->d.rei!=MURO && !d_g)
         {
-          //g=g->dextra;
 	  moveo_Cellam(&g, DESTRA);
           g->d.visitata=1;
           agri_addo_Iter(&p,g);
           l=p;
           return DESTRA;
         }
-      /* chekcs D */
       
+      /* 
+	 ITA: Controlla giu 
+	 ENG: Chekcs down
+      */
       if(g->deorsum->d.rei!=MURO && !b_g)
         {
-          //g=g->deorsum;
 	  moveo_Cellam(&g, GIU);
           g->d.visitata=1;
           agri_addo_Iter(&p,g);
           l=p;
           return GIU;
         }
-      
     }
   
- //chekcs L
-  //if(g->sinistra->d.rei==MURO)g->sinistra->d.visitata=1;
+  /* 
+     ITA: Controlla a sinistra 
+     ENG: Chekcs left
+  */
   if(g->sinistra->d.visitata==0&&g->sinistra->d.rei!=MURO)
     {
       g=g->sinistra;
-      //moveo_Cellam(&g, SINISTRA); //Anlogo, stessa cosa
       g->d.visitata=1;
       agri_addo_Iter(&p,g);
       l=p;
       return SINISTRA;
     }
-
-  //chekcs U
-  //if(g->sursum->d.rei==MURO)g->sursum->d.visitata=1;
+  
+  /* 
+     ITA: Controlla su 
+     ENG: Chekcs up
+  */
   if(g->sursum->d.visitata==0&&g->sursum->d.rei!=MURO)
     {
       g=g->sursum;
@@ -264,11 +310,11 @@ direzione gioca_tuki(posizioni posi, oggetto **labx){
       l=p;
       return SU;
     }
-      
-
-
- //chekcs R
-  //if(g->destra->d.rei==MURO)g->destra->d.visitata=1;
+  
+  /* 
+     ITA: Controlla a destra 
+     ENG: Chekcs right
+  */
   if(g->dextra->d.visitata==0&&g->dextra->d.rei!=MURO)
     {
       g=g->dextra;
@@ -277,8 +323,11 @@ direzione gioca_tuki(posizioni posi, oggetto **labx){
       l=p;
       return DESTRA;
     }
-  //chekcs D
-  //if(g->deorsum->d.rei==MURO)g->deorsum->d.visitata=1;
+  
+  /* 
+     ITA: Controlla giu 
+     ENG: Chekcs down
+  */
   if(g->deorsum->d.visitata==0&&g->deorsum->d.rei!=MURO)
     {
       g=g->deorsum;
@@ -287,48 +336,59 @@ direzione gioca_tuki(posizioni posi, oggetto **labx){
       l=p;
       return GIU;
     }
- 
   
-
   /*
-    3) At this point, back track until a cell with unvis-
+    ITA: 3) A questo punto, torna indietro fino a quando non 
+    incontra una cella con vicini non visitati. 
+    Questo back tracking viene eseguito camminando in avanti 
+    nell'elenco agri_Iter, inserendo ogni elemento che viene 
+    visitato in testa alla lista agri_Iter, fino a quando non si
+    incontra un elemento con un vicino non visitato. 
+    Inserisce questo elemento in testa alla lista  agri_Iter e 
+    ripete la procedura sopra (ovvero va al passaggio 2).
+    ENG: 3) At this point, back track until a cell with unvis-
     ited neighbors is encountered. This back tracking is
     achieved by walking forward through the agri_Iter list,
     inserting each element that is visitata to the front
-    of the agri_Iter list, until an element with an unvisied
+    of the agri_Iter list, until an element with an unvisited
     neighbor is encountered. Insert this element to the
     front of the agri_Iter list and repeat the above procedure
     (i.e., goto step 2).
    */
- 
-  /*back to previous cell*/
+  
+  /*
+    ITA: Indietro all cella precedente
+    ENG: Back to previous cell
+  */
   l=l->prev;
   if(l==NULL) exit(-1);
-  /*Add it to the agri_Iter list*/
+  
+  /*
+    ITA: La aggiunge alla lista agri_Iter
+    ENG: Add it to the agri_Iter list
+  */
   agri_addo_Iter(&p,l->locus);
   
-  /*get the diretion*/
+  /*
+    ITA: Ottiene la direzione
+    ENG: Get the direction
+  */
   direzione nd;//next step direzione
-
+  
   if(g->dextra==l->locus) nd=DESTRA;
-  else
-  if(g->sinistra==l->locus) nd=SINISTRA;
-  else
-  if(g->sursum==l->locus) nd=SU;
-  else
-  if(g->deorsum==l->locus) nd=GIU;
-
-  /*Set as the online cell*/
-  //g=l->locus;
-  /*move to the previous one*/
+  else if(g->sinistra==l->locus) nd=SINISTRA;
+  else if(g->sursum==l->locus) nd=SU;
+  else if(g->deorsum==l->locus) nd=GIU;
   
   return nd;
 }
 
-rei_genus rivela_rei_genus(oggetto code){
-  if(code != 'J' && code != 'U' && code != 'V'){
-    return MURO;
-  }
+rei_genus rivela_rei_genus(oggetto code)
+{
+  if(code != 'J' && code != 'U' && code != 'V')
+    {
+      return MURO;
+    }
   
   return ALTRO;
 }
@@ -343,7 +403,6 @@ agri_Tabella moveo_Cellam(agri_Tabella * ptab, versus dir)
     *ptab = (*ptab)->deorsum;
   else if (dir == SURSUM)
     *ptab = (*ptab)->sursum;
-  return *ptab;
-
+  return *ptab; 
 }
 
