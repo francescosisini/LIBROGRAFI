@@ -11,7 +11,6 @@
 #include <time.h>
 #include <unistd.h>
 
-
 #define SCONOSCIUTO -2
 #define GUINZAGLIO 10
 
@@ -19,13 +18,16 @@
 
 /*
   ITA: array di vertici del grafo completo del Pac-Man
- */
+  ENG: vertex array of the complete Pac-Man graph
+*/
 static agri_Vertex grafo[NODI_LAB_POT];
 
 /*
   ITA: array della sequnza dei vertici più efficiente
   per completare il percorso
- */
+  ENG: array of the most efficient vertex sequence
+  to complete the path
+*/
 int * cammino;
 char * dir(versus d)
 {
@@ -34,10 +36,8 @@ char * dir(versus d)
   if(d == DEORSUM) return "DEORSUM";
   if(d == SURSUM) return "SURSUM";
   if(d == FIXO) return "FIXO";
-  return "-1";
-  
+  return "-1"; 
 }
-
 
 agri_Vertex agri_Vertices_Colligati[NODI_LAB_POT];
 double euri(int start, int goal)
@@ -48,14 +48,17 @@ double euri(int start, int goal)
   y1=agri_Vertices_Colligati[start].linea;
   x2=agri_Vertices_Colligati[goal].columna;
   y2=agri_Vertices_Colligati[goal].linea;
-  //Euristica uguale al quadrato della distanza euclidea
+  /*
+    ITA: Euristica uguale al quadrato della distanza euclidea
+    ENG: Heuristic equal to the square of the Euclidean distance
+  */
   d = (x1-x2)*(x1-x2)+(y1-y2)*(y1-y2);
   return sqrt(d);
 }
 
 /* 
    ITA: Controlla se l'oggetto nella cella non è un muro
-   ENG: chcks if the object into the cell is or not a wall
+   ENG: checks if the object into the cell is or not a wall
 */
 bool oggetto_accessibile(oggetto s)
 {
@@ -65,9 +68,9 @@ bool oggetto_accessibile(oggetto s)
     return false;
 }
 
-/*___________________________________________________________
- *|
- *| Crea un grafo corrispondente al labirinto del tuki
+/*
+  ITA: Crea un grafo corrispondente al labirinto di Pac-Man
+  ENG: Create a graph corresponding to the maze of Pac-Man
  */
 void collega_tuki_nodi()
 {
@@ -90,7 +93,7 @@ void collega_tuki_nodi()
   grafo[0].ianua[DESTRA] = 35;
   grafo[0].ianua[SU] = -1;
   grafo[0].ianua[GIU] = 3;
-
+  
   grafo[1].linea = 3;
   grafo[1].columna = 21;
   grafo[1].index = 1;
@@ -114,7 +117,7 @@ void collega_tuki_nodi()
   grafo[3].ianua[DESTRA] = 4;
   grafo[3].ianua[SU] = 0;
   grafo[3].ianua[GIU] = 10;
-
+  
   grafo[4].linea = 7;
   grafo[4].columna = 9;
   grafo[4].index = 4;
@@ -122,7 +125,7 @@ void collega_tuki_nodi()
   grafo[4].ianua[DESTRA] = 5;
   grafo[4].ianua[SU] = -1;
   grafo[4].ianua[GIU] = 12;
-
+  
   grafo[5].linea = 7;
   grafo[5].columna = 12;
   grafo[5].index = 5;
@@ -138,7 +141,7 @@ void collega_tuki_nodi()
   grafo[6].ianua[DESTRA] = 7;
   grafo[6].ianua[SU] = 36;
   grafo[6].ianua[GIU] = -1;
-
+  
   grafo[7].linea = 7;
   grafo[7].columna = 18;
   grafo[7].index = 7;
@@ -146,7 +149,7 @@ void collega_tuki_nodi()
   grafo[7].ianua[DESTRA] = 8;
   grafo[7].ianua[SU] = -1;
   grafo[7].ianua[GIU] = 13;
-
+  
   grafo[8].linea = 7;
   grafo[8].columna = 21;
   grafo[8].index = 8;
@@ -154,7 +157,7 @@ void collega_tuki_nodi()
   grafo[8].ianua[DESTRA] = 9;
   grafo[8].ianua[SU] = 1;
   grafo[8].ianua[GIU] = 11;
-
+  
   grafo[9].linea = 7;
   grafo[9].columna = 26;
   grafo[9].index = 9;
@@ -162,7 +165,7 @@ void collega_tuki_nodi()
   grafo[9].ianua[DESTRA] = -1;
   grafo[9].ianua[SU] = 37;
   grafo[9].ianua[GIU] = 39;
-
+  
   grafo[10].linea = 10;
   grafo[10].columna = 6;
   grafo[10].index = 10;
@@ -178,7 +181,7 @@ void collega_tuki_nodi()
   grafo[11].ianua[DESTRA] = 39;
   grafo[11].ianua[SU] = 8;
   grafo[11].ianua[GIU] = 17;
-
+  
   grafo[12].linea = 13;
   grafo[12].columna = 12;
   grafo[12].index = 12;
@@ -186,7 +189,7 @@ void collega_tuki_nodi()
   grafo[12].ianua[DESTRA] = 13;
   grafo[12].ianua[SU] = 4;
   grafo[12].ianua[GIU] = -1;
-
+  
   grafo[13].linea = 13;
   grafo[13].columna = 15;
   grafo[13].index = 13;
@@ -434,7 +437,6 @@ void collega_tuki_nodi()
   grafo[43].ianua[DESTRA] = -1;
   grafo[43].ianua[SU] = 31;
   grafo[43].ianua[GIU] = -1;
-  
 }
 
 double distanza_esatta(int da_nodo, int a_nodo)
@@ -448,7 +450,7 @@ double distanza_esatta(int da_nodo, int a_nodo)
       for(int i=0; i<NODI_LAB_POT;i++)
         for(int j=0; j<NODI_LAB_POT;j++)
           distanze[i][j]=INFINITO;
-
+      
       distanze[0][2]=8;
       distanze[0][3]=3;
       distanze[0][5]=9;
@@ -656,12 +658,13 @@ double distanza_esatta(int da_nodo, int a_nodo)
   return (double)distanze[s][g];
 }
 
-
-/*__________________________________________________________
- *|
- *| Torna l'indice del nodo presente in (riga, colonna)
- *| Se non è presente alcun nodo (il fantasma è su un ramo)
- *| torna -1
+/*
+  ITA: Restituisce l'indice del vertice presente in (riga, colonna).
+  Se non è presente alcun nodo (il fantasma è su un ramo)
+  restituisce -1
+  ENG: Returns the index of the vertex present in (row, column).
+  If no vertex is present (the ghost is on a branch)
+  returns -1
  */
 int indice_tuki_nodo_cella(int riga, int col)
 {
@@ -681,24 +684,25 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
   static int * copia;
   static Modo modo_gioco = ESPLORA;
   static int indice_array_vertice_bersaglio = 0;
-
+  
   int vertice_corrente = -1;
   /*
-    ITA: per generare il grafo impediamo a PAC-MAN di entrare nella
+    ITA: per generare il grafo impediamo a Pac-Man di entrare nella
     casa dei fantasmi
-    ENG: to generte maze graph we prevent PAC-MAN to get into 
+    ENG: to generate the maze graph we prevent Pac-Man to get into 
     ghosts' house
-   */
+  */
   labx[14][12]='A';
   labx[14][13]='A';
   labx[14][11]='A';
   labx[14][14]='A';
-
+  
   /*
-    ITA: creazione esterna del grafo del labirinto
-   */
+    ITA: Creazione esterna del grafo del labirinto
+    ENG: External creation of the graph of the labyrinth
+  */
   collega_tuki_nodi();
-
+  
   /* 
      ITA: Direzione presa nel turno di gioco corrente 
      ENG: Direction taken into the current game cycle
@@ -714,27 +718,33 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
   
   /* 
      ITA: Posizione di Pac-Man nel labirinto
-     ENG: PAC-MAN's row and column
-   */
+     ENG: Pac-Man's row and column
+  */
   int i = posi.tuki_y;
   int j = posi.tuki_x;
-  
-  /* Celle confinanti (neighbors) */
+    
+  /*
+    ITA: Celle confinanti 
+    ENG: Neighboring cells
+  */
   oggetto vicino[4];
   vicino[0] = labx[i][j-1]; //sinistra - left
   vicino[1] = labx[i][j+1]; //destra - right
   vicino[2] = labx[i-1][j]; //su - up
   vicino[3] = labx[i+1][j]; //giu - down
-
-  /* Variabile ausiliarie con nomi più comodi */
+  
+  /*
+    ITA: Variabili ausiliarie con nomi più comodi 
+    ENG: Auxiliary variable with more memorable names
+  */
   oggetto s = vicino[0];
   oggetto d = vicino[1];
   oggetto a = vicino[2];
   oggetto b = vicino[3];
-
+  
   /*
     ITA: cerca un fantasma nelle celle vicine
-    
+    ENG: look for a ghost in neighboring cells
   */
   int x = posi.tuki_x;
   int y = posi.tuki_y;
@@ -744,15 +754,16 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
   x_g[1] = posi.pinky_x;
   x_g[2] = posi.inky_x;
   x_g[3] = posi.clyde_x;
-
+  
   y_g[0] = posi.blinky_y;
   y_g[1] = posi.pinky_y;
   y_g[2] = posi.inky_y;
   y_g[3] = posi.clyde_y;
-
+  
   /*
     ITA: flag di presenza del fantasma
-   */
+    ENG: ghost flag
+  */
   char s_g = 0, d_g = 0,a_g = 0,b_g = 0;
   for (int ig = 0; ig<4; ig++)
     {
@@ -779,9 +790,11 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
     nd += (1*oggetto_accessibile(vicino[k]));
   
   fflush(stdout);
-
-  /* ITA: È vero se nel ciclo di gioco corrente viene rilevato un nodo */
-  /* ENG: Is true if in the current game cycle a node is detetcted  */
+  
+  /* 
+     ITA: È vero se nel ciclo di gioco corrente viene rilevato un nodo 
+     ENG: Is true if in the current game cycle a node is detetcted  
+  */
   bool nodo_rilevato = false;
   if(nd>=2)
     {
@@ -797,52 +810,54 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
 	    modo_gioco = CALCOLA;
 	}
     }
-
-  /* ITA: Gestione ostacoli
+  
+  /* 
+     ITA: Gestione ostacoli
      ENG: dealing with obstacles
   */
   bool disponibile = false;
   bool aleatorio = false;
- 
-  /* Se un fantasma è nelle vicinanze prendo la prima cella buona */
+  
+  /* 
+     ITA: Se un fantasma è nelle vicinanze prendo la prima cella buona
+     ENG: If a ghost is nearby take the first good cell
+  */
   if((s_g || d_g || a_g || b_g) && FUGA)
     {
+      
       /*
 	ITA: direzioni possibili di fuga
-       */
+	ENG: possible escape directions
+      */
       direzione esc[4];
       for(int i=0;i<4;i++) esc[i]=FERMO;
-      int ki = 0; //direzioni buone
+      int ki = 0; //direzioni buone, good directions
       if(copia) free(copia);
       copia = 0;
       modo_gioco = ESPLORA;
-            
+      
       if(oggetto_accessibile(s) && !s_g)
 	{
 	  esc[ki] = SINISTRA;
 	  ki++;
 	}
-      
       if(oggetto_accessibile(a) && !a_g)
 	{
 	  esc[ki] = SU;
 	  ki++;
 	}
-      
       if(oggetto_accessibile(d) && !d_g)
 	{
 	  esc[ki] = DESTRA;
 	  ki++;
 	}
-      
       if(oggetto_accessibile(b) && !b_g)
 	{
 	  esc[ki] = GIU;
 	  ki++;
 	}
-      
       if(ki == 0) return FERMO;
-
+      
       ld = esc[rand()%ki];
       
       return ld;
@@ -853,8 +868,8 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
       /* 
 	 ITA: se la cella successiva nella direzione corrente non è disponibile,
 	 ne viene scelta un'altra e viene eseguita una nuova iterazione
-	 ENG: if the next cell in the current direction is not available, it chooses
-	 another one and new iteration is executed
+	 ENG: if the next cell in the current direction is not available, 
+	 it chooses another one and new iteration is executed
       */
       while(!disponibile)
 	{
@@ -867,41 +882,35 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
 		ld = GIU;
 	      aleatorio = true;
 	    }
-	  else
-	    
-	    if(!oggetto_accessibile(d) && ld == DESTRA)
-	      {
-		
-		ld = rand()%2;
-		if(ld==0) ld = SU;
-		else
-		  ld = GIU;
-		aleatorio = true;
-	      }
-	    else
-	      if(!oggetto_accessibile(a) && ld == SU)
-		{
-		  ld = rand()%2;
-		  if(ld==0) ld = SINISTRA;
-		  else
-		    ld = DESTRA;
-		  aleatorio = true;
-		}
+	  else if(!oggetto_accessibile(d) && ld == DESTRA)
+	    {    
+	      ld = rand()%2;
+	      if(ld==0) ld = SU;
 	      else
-		if(!oggetto_accessibile(b) && ld == GIU)
-		  {
-		    ld = rand()%2;
-		    if(ld==0) ld = SINISTRA;
-		    else
-		      ld = DESTRA;
-		    aleatorio = true;
-		  }
-		else
-		  disponibile = true;
+		ld = GIU;
+	      aleatorio = true;
+	    }
+	  else if(!oggetto_accessibile(a) && ld == SU)
+	    {
+	      ld = rand()%2;
+	      if(ld==0) ld = SINISTRA;
+	      else
+		ld = DESTRA;
+	      aleatorio = true;
+	    }
+	  else if(!oggetto_accessibile(b) && ld == GIU)
+	    {
+	      ld = rand()%2;
+	      if(ld==0) ld = SINISTRA;
+	      else
+		ld = DESTRA;
+	      aleatorio = true;
+	    }
+	  else disponibile = true;
 	}
-            
+      
       if(aleatorio) return ld;
-            
+      
       /*
 	ITA: Se la direzione non è aleatoria la cambiamo qui
 	ENG: If a random step has not been taken during the
@@ -931,28 +940,20 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
 	  if(sv>=5)
 	    ld = DESTRA;
 	}
-            
+      
       return ld;
     }
   else if(modo_gioco == CALCOLA)
-    {
-      
-      //printf("##Calcola itinerario da %d a %d    \n",
-      //vertice_corrente,
-      //cammino[indice_array_vertice_bersaglio]);
+    { 
       if( vertice_corrente ==  cammino[indice_array_vertice_bersaglio])
 	{
-	  //printf("Partenza == Destinazione\n");
 	  indice_array_vertice_bersaglio++;
 	}
       
-      
       percorso_fuga = agri_astar
-	(
-	 vertice_corrente,
+	(vertice_corrente,
 	 cammino[indice_array_vertice_bersaglio],
-	 grafo,&distanza_esatta,&euri,NODI_LAB_POT
-	 );
+	 grafo,&distanza_esatta,&euri,NODI_LAB_POT);
       
       if(percorso_fuga == 0)
 	{
@@ -960,21 +961,23 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
 	  ld = FERMO;
 	  return ld;
 	}
-
+      
       copia = percorso_fuga;
       modo_gioco = NAVIGA;
     }
+  
   if(modo_gioco == NAVIGA)
     {
       if(nodo_rilevato == true)
 	{
+	  
 	  /*
 	    ITA: pesco il prossimo nodo
+	    ENG: Extract the next vertex
 	  */
 	  int indice_nodo = *percorso_fuga;
 	  if(indice_nodo == -1 ||(vertice_corrente ==cammino[indice_array_vertice_bersaglio] ) )
 	    {
-	      //printf("***Completato il cammino\n");
 	      indice_array_vertice_bersaglio++;
 	      modo_gioco = ESPLORA;
 	      free(copia);
@@ -982,10 +985,14 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
 	      return FERMO;
 	    }
 	  percorso_fuga++;
+	  
 	  /*
-	    ITA: Cerco il percorso per il nodo indice_nodo
-	    antro in d[vertice_corrente] e controllo le sue porte
+	    ITA:  Cerco il percorso per il nodo indice_nodo.
+	    Entro in d[vertice_da] e controllo le sue porte
 	    finché non trovo quella che collega a indice_nodo
+	    ENG: look for the path to the vertex indice_nodo.
+	    I enter d[vertice_da] and check its doors
+	    until I find the one that connects to indice_nodo
 	  */
 	  if(grafo[vertice_corrente].ianua[SINISTRA] == indice_nodo)
 	    {
@@ -1004,31 +1011,32 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
 	      ld = GIU;
 	    }
 	}
-      //SINISTRA
+      
+      //SINISTRA - LEFT
       if(ld == SINISTRA && oggetto_accessibile(s))
 	return ld;
       if(ld == SINISTRA && oggetto_accessibile(a))
 	return ld = SU;
       if(ld == SINISTRA && oggetto_accessibile(b))
 	return ld = GIU;
-
-       //DESTRA
+      
+      //DESTRA - RIGHT
       if(ld == DESTRA && oggetto_accessibile(d))
 	return ld;
       if(ld == DESTRA && oggetto_accessibile(a))
 	return ld = SU;
       if(ld == DESTRA && oggetto_accessibile(b))
 	return ld = GIU;
-
-      //SU
+      
+      //SU - UP
       if(ld == SU && oggetto_accessibile(a))
 	return ld;
       if(ld == SU && oggetto_accessibile(s))
 	return ld = SINISTRA;
       if(ld == SU && oggetto_accessibile(d))
 	return ld = DESTRA;
-
-      //GIU
+      
+      //GIU - DOWN
       if(ld == GIU && oggetto_accessibile(b))
 	return ld;
       if(ld == GIU && oggetto_accessibile(s))
@@ -1036,5 +1044,4 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
       if(ld == GIU && oggetto_accessibile(d))
 	return ld = DESTRA;
     }
-
 }
