@@ -26,7 +26,7 @@ bool oggetto_accessibile(oggetto s)
   Viene chiamata da tuki5_controllo ad ogni ciclo di gioco
   ENG: This function contains the Pac-Man agent's logic. 
   It is called by  tuki5_controllo every game cycle
- */
+*/
 direzione gioca_tuki(posizioni posi, oggetto **labx)
 {
   static direzione ld = SINISTRA; 
@@ -55,11 +55,10 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
   a = labx[i-1][j]; //su, up
   b = labx[i+1][j]; //giu, down
 
-  
-/*
+  /*
     ITA: cerca un fantasma nelle celle vicine
-
-   */
+    ENG: look for a ghost in neighboring cells
+  */
   int x = posi.tuki_x;
   int y = posi.tuki_y;
   int x_g[4];
@@ -68,15 +67,16 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
   x_g[1] = posi.pinky_x;
   x_g[2] = posi.inky_x;
   x_g[3] = posi.clyde_x;
-
+  
   y_g[0] = posi.blinky_y;
   y_g[1] = posi.pinky_y;
   y_g[2] = posi.inky_y;
   y_g[3] = posi.clyde_y;
-
+  
   /*
     ITA: flag di presenza del fantasma
-   */
+    ENG: ghost flag
+  */
   char s_g = 0, d_g = 0,a_g = 0,b_g = 0;
   for (int ig = 0; ig<4; ig++)
     {
@@ -94,48 +94,45 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
       b_g = b_g || ((y == y_g[ig] - 1) && (x_g[ig] == x-1));
     }
   
-
-  /* Se un fantasma è nelle vicinanze prendo la prima cella buona */
+  /* 
+     ITA: Se un fantasma è nelle vicinanze prendo la prima cella buona
+     ENG: If a ghost is nearby take the first good cell
+  */
   if((s_g || d_g || a_g || b_g) && FUGA)
     {
-
       /*
 	ITA: direzioni possibili di fuga
-       */
+	ENG: possible escape directions
+      */
       direzione esc[4];
       for(int i=0;i<4;i++) esc[i]=FERMO;
-      int ki = 0; //direzioni buone
-          
+      int ki = 0; //direzioni buone, good directions
+      
       if(oggetto_accessibile(s) && !s_g)
 	{
 	  esc[ki] = SINISTRA;
 	  ki++;
 	}
-      
       if(oggetto_accessibile(a) && !a_g)
 	{
 	  esc[ki] = SU;
 	  ki++;
 	}
-      
       if(oggetto_accessibile(d) && !d_g)
 	{
 	  esc[ki] = DESTRA;
 	  ki++;
 	}
-      
       if(oggetto_accessibile(b) && !b_g)
 	{
 	  esc[ki] = GIU;
 	  ki++;
 	}
-      
       if(ki == 0)
 	{
 	  return FERMO;
 	}
       ld = esc[rand()%ki];
-      
       
       return ld;
     }
@@ -168,40 +165,35 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
             ld = GIU;
           aleatorio = true;
         }
-      else
-	if(!oggetto_accessibile(d) && ld == DESTRA)
-          {
-	    
-            ld = rand()%2;
-            if(ld == 0) ld = SU;
-            else
-              ld = GIU;
-            aleatorio = true;
-          }
-        else
-	  if(!oggetto_accessibile(a) && ld == SU)
-            {
-              ld = rand()%2;
-              if(ld == 0) ld = SINISTRA;
-              else
-                ld = DESTRA;
-              aleatorio = true;
-            }
-          else
-            if(!oggetto_accessibile(b) && ld == GIU)
-	      {
-                ld = rand()%2;
-                if(ld == 0) ld = SINISTRA;
-                else
-                  ld = DESTRA;
-                aleatorio = true;
-	      }
-            else
-              trovata_direzione = true;
+      else if(!oggetto_accessibile(d) && ld == DESTRA)
+	{ 
+	  ld = rand()%2;
+	  if(ld == 0) ld = SU;
+	  else
+	    ld = GIU;
+	  aleatorio = true;
+	}
+      else if(!oggetto_accessibile(a) && ld == SU)
+	{
+	  ld = rand()%2;
+	  if(ld == 0) ld = SINISTRA;
+	  else
+	    ld = DESTRA;
+	  aleatorio = true;
+	}
+      else if(!oggetto_accessibile(b) && ld == GIU)
+	{
+	  ld = rand()%2;
+	  if(ld == 0) ld = SINISTRA;
+	  else
+	    ld = DESTRA;
+	  aleatorio = true;
+	}
+      else trovata_direzione = true;
     }
-    
+  
   if(aleatorio) return ld;
-    
+  
   /* 
      ITA:Se la direzione non è aleatoria
      qui viene data un'altra chance alla fortuna.
@@ -209,32 +201,31 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
      ENG: If the direction has not been randomly generated, 
      here it is forced to be randomly changed in an available 
      direction
-   */
+  */
   if(oggetto_accessibile(a) && ld !=SU && ld!=GIU)
     {
       int sv = rand()%10;
-	if(sv>=5)
-	  ld = SU;
-      }
-    if(oggetto_accessibile(b) && ld !=GIU && ld!=SU)
-      {
-	int sv = rand()%10;
-	if(sv>=5)
-	  ld = GIU;
-      }
-    if(oggetto_accessibile(s) && ld !=SINISTRA && ld!=DESTRA)
-      {
-	int sv = rand()%10;
-	if(sv>=5)
-	  ld = SINISTRA;
-      }
-    if(oggetto_accessibile(d) && ld !=DESTRA && ld!=SINISTRA)
-      {
-	int sv = rand()%10;
-	if(sv>=5)
-	  ld = DESTRA;
-      }
-    
-    return ld;
+      if(sv>=5)
+	ld = SU;
+    }
+  if(oggetto_accessibile(b) && ld !=GIU && ld!=SU)
+    {
+      int sv = rand()%10;
+      if(sv>=5)
+	ld = GIU;
+    }
+  if(oggetto_accessibile(s) && ld !=SINISTRA && ld!=DESTRA)
+    {
+      int sv = rand()%10;
+      if(sv>=5)
+	ld = SINISTRA;
+    }
+  if(oggetto_accessibile(d) && ld !=DESTRA && ld!=SINISTRA)
+    {
+      int sv = rand()%10;
+      if(sv>=5)
+	ld = DESTRA;
+    }
   
+  return ld;  
 }
