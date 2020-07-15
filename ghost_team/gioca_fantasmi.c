@@ -1,3 +1,7 @@
+/*________________________________________________________
+* FILE: gioca_fantasmi.c
+*/
+
 #include "tuki5_modello.h"
 #include <stdio.h>
 #include <stdlib.h>
