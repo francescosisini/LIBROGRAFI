@@ -19,7 +19,7 @@
 
 
 /**
-The Green Race - A C-Language coding game based on  Path planning problem
+File: tuki_controllo.c
  */
 
 #include <unistd.h>
