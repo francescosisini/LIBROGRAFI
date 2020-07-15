@@ -1,3 +1,7 @@
+/*________________________________________________________
+* FILE: tuki5_visore.h
+*/
+
 void view_init();
 
 /** Stampa il labirinto */
