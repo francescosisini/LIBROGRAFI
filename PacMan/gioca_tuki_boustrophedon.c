@@ -1,10 +1,13 @@
+/*____________________________________________
+* FILE: gioca_tuki_boustrophedon.c
+*/
+
 #include "tuki5_modello.h"
 #include "libagri.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 
-//#define FUGA 
 
 /*
   ITA: classifica il contenuto in MURO o ALTRO
