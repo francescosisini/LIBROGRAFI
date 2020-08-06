@@ -39,6 +39,23 @@ int evita_casa_fantasmi(int vertice)
   
 }
 
+/*
+  ITA: Restituisce l'indice del vertice presente in (riga, colonna).
+  Se non è presente alcun nodo 
+  restituisce -1
+  ENG: Returns the index of the vertex present in (row, column).
+  If no vertex is present 
+  returns -1
+ */
+int trova_vertice(int riga, int colonna)
+{
+  for(int i = 0; i<NODI_LAB_POT;i++)
+    {
+      if(grafo[i].linea == riga && grafo[i].columna == colonna)
+	return grafo[i].index;
+    }
+  return -1;
+}
 
 /* 
    ITA: Controlla se l'oggetto nella cella non è un muro
@@ -80,7 +97,7 @@ double euri(int start, int goal)
   y_g[2] = g_posi.inky_y;
   y_g[3] = g_posi.clyde_y;
 
-  int peso_g[]={300,200,100,50};
+  int peso_g[]={500,500,500,500};
   
   int x1,x2,y1,y2;
   double d;
@@ -100,7 +117,9 @@ double euri(int start, int goal)
       if(grafo[v].ianua[SINISTRA] == start ||
 	 grafo[v].ianua[DESTRA] == start ||
 	 grafo[v].ianua[SU] == start ||
-	 grafo[v].ianua[GIU] == start)
+	 grafo[v].ianua[GIU] == start||
+	 grafo[v].index == start
+	 )
 	{
 	  return peso_g[i];
 	}
@@ -110,23 +129,7 @@ double euri(int start, int goal)
   
 }
 
-/*
-  ITA: Restituisce l'indice del vertice presente in (riga, colonna).
-  Se non è presente alcun nodo 
-  restituisce -1
-  ENG: Returns the index of the vertex present in (row, column).
-  If no vertex is present 
-  returns -1
- */
-int trova_vertice(int riga, int colonna)
-{
-  for(int i = 0; i<NODI_LAB_POT;i++)
-    {
-      if(grafo[i].linea == riga && grafo[i].columna == colonna)
-	return grafo[i].index;
-    }
-  return -1;
-}
+
 
 /*
   ITA: Crea un grafo corrispondente al labirinto di Pac-Man
@@ -252,7 +255,7 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
   /* Evita la casa dei fantasmi */
   vertice_goal = evita_casa_fantasmi(vertice_goal);
 
-  printf("Passo %d -> %d \n",vertice_corrente,vertice_goal);
+  //printf("Passo %d -> %d \n",vertice_corrente,vertice_goal);
 
   do
     {
