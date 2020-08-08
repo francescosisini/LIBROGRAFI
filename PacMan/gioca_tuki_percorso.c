@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <sys/time.h>
 #include <unistd.h>
 
 #define SCONOSCIUTO -2
@@ -712,7 +713,11 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
   static bool init = false;
   if(!init)
     {
-      srand(time(0));
+      struct timeval time; 
+      gettimeofday(&time,NULL);
+      
+      srand((time.tv_sec * 1000) + (time.tv_usec / 1000));
+      //srand(time(0));
       init = true;
     }
   

@@ -149,14 +149,14 @@ int main(int argc, char **argv)
       {
         view_mangiato(p);
         view_gameover("GAME OVER");
-        exit(0);
+        exit(pnt);
       }
 
     /** Pacman ha finito le pastiglie 245 */
     if(pnt == 244)
       {
         view_gameover("Hai vinto!");
-        exit(0);
+        exit(pnt);
       }
    }  
   /*end of the game*/

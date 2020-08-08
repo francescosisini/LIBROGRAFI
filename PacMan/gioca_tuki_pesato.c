@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <sys/time.h>
 #include <unistd.h>
 
 #define SCONOSCIUTO -2
@@ -97,7 +98,7 @@ double euri(int start, int goal)
   y_g[2] = g_posi.inky_y;
   y_g[3] = g_posi.clyde_y;
 
-  int peso_g[]={500,500,500,500};
+  int peso_g[]={500,400,500,400};
   
   int x1,x2,y1,y2;
   double d;
@@ -139,7 +140,6 @@ void collega_tuki_nodi(oggetto **labx)
 {
   int i_aux,j_aux;
   int k = 0;
-
   /* Genera i vertici del grafo */
   for(int i = 3; i<ALTEZZA-3; i++)
     {
@@ -219,7 +219,10 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
   if(!init)
     {
       collega_tuki_nodi(labx);
-      srand(time(0));
+      struct timeval time; 
+      gettimeofday(&time,NULL);
+      
+      srand((time.tv_sec * 1000) + (time.tv_usec / 1000));
       init = 1;
     }
   
