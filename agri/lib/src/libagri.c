@@ -122,6 +122,58 @@ int Ordo_pop(Ordo * pOrdo)
   return n;
 }
 
+
+int agri_breadthfirstsearch(int start, 
+		    agri_Vertex * agri_Vertices_Colligati,
+		    int (*visitatus)(int ),
+		    int nmembri
+		    )
+{
+  static int iter;
+  
+  int precedente[nmembri];
+
+  //Nodi in valutazione per il path da start a goal
+  Ordo candidati = 0;
+  
+  
+  Ordo_insero_nodus(&candidati,start,1);
+
+  while(candidati != 0)
+    {
+      fflush(stdout);
+      int corrente = Ordo_pop(&candidati);
+     
+      /* Arrivato al nodus goal torna il cammino */
+      if(!visitatus(corrente) && corrente!=start)
+        {
+	  return corrente;
+        }
+     
+      /* Nel labirinto di Pac-Man ci sono al massimo 4 vicini */
+      int vicino[PORTE];
+      for(int i=0; i<PORTE; i++)
+	{
+	  vicino[i] = agri_Vertices_Colligati[corrente].ianua[i];
+	}
+      
+      for(int i =0; i<PORTE; i++)
+        {
+	  int iv = vicino[i];
+	  
+          if(iv == -1)continue;
+	  	  
+	  precedente[iv] = corrente;
+	  	  
+	  Ordo_insero_nodus(&candidati,iv,1);
+	}
+    }
+  
+  
+  return 0;
+
+}
+
 agri_Via agri_astar(int start, int goal,
 		    agri_Vertex * agri_Vertices_Colligati,
 		    double (*spatium)(int ab, int ad),

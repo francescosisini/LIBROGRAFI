@@ -114,7 +114,11 @@ agri_Via agri_astar(int start, int goal,
 		    int nmembri
 		    );
 
-
+int agri_breadthfirstsearch(int start, 
+		    agri_Vertex * agri_Vertices_Colligati,
+		    int (*visitatus)(int ),
+		    int nmembri
+				 );
 
 /*__________________________________________________________
  *|

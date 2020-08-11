@@ -1,6 +1,6 @@
 /*___________________________________________________________
  * 
- * FILE: gioca_tuki_pesato.c
+ * FILE: gioca_tuki_respiro.c
  */
 #include "tuki5_modello.h"
 #include "libagri.h"
@@ -19,6 +19,7 @@
 
 posizioni g_posi;
 int n_vertici;
+oggetto **lab;
 
 /*
   ITA: array di vertici del grafo completo del Pac-Man
@@ -28,17 +29,6 @@ static agri_Vertex grafo[NODI_LAB_POT];
 
 agri_Vertex agri_Vertices_Colligati[NODI_LAB_POT];
 
-/* Evita la casa dei fantasmi */
-int evita_casa_fantasmi(int vertice)
-{
-  int r = grafo[vertice].linea;
-  int c = grafo[vertice].columna;
-  if(r>=15 && r<=17 && c>=11 && c<=16)
-    return 0;
-
-  return vertice;
-  
-}
 
 /*
   ITA: Restituisce l'indice del vertice presente in (riga, colonna).
@@ -56,6 +46,69 @@ int trova_vertice(int riga, int colonna)
 	return grafo[i].index;
     }
   return -1;
+}
+
+
+int visitatus(int vertice)
+{
+  
+  int r = grafo[vertice].linea;
+  int c = grafo[vertice].columna;
+  
+  if(lab[r][c] == U ||lab[r][c] == V)
+    return 0;
+  return 1;
+
+}
+
+int phantasmatis_presentia(int vertice)
+{
+  
+  int r = grafo[vertice].linea;
+  int c = grafo[vertice].columna;
+  
+  int x_g[4];
+  int y_g[4];
+  x_g[0] = g_posi.blinky_x;
+  x_g[1] = g_posi.pinky_x;
+  x_g[2] = g_posi.inky_x;
+  x_g[3] = g_posi.clyde_x;
+  
+  y_g[0] = g_posi.blinky_y;
+  y_g[1] = g_posi.pinky_y;
+  y_g[2] = g_posi.inky_y;
+  y_g[3] = g_posi.clyde_y;
+
+  for(int i = 0; i<4; i++)
+    {
+      int v = trova_vertice(y_g[i], x_g[i]);
+      if(grafo[v].ianua[SINISTRA] == vertice ||
+	 grafo[v].ianua[DESTRA] == vertice ||
+	 grafo[v].ianua[SU] == vertice ||
+	 grafo[v].ianua[GIU] == vertice||
+	 grafo[v].index == vertice
+	 )
+	{
+	  return 0;
+	}
+      
+    }
+  
+  return 1;
+
+}
+
+
+/* Evita la casa dei fantasmi */
+int evita_casa_fantasmi(int vertice)
+{
+  int r = grafo[vertice].linea;
+  int c = grafo[vertice].columna;
+  if(r>=15 && r<=17 && c>=11 && c<=16)
+    return 0;
+
+  return vertice;
+  
 }
 
 /* 
@@ -98,7 +151,7 @@ double euri(int start, int goal)
   y_g[2] = g_posi.inky_y;
   y_g[3] = g_posi.clyde_y;
 
-  int peso_g[]={600,600,600,600};
+  int peso_g[]={700,700,700,700};
   
   int x1,x2,y1,y2;
   double d;
@@ -209,6 +262,7 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
   static int init = 0;
   /* condivisione delle posizioni per accedere da euri **/
   g_posi = posi;
+  lab = labx;
   
   int vertice_corrente = -1;
     
@@ -249,17 +303,19 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
      vertice_goal == -1
      )
     {
-      do{
-	vertice_goal = (double)rand()/((double)RAND_MAX)*NODI_LAB_POT;
-      }
-      while(labx[grafo[vertice_goal].linea][grafo[vertice_goal].columna] == 'J');
+      vertice_goal = agri_breadthfirstsearch
+	(vertice_corrente, 
+	 grafo,
+	 phantasmatis_presentia,
+	 NODI_LAB_POT
+	 );
     }
-
-  /* Evita la casa dei fantasmi */
-  vertice_goal = evita_casa_fantasmi(vertice_goal);
-
-  //printf("Passo %d -> %d \n",vertice_corrente,vertice_goal);
-
+  percorso_fuga = agri_astar
+    (vertice_corrente,
+	 vertice_goal,
+	 grafo,&distanza_esatta,&euri,NODI_LAB_POT);
+  
+  /*
   do
     {
       percorso_fuga = agri_astar
@@ -267,9 +323,21 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
 	 vertice_goal,
 	 grafo,&distanza_esatta,&euri,NODI_LAB_POT);
       if(!percorso_fuga)
-	vertice_goal = (double)rand()/((double)RAND_MAX)*NODI_LAB_POT;
+	{
+	  vertice_corrente = trova_vertice(i,j);
+	  vertice_goal = agri_breadthfirstsearch
+	    (vertice_corrente, 
+	     grafo,
+	     visitatus,
+	     NODI_LAB_POT
+	     );
+	  percorso_fuga = agri_astar
+	    (vertice_corrente,
+	     vertice_goal,
+	     grafo,&distanza_esatta,&euri,NODI_LAB_POT);
+	}
     }while(!percorso_fuga);
-  
+  */
   prossimo_vertice = *percorso_fuga;
   free(percorso_fuga);
 
