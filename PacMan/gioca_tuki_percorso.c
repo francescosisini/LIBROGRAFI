@@ -17,18 +17,8 @@
 
 #define NODI_LAB_POT 44
 
-/*
-  ITA: array di vertici del grafo completo del Pac-Man
-  ENG: vertex array of the complete Pac-Man graph
-*/
 static agri_Vertex grafo[NODI_LAB_POT];
 
-/*
-  ITA: array della sequnza dei vertici più efficiente
-  per completare il percorso
-  ENG: array of the most efficient vertex sequence
-  to complete the path
-*/
 int * cammino;
 char * dir(versus d)
 {
@@ -49,18 +39,11 @@ double euri(int start, int goal)
   y1=agri_Vertices_Colligati[start].linea;
   x2=agri_Vertices_Colligati[goal].columna;
   y2=agri_Vertices_Colligati[goal].linea;
-  /*
-    ITA: Euristica uguale al quadrato della distanza euclidea
-    ENG: Heuristic equal to the square of the Euclidean distance
-  */
+
   d = (x1-x2)*(x1-x2)+(y1-y2)*(y1-y2);
   return sqrt(d);
 }
 
-/* 
-   ITA: Controlla se l'oggetto nella cella non è un muro
-   ENG: checks if the object into the cell is or not a wall
-*/
 bool oggetto_accessibile(oggetto s)
 {
   if(s == 'J' || s == 'U' || s == 'V')
@@ -69,10 +52,6 @@ bool oggetto_accessibile(oggetto s)
     return false;
 }
 
-/*
-  ITA: Crea un grafo corrispondente al labirinto di Pac-Man
-  ENG: Create a graph corresponding to the maze of Pac-Man
- */
 void collega_tuki_nodi()
 {
   static int cam[]=
@@ -659,14 +638,6 @@ double distanza_esatta(int da_nodo, int a_nodo)
   return (double)distanze[s][g];
 }
 
-/*
-  ITA: Restituisce l'indice del vertice presente in (riga, colonna).
-  Se non è presente alcun nodo (il fantasma è su un ramo)
-  restituisce -1
-  ENG: Returns the index of the vertex present in (row, column).
-  If no vertex is present (the ghost is on a branch)
-  returns -1
- */
 int indice_tuki_nodo_cella(int riga, int col)
 {
   for(int i=0; i<NODI_LAB_POT;i++)
@@ -685,72 +656,39 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
   static int * copia;
   static Modo modo_gioco = ESPLORA;
   static int indice_array_vertice_bersaglio = 0;
-  
+  static bool init = false;
+  static direzione ld = SINISTRA;
   int vertice_corrente = -1;
-  /*
-    ITA: per generare il grafo impediamo a Pac-Man di entrare nella
-    casa dei fantasmi
-    ENG: to generate the maze graph we prevent Pac-Man to get into 
-    ghosts' house
-  */
+  
   labx[14][12]='A';
   labx[14][13]='A';
   labx[14][11]='A';
   labx[14][14]='A';
   
-  /*
-    ITA: Creazione esterna del grafo del labirinto
-    ENG: External creation of the graph of the labyrinth
-  */
-  collega_tuki_nodi();
-  
-  /* 
-     ITA: Direzione presa nel turno di gioco corrente 
-     ENG: Direction taken into the current game cycle
-  */
-  static direzione ld = SINISTRA;
-  
-  static bool init = false;
   if(!init)
     {
+      collega_tuki_nodi();
+      
       struct timeval time; 
       gettimeofday(&time,NULL);
-      
       srand((time.tv_sec * 1000) + (time.tv_usec / 1000));
-      //srand(time(0));
       init = true;
     }
   
-  /* 
-     ITA: Posizione di Pac-Man nel labirinto
-     ENG: Pac-Man's row and column
-  */
   int i = posi.tuki_y;
   int j = posi.tuki_x;
-    
-  /*
-    ITA: Celle confinanti 
-    ENG: Neighboring cells
-  */
+  
   oggetto vicino[4];
   vicino[0] = labx[i][j-1]; //sinistra - left
   vicino[1] = labx[i][j+1]; //destra - right
   vicino[2] = labx[i-1][j]; //su - up
   vicino[3] = labx[i+1][j]; //giu - down
   
-  /*
-    ITA: Variabili ausiliarie con nomi più comodi 
-    ENG: Auxiliary variable with more memorable names
-  */
   oggetto s = vicino[0];
   oggetto d = vicino[1];
   oggetto a = vicino[2];
   oggetto b = vicino[3];
   
-  /*
-    ITA: cerca un fantasma nelle celle vicine
-    ENG: look for a ghost in neighboring cells
-  */
   int x = posi.tuki_x;
   int y = posi.tuki_y;
   int x_g[4];
@@ -765,10 +703,6 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
   y_g[2] = posi.inky_y;
   y_g[3] = posi.clyde_y;
   
-  /*
-    ITA: flag di presenza del fantasma
-    ENG: ghost flag
-  */
   char s_g = 0, d_g = 0,a_g = 0,b_g = 0;
   for (int ig = 0; ig<4; ig++)
     {
@@ -786,27 +720,15 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
       b_g = b_g || ((y == y_g[ig] - 1) && (x_g[ig] == x-1));
     }
   
-  /*  
-      ITA: Conta il numero di vicini accessibili
-      ENG: Counts the number of accessible neighbors
-  */
   int nd = 0;
   for(int k=0; k<4; k++)
     nd += (1*oggetto_accessibile(vicino[k]));
   
   fflush(stdout);
   
-  /* 
-     ITA: È vero se nel ciclo di gioco corrente viene rilevato un nodo 
-     ENG: Is true if in the current game cycle a node is detetcted  
-  */
   bool nodo_rilevato = false;
   if(nd>=2)
     {
-      /* 
-	 ITA: Se siamo qui, Tuki è su un vertice
-	 ENG: If we are here Tuki position is a vertex 
-      */
       vertice_corrente = indice_tuki_nodo_cella(i,j);
       if(vertice_corrente>=0)
 	{
@@ -816,24 +738,11 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
 	}
     }
   
-  /* 
-     ITA: Gestione ostacoli
-     ENG: dealing with obstacles
-  */
   bool disponibile = false;
   bool aleatorio = false;
   
-  /* 
-     ITA: Se un fantasma è nelle vicinanze prendo la prima cella buona
-     ENG: If a ghost is nearby take the first good cell
-  */
   if((s_g || d_g || a_g || b_g) && FUGA)
     {
-      
-      /*
-	ITA: direzioni possibili di fuga
-	ENG: possible escape directions
-      */
       direzione esc[4];
       for(int i=0;i<4;i++) esc[i]=FERMO;
       int ki = 0; //direzioni buone, good directions
@@ -870,12 +779,6 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
   
   if(modo_gioco == ESPLORA)
     {
-      /* 
-	 ITA: se la cella successiva nella direzione corrente non è disponibile,
-	 ne viene scelta un'altra e viene eseguita una nuova iterazione
-	 ENG: if the next cell in the current direction is not available, 
-	 it chooses another one and new iteration is executed
-      */
       while(!disponibile)
 	{
 	  if(!oggetto_accessibile(s) && ld == SINISTRA)
@@ -915,12 +818,7 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
 	}
       
       if(aleatorio) return ld;
-      
-      /*
-	ITA: Se la direzione non è aleatoria la cambiamo qui
-	ENG: If a random step has not been taken during the
-	direction decision, we do it here
-      */
+     
       if(oggetto_accessibile(a) && ld !=SU && ld!=GIU)
 	{
 	  int sv = rand()%10;
@@ -975,11 +873,6 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
     {
       if(nodo_rilevato == true)
 	{
-	  
-	  /*
-	    ITA: pesco il prossimo nodo
-	    ENG: Extract the next vertex
-	  */
 	  int indice_nodo = *percorso_fuga;
 	  if(indice_nodo == -1 ||(vertice_corrente ==cammino[indice_array_vertice_bersaglio] ) )
 	    {
@@ -990,15 +883,7 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
 	      return FERMO;
 	    }
 	  percorso_fuga++;
-	  
-	  /*
-	    ITA:  Cerco il percorso per il nodo indice_nodo.
-	    Entro in d[vertice_da] e controllo le sue porte
-	    finché non trovo quella che collega a indice_nodo
-	    ENG: look for the path to the vertex indice_nodo.
-	    I enter d[vertice_da] and check its doors
-	    until I find the one that connects to indice_nodo
-	  */
+	 
 	  if(grafo[vertice_corrente].ianua[SINISTRA] == indice_nodo)
 	    {
 	      ld = SINISTRA;

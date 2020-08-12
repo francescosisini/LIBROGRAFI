@@ -1,6 +1,6 @@
 /*___________________________________________________________
  * 
- * FILE: gioca_tuki_respiro.c
+ * FILE: gioca_tuki_evita.c
  */
 #include "tuki5_modello.h"
 #include "libagri.h"
@@ -15,7 +15,7 @@
 #define SCONOSCIUTO -2
 #define GUINZAGLIO 10
 #define PROFONDITA_RICERCA 60
-#define DISTANZA_SICUREZZA 10
+#define DISTANZA_SICUREZZA 16
 #define TENTATIVI 50
 
 #define NODI_LAB_POT 600
@@ -23,31 +23,19 @@
 posizioni g_posi;
 int n_vertici;
 oggetto **lab;
-
-/*
-  ITA: array di vertici del grafo completo del Pac-Man
-  ENG: vertex array of the complete Pac-Man graph
-*/
 static agri_Vertex grafo[NODI_LAB_POT];
-
 agri_Vertex agri_Vertices_Colligati[NODI_LAB_POT];
 
-
-/*
-  Ricerca un fantasma usando la BFS e ritorna il livello
-  a cui l'ha trovato
- */
-int phantasmatis_presentia(int start, 
-		    agri_Vertex * agri_Vertices_Colligati,
-			   int (*fantasma_presente)(int ),
-		    int nmembri
-		    )
+int phantasmatis_presentia
+(
+ int start, 
+ agri_Vertex * agri_Vertices_Colligati,
+ int (*fantasma_presente)(int ),
+ int nmembri
+ )
 {
-  static int iter;
-  
+  static int iter; 
   int precedente[nmembri];
-
-  //Nodi in valutazione per il path da start a goal
   Ordo candidati = 0;
   int livello = 0;
   
@@ -81,21 +69,9 @@ int phantasmatis_presentia(int start,
 	  Ordo_insero_nodus(&candidati,iv,1);
 	}
     }
-  
-  
   return 0;
-
 }
 
-
-/*
-  ITA: Restituisce l'indice del vertice presente in (riga, colonna).
-  Se non è presente alcun nodo 
-  restituisce -1
-  ENG: Returns the index of the vertex present in (row, column).
-  If no vertex is present 
-  returns -1
- */
 int trova_vertice(int riga, int colonna)
 {
   for(int i = 0; i<NODI_LAB_POT;i++)
@@ -106,17 +82,14 @@ int trova_vertice(int riga, int colonna)
   return -1;
 }
 
-
 int visitatus(int vertice)
 {
-  
   int r = grafo[vertice].linea;
   int c = grafo[vertice].columna;
   
   if(lab[r][c] == U ||lab[r][c] == V)
     return 0;
   return 1;
-
 }
 
 int phantasmatis(int vertice)
@@ -125,14 +98,8 @@ int phantasmatis(int vertice)
   int r = grafo[vertice].linea;
   int c = grafo[vertice].columna;
 
-  /*
-    Se il vertice è all'interno della casa
-    dei fantasmi la verifica è negativa
-    perché li i fantsmi non fanno niente
-   */
   if(r>=15 && r<=17 && c>=11 && c<=16)
     return 0;
-  
   
   int x_g[4];
   int y_g[4];
@@ -158,15 +125,10 @@ int phantasmatis(int vertice)
 	{
 	  return 1;
 	}
-      
     }
-  
   return 0;
-
 }
 
-
-/* Evita la casa dei fantasmi */
 int evita_casa_fantasmi(int vertice)
 {
   int r = grafo[vertice].linea;
@@ -174,14 +136,9 @@ int evita_casa_fantasmi(int vertice)
   if(r>=15 && r<=17 && c>=11 && c<=16)
     return 0;
 
-  return vertice;
-  
+  return vertice;  
 }
 
-/* 
-   ITA: Controlla se l'oggetto nella cella non è un muro
-   ENG: checks if the object into the cell is or not a wall
-*/
 bool oggetto_accessibile(oggetto s)
 {
   if(s == 'J' || s == 'U' || s == 'V')
@@ -190,20 +147,22 @@ bool oggetto_accessibile(oggetto s)
     return false;
 }
 
+bool area_accessibile(int r, int c)
+{
+  if (r<3) return false;
+  if(r>32) return false;
+  if( r>=12 && r<=14 && (c<=4 || c>= 23)) return false;
+  if( r>=18 && r<=20 && (c<=4 || c>= 23)) return false;
+  return true;
+}
 
 double euri(int start, int goal)
 {
   if(start<0)
     {
-      printf("Indice nodo start negativo\n");
       exit(1);
-
     }
 
-  /*
-    ITA: cerca un fantasma nelle celle vicine
-    ENG: look for a ghost in neighboring cells
-  */
   int x = g_posi.tuki_x;
   int y = g_posi.tuki_y;
   int x_g[4];
@@ -226,10 +185,7 @@ double euri(int start, int goal)
   y1 = agri_Vertices_Colligati[start].linea;
   x2 = agri_Vertices_Colligati[goal].columna;
   y2 = agri_Vertices_Colligati[goal].linea;
-  /*
-    ITA: Euristica uguale al quadrato della distanza euclidea
-    ENG: Heuristic equal to the square of the Euclidean distance
-  */
+
   d = (x1-x2)*(x1-x2)+(y1-y2)*(y1-y2);
 
   for(int i = 0; i<4; i++)
@@ -243,19 +199,11 @@ double euri(int start, int goal)
 	 )
 	{
 	  return peso_g[i];
-	}
-      
+	}      
     }
   return(sqrt(d));
-  
 }
 
-
-
-/*
-  ITA: Crea un grafo corrispondente al labirinto di Pac-Man
-  ENG: Create a graph corresponding to the maze of Pac-Man
- */
 void collega_tuki_nodi(oggetto **labx)
 {
   int i_aux,j_aux;
@@ -265,13 +213,12 @@ void collega_tuki_nodi(oggetto **labx)
     {
       for(int j = 1; j<LARGHEZZA-1; j++)
 	{
-	  if( oggetto_accessibile(labx[i][j]))
+	  if( oggetto_accessibile(labx[i][j]) && area_accessibile(i,j))
 	    {
 	      grafo[k].linea = i;
 	      grafo[k].columna = j;
 	      grafo[k].index = k;
 	      k++;
-	      // printf("Vertice: %d: (%d,%d)\n",k,i,j);
 	    }
 	} 
     }
@@ -291,8 +238,6 @@ void collega_tuki_nodi(oggetto **labx)
       if(r<ALTEZZA-1)
 	grafo[k].ianua[GIU] = trova_vertice(r+1, c);
     } 
-
-
 }
 
 double distanza_esatta(int da_nodo, int a_nodo)
@@ -316,10 +261,8 @@ double distanza_esatta(int da_nodo, int a_nodo)
 	  }
       init = 1;
     }
-  
   return (double)distanze[s][g];
 }
-
 
 
 direzione gioca_tuki(posizioni posi, oggetto **labx)
@@ -327,16 +270,11 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
   static int * percorso_fuga = 0;
   static int vertice_goal = -1;
   static int init = 0;
-  /* condivisione delle posizioni per accedere da euri **/
   g_posi = posi;
   lab = labx;
   
   int vertice_corrente = -1;
     
-  /*
-    ITA: Creazione esterna del grafo del labirinto
-    ENG: External creation of the graph of the labyrinth
-  */
   if(!init)
     {
       collega_tuki_nodi(labx);
@@ -347,16 +285,8 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
       init = 1;
     }
   
-  /* 
-     ITA: Direzione presa nel turno di gioco corrente 
-     ENG: Direction taken into the current game cycle
-  */
   static direzione ld = SINISTRA;
-    
-  /* 
-     ITA: Posizione di Pac-Man nel labirinto
-     ENG: Pac-Man's row and column
-  */
+  
   int i = posi.tuki_y;
   int j = posi.tuki_x;
 
@@ -417,18 +347,7 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
   
   prossimo_vertice = *percorso_fuga;
   free(percorso_fuga);
-  
-  
-  
-  
-  /*
-    ITA:  Cerco il percorso per il nodo indice_nodo.
-    Entro in d[vertice_da] e controllo le sue porte
-    finché non trovo quella che collega a indice_nodo
-    ENG: look for the path to the vertex indice_nodo.
-    I enter d[vertice_da] and check its doors
-    until I find the one that connects to indice_nodo
-  */
+
   if(grafo[vertice_corrente].ianua[SINISTRA] == prossimo_vertice)
     {
       ld = SINISTRA;

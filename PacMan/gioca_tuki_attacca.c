@@ -1,6 +1,6 @@
 /*___________________________________________________________
  * 
- * FILE: gioca_tuki_respiro.c
+ * FILE: gioca_tuki_attacco.c
  */
 #include "tuki5_modello.h"
 #include "libagri.h"
@@ -20,24 +20,9 @@
 posizioni g_posi;
 int n_vertici;
 oggetto **lab;
-
-/*
-  ITA: array di vertici del grafo completo del Pac-Man
-  ENG: vertex array of the complete Pac-Man graph
-*/
 static agri_Vertex grafo[NODI_LAB_POT];
-
 agri_Vertex agri_Vertices_Colligati[NODI_LAB_POT];
 
-
-/*
-  ITA: Restituisce l'indice del vertice presente in (riga, colonna).
-  Se non è presente alcun nodo 
-  restituisce -1
-  ENG: Returns the index of the vertex present in (row, column).
-  If no vertex is present 
-  returns -1
- */
 int trova_vertice(int riga, int colonna)
 {
   for(int i = 0; i<NODI_LAB_POT;i++)
@@ -48,22 +33,18 @@ int trova_vertice(int riga, int colonna)
   return -1;
 }
 
-
 int visitatus(int vertice)
-{
-  
+{  
   int r = grafo[vertice].linea;
   int c = grafo[vertice].columna;
   
   if(lab[r][c] == U ||lab[r][c] == V)
     return 0;
   return 1;
-
 }
 
 int phantasmatis_presentia(int vertice)
 {
-  
   int r = grafo[vertice].linea;
   int c = grafo[vertice].columna;
   
@@ -90,16 +71,11 @@ int phantasmatis_presentia(int vertice)
 	 )
 	{
 	  return 0;
-	}
-      
+	}     
     }
-  
   return 1;
-
 }
 
-
-/* Evita la casa dei fantasmi */
 int evita_casa_fantasmi(int vertice)
 {
   int r = grafo[vertice].linea;
@@ -111,10 +87,6 @@ int evita_casa_fantasmi(int vertice)
   
 }
 
-/* 
-   ITA: Controlla se l'oggetto nella cella non è un muro
-   ENG: checks if the object into the cell is or not a wall
-*/
 bool oggetto_accessibile(oggetto s)
 {
   if(s == 'J' || s == 'U' || s == 'V')
@@ -122,7 +94,6 @@ bool oggetto_accessibile(oggetto s)
   else
     return false;
 }
-
 
 double euri(int start, int goal)
 {
@@ -133,10 +104,6 @@ double euri(int start, int goal)
 
     }
 
-  /*
-    ITA: cerca un fantasma nelle celle vicine
-    ENG: look for a ghost in neighboring cells
-  */
   int x = g_posi.tuki_x;
   int y = g_posi.tuki_y;
   int x_g[4];
@@ -159,10 +126,7 @@ double euri(int start, int goal)
   y1 = agri_Vertices_Colligati[start].linea;
   x2 = agri_Vertices_Colligati[goal].columna;
   y2 = agri_Vertices_Colligati[goal].linea;
-  /*
-    ITA: Euristica uguale al quadrato della distanza euclidea
-    ENG: Heuristic equal to the square of the Euclidean distance
-  */
+
   d = (x1-x2)*(x1-x2)+(y1-y2)*(y1-y2);
 
   for(int i = 0; i<4; i++)
@@ -176,19 +140,11 @@ double euri(int start, int goal)
 	 )
 	{
 	  return peso_g[i];
-	}
-      
+	}      
     }
   return(sqrt(d));
-  
 }
 
-
-
-/*
-  ITA: Crea un grafo corrispondente al labirinto di Pac-Man
-  ENG: Create a graph corresponding to the maze of Pac-Man
- */
 void collega_tuki_nodi(oggetto **labx)
 {
   int i_aux,j_aux;
@@ -204,7 +160,6 @@ void collega_tuki_nodi(oggetto **labx)
 	      grafo[k].columna = j;
 	      grafo[k].index = k;
 	      k++;
-	      // printf("Vertice: %d: (%d,%d)\n",k,i,j);
 	    }
 	} 
     }
@@ -224,8 +179,6 @@ void collega_tuki_nodi(oggetto **labx)
       if(r<ALTEZZA-1)
 	grafo[k].ianua[GIU] = trova_vertice(r+1, c);
     } 
-
-
 }
 
 double distanza_esatta(int da_nodo, int a_nodo)
@@ -249,11 +202,8 @@ double distanza_esatta(int da_nodo, int a_nodo)
 	  }
       init = 1;
     }
-  
   return (double)distanze[s][g];
 }
-
-
 
 direzione gioca_tuki(posizioni posi, oggetto **labx)
 {
@@ -265,11 +215,7 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
   lab = labx;
   
   int vertice_corrente = -1;
-    
-  /*
-    ITA: Creazione esterna del grafo del labirinto
-    ENG: External creation of the graph of the labyrinth
-  */
+
   if(!init)
     {
       collega_tuki_nodi(labx);
@@ -279,17 +225,9 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
       srand((time.tv_sec * 1000) + (time.tv_usec / 1000));
       init = 1;
     }
-  
-  /* 
-     ITA: Direzione presa nel turno di gioco corrente 
-     ENG: Direction taken into the current game cycle
-  */
+
   static direzione ld = SINISTRA;
-    
-  /* 
-     ITA: Posizione di Pac-Man nel labirinto
-     ENG: Pac-Man's row and column
-  */
+
   int i = posi.tuki_y;
   int j = posi.tuki_x;
 
@@ -312,46 +250,12 @@ direzione gioca_tuki(posizioni posi, oggetto **labx)
     }
   percorso_fuga = agri_astar
     (vertice_corrente,
-	 vertice_goal,
-	 grafo,&distanza_esatta,&euri,NODI_LAB_POT);
+     vertice_goal,
+     grafo,&distanza_esatta,&euri,NODI_LAB_POT);
   
-  /*
-  do
-    {
-      percorso_fuga = agri_astar
-	(vertice_corrente,
-	 vertice_goal,
-	 grafo,&distanza_esatta,&euri,NODI_LAB_POT);
-      if(!percorso_fuga)
-	{
-	  vertice_corrente = trova_vertice(i,j);
-	  vertice_goal = agri_breadthfirstsearch
-	    (vertice_corrente, 
-	     grafo,
-	     visitatus,
-	     NODI_LAB_POT
-	     );
-	  percorso_fuga = agri_astar
-	    (vertice_corrente,
-	     vertice_goal,
-	     grafo,&distanza_esatta,&euri,NODI_LAB_POT);
-	}
-    }while(!percorso_fuga);
-  */
   prossimo_vertice = *percorso_fuga;
   free(percorso_fuga);
-
   
-  
-  
-  /*
-    ITA:  Cerco il percorso per il nodo indice_nodo.
-    Entro in d[vertice_da] e controllo le sue porte
-    finché non trovo quella che collega a indice_nodo
-    ENG: look for the path to the vertex indice_nodo.
-    I enter d[vertice_da] and check its doors
-    until I find the one that connects to indice_nodo
-  */
   if(grafo[vertice_corrente].ianua[SINISTRA] == prossimo_vertice)
     {
       ld = SINISTRA;
