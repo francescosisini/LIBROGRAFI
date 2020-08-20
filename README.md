@@ -22,6 +22,22 @@ La teoria dei grafi offre una base formale per sviluppare algoritmi di path sear
 
 Prova il [codice](PacMan/gioca_tuki_generagrafo.c)
 
+### Pac-Man punta al bersaglio
+Utilizzando l'algoritmo su grafo A*, l'*agent* punta diritto al nodo che vuole raggiungere
+
+Prova il [codice](PacMan/gioca_tuki_esploraeritorna.c)
+
+### Pac-Man ha un percorso
+Questo *agent* cerca di seguire un percorso sub-ottimale predefinito prima del gioco. Peccato che i fantasmi lo distraggano dal suo compito...
+
+Prova il [codice](PacMan/gioca_tuki_percorso.c)
+
+### Pac-Man evita i fantasmi senza fuggire
+Questo *agent* sfrutta l'euristica per evitare i fantasmi senza sfugirli direttamente
+
+Prova il [codice](PacMan/gioca_tuki_evita.c)
+
+###
 
 <!--[Applicazioni di grafi e algoritmi alla fuga di Pac-Man dal Ghosts Team](https://www.amazon.it/Applicazioni-grafi-algoritmi-Pac-Man-Ghosts-ebook/dp/B087GLBPNM/)
 ![KIndle](mezza.jpg)-->
