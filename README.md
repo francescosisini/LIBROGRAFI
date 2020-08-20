@@ -32,15 +32,21 @@ Questo *agent* cerca di seguire un percorso sub-ottimale predefinito prima del g
 
 Prova il [codice](PacMan/gioca_tuki_percorso.c)
 
-### Pac-Man evita i fantasmi senza fuggire
+### Pac-Man pesa i percorsi e evita i fantasmi senza fuggire
 Questo *agent* sfrutta l'euristica per evitare i fantasmi senza sfugirli direttamente
 
-Prova il [codice](PacMan/gioca_tuki_evita.c)
+Prova il [codice](PacMan/gioca_tuki_pesato.c)
 
 ### Pac-Man ottimizza il percorso
 Questo *agent* sfrutta l'algorimo breadth-first per ottimizzare il percorso
 
 Prova il [codice](PacMan/gioca_tuki_respiro.c)
+
+
+### Pac-Man ottimizza il percorso ed evita i fantasmi senza fuggire
+Questo *agent* combina i due precendenti per ottimizzare il percorso e sfuggire ai fantasmi
+
+Prova il [codice](PacMan/gioca_tuki_evita.c)
 
 <!--[Applicazioni di grafi e algoritmi alla fuga di Pac-Man dal Ghosts Team](https://www.amazon.it/Applicazioni-grafi-algoritmi-Pac-Man-Ghosts-ebook/dp/B087GLBPNM/)
 ![KIndle](mezza.jpg)-->
