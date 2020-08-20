@@ -37,7 +37,10 @@ Questo *agent* sfrutta l'euristica per evitare i fantasmi senza sfugirli diretta
 
 Prova il [codice](PacMan/gioca_tuki_evita.c)
 
-###
+### Pac-Man ottimizza il percorso
+Questo *agent* sfrutta l'algorimo breadth-first per ottimizzare il percorso
+
+Prova il [codice](PacMan/gioca_tuki_respiro.c)
 
 <!--[Applicazioni di grafi e algoritmi alla fuga di Pac-Man dal Ghosts Team](https://www.amazon.it/Applicazioni-grafi-algoritmi-Pac-Man-Ghosts-ebook/dp/B087GLBPNM/)
 ![KIndle](mezza.jpg)-->
