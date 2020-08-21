@@ -6,6 +6,7 @@
 ## Il labirinto di Pac-Man su una piattaforma Open Source
 La piattaforma [Tuki-5](mvc) è una implementazione parziale del gioco del Pac-Man in linguaggio C.
 Sfruttando la piattaforma si possono sviluppare specifci *agents* per studiare le strategie di *attacco* e di *difesa* nel gioco
+La piattaforma di gioco insieme al codice sono descritte nel libro [Sfidare gli algoritmi](https://www.amazon.it/Sfidare-gli-algoritmi-videogiochi-Linux/dp/1695109325) ed è presente su [GitHub](https://github.com/francescosisini/LIBRO-Sfidare-gli-algoritmi-5-videogiochi-in-C-su-Linux-codice)
 
 ### Pac-Man vaga per il labirinto
 Questo *agent* percorre tutto il labirinto sfidando i fantasmi, ma se vince è solo... una questione di fortuna!
