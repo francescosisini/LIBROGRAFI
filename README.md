@@ -1,7 +1,7 @@
 # Mangia e Fuggi
 (ovvero, i miracolosi schemi di Pac-Man per complerare il lebirinto senza essere catturato dal Ghost-Team)
 
-**New** Dal 4 settmbre il libro su Amazon [Applicazioni di grafi e algoritmi alla fuga di Pac-Man dal Ghosts Team](https://www.amazon.it/Applicazioni-grafi-algoritmi-Pac-Man-Ghosts-ebook/dp/B087GLBPNM/)
+**New** Dal 4 settmbre il libro su Amazon [Applicazioni di grafi e algoritmi alla fuga di Pac-Man dal Ghosts Team](https://www.amazon.it/)
 
 ## Il labirinto di Pac-Man su una piattaforma Open Source
 La piattaforma [Tuki-5](mvc) è una implementazione parziale del gioco del Pac-Man in linguaggio C.
