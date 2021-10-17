@@ -1,5 +1,5 @@
 # Mangia e Fuggi
-(ovvero, i miracolosi schemi di Pac-Man per complerare il lebirinto senza essere catturato dal Ghost-Team)
+(ovvero, i miracolosi schemi di Pac-Man per complerare il labirinto senza essere catturato dal Ghost-Team)
 
 **New** Dal 31 agosto il libro su Amazon [Applicazioni di grafi e algoritmi alla fuga di Pac-Man dal Ghosts Team](https://www.amazon.it/dp/B08GTJ2KHM)
 
